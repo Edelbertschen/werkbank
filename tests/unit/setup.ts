@@ -11,8 +11,12 @@ const realFetch = globalThis.fetch;
 globalThis.fetch = (async (input: any, init?: any) => {
   const url = typeof input === 'string' ? input : input?.url;
   if (typeof url === 'string' && url.startsWith('/')) {
-    try { return new Response(await readFile(resolve('public' + url.split('?')[0]))); }
-    catch { return new Response(null, { status: 404 }); }
+    const path = url.split('?')[0];
+    // public/engines entsteht erst beim Build (npm run engines); Schriften von pdf.js gibt es auch direkt im Paket
+    const candidates = [resolve('public' + path)];
+    if (path.startsWith('/engines/pdfjs/')) candidates.push(resolve('node_modules/pdfjs-dist' + path.slice('/engines/pdfjs'.length)));
+    for (const c of candidates) { try { return new Response(await readFile(c)); } catch { /* nächster Ort */ } }
+    return new Response(null, { status: 404 });
   }
   return realFetch(input, init);
 }) as typeof fetch;
