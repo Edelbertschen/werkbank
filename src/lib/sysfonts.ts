@@ -1,5 +1,5 @@
 // Installierte Schriften, die zur Schrift im PDF passen – zwischengespeichert je Name und Schnitt
-import { findSystemFont } from './platform';
+import { findSystemFont, listSystemFonts } from './platform';
 
 const bytes = new Map<string, Promise<Uint8Array | null>>();
 const faces = new Map<string, Promise<string | null>>();
@@ -18,10 +18,20 @@ export function previewFamily(name: string, bold = false, italic = false): Promi
     const b = await systemFont(name, bold, italic);
     if (!b) return null;
     const fam = 'wb-sys-' + faces.size;
+    realNames.set(fam, name.replace(/^[A-Z]{6}\+/, ''));
     const ff = new FontFace(fam, b.slice().buffer);
     await ff.load();
     document.fonts.add(ff);
     return fam;
   })().catch(() => null));
   return faces.get(k)!;
+}
+
+/** CSS-Name der Vorschauschrift → Name der installierten Schrift (für das Schreiben ins PDF) */
+export const realNames = new Map<string, string>();
+
+let families: Promise<string[]> | null = null;
+/** Installierte Schriftfamilien für die Schriftwahl */
+export function systemFamilies(): Promise<string[]> {
+  return (families ??= listSystemFonts().catch(() => []));
 }

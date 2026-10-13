@@ -511,6 +511,12 @@ fn deliver_files(app: &AppHandle, files: Vec<String>) {
     let _ = app.emit("open-files", files);
 }
 
+/// Namen der installierten Schriftfamilien (für die Schriftwahl beim Bearbeiten)
+#[tauri::command]
+async fn system_fonts() -> Result<Vec<String>, String> {
+    tauri::async_runtime::spawn_blocking(sysfont::families).await.map_err(|e| e.to_string())
+}
+
 /// Installierte Schrift zum Namen einer PDF-Schrift (leere Antwort: keine passende oder Einbetten nicht erlaubt)
 #[tauri::command]
 async fn system_font(name: String, bold: bool, italic: bool) -> Result<Response, String> {
@@ -556,7 +562,8 @@ pub fn run() {
             platform_info,
             office_info,
             office_convert,
-            system_font
+            system_font,
+            system_fonts
         ])
         .setup(|app| {
             let root = app

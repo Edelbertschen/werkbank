@@ -41,6 +41,7 @@
     "allow-platform-info",
     "allow-office-info",
     "allow-office-convert",
-    "allow-system-font"
+    "allow-system-font",
+    "allow-system-fonts"
   ]
 }

@@ -27,6 +27,22 @@ pub fn lookup(name: &str, bold: bool, italic: bool) -> Option<Vec<u8>> {
     face_bytes(db, id)
 }
 
+/// Namen aller installierten Schriftfamilien (sortiert, ohne versteckte Systemschriften)
+pub fn families() -> Vec<String> {
+    family_names(system_db())
+}
+
+pub fn family_names(db: &Database) -> Vec<String> {
+    let mut v: Vec<String> = db
+        .faces()
+        .filter_map(|f| f.families.first().map(|(n, _)| n.clone()))
+        .filter(|n| !n.starts_with('.') && !n.is_empty())
+        .collect();
+    v.sort_by_key(|n| n.to_lowercase());
+    v.dedup();
+    v
+}
+
 /// Kleinbuchstaben und Ziffern, ohne Herstellerkürzel am Ende ("MT", "PS", "PSMT", "Std", "Pro")
 pub fn normalize(s: &str) -> String {
     let mut n: String = s.chars().filter(|c| c.is_ascii_alphanumeric()).collect::<String>().to_ascii_lowercase();
@@ -169,6 +185,15 @@ mod tests {
         let db = db();
         assert!(find(&db, "FrutigerLTStd-Roman", false, false).is_none());
         assert!(find(&db, "", true, false).is_none());
+    }
+
+    #[test]
+    fn listet_familien_einmal_und_sortiert() {
+        let names = family_names(&db());
+        assert_eq!(names.iter().filter(|n| n.as_str() == "Liberation Sans").count(), 1);
+        let mut sorted = names.clone();
+        sorted.sort_by_key(|n| n.to_lowercase());
+        assert_eq!(names, sorted);
     }
 
     #[test]

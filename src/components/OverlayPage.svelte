@@ -9,6 +9,9 @@
   import * as I from '../lib/icons';
   import { groupLines, paragraphAt, classifyFont, FONT_STACK, type Box, type FontStyle } from '../lib/textedit';
   import { previewFamily } from '../lib/sysfonts';
+  import TextToolbar, { trackSelection } from './TextToolbar.svelte';
+  import { BUILTIN_STACK, escapeHtml } from '../lib/richtext';
+  import { embeddedFontCovers } from '../lib/pageobjects';
 
   let { index }: { index: number } = $props();
   let host: HTMLDivElement;
@@ -76,6 +79,7 @@
   }
 
   onMount(() => {
+    trackSelection();
     const ro = new ResizeObserver(() => { if (page) k = host.clientWidth / page.w; });
     ro.observe(host);
     return () => ro.disconnect();
@@ -219,7 +223,7 @@
     const para = paragraphAt(lines, iHit);
     const multi = para.lines.length > 1;
     const { left, right, top, bottom } = multi ? para.box : lines[iHit];
-    const text = multi ? para.box.text : lines[iHit].text;
+    const text = (multi ? para.box.text : lines[iHit].text).normalize('NFC');
     const lineH = multi ? para.lineHeight : bottom - top;
     const glyphH = Math.min(...(multi ? para.lines : [lines[iHit]]).map(l => l.height));
     const sizePt = glyphH / k * 0.92;
@@ -233,9 +237,17 @@
     const d = doc;
     fontAt(fx, fy, fx + fw, fy + fh).then(f => {
       const live = itemsOf(d).find(x => x.id === it.id) as any;
-      if (live) { live.bold = f.bold; live.italic = f.italic; live.family = f.family; live.fontName = f.name; }
-      // Ist die Schrift installiert, zeigt die Vorschau genau diese
-      if (f.name) previewFamily(f.name, f.bold, f.italic).then(fam => { if (fam && live) live.css = fam; });
+      if (!live) return;
+      live.bold = f.bold; live.italic = f.italic; live.family = f.family; live.fontName = f.name;
+      live.origSize = live.size; live.origBold = f.bold; live.origItalic = f.italic; live.origColor = live.color;
+      // Welche Schrift wird geschrieben? Eingebettet (vollständig) > installiert > Ersatz – sichtbar in Leiste und am Text
+      Promise.all([
+        f.name ? previewFamily(f.name, f.bold, f.italic) : Promise.resolve(null),
+        embeddedFontCovers(d.bytes, index, { x: fx, y: fy, w: fw, h: fh }, text).catch(() => ({ complete: false })),
+      ]).then(([fam, emb]) => {
+        if (fam) live.css = fam;
+        live.fstate = emb.complete ? 'original' : fam ? 'installed' : 'substitute';
+      });
     });
   }
   async function sampleColor(pageEl: HTMLElement, l: number, t: number, r: number, b: number) {
@@ -298,7 +310,10 @@
     if (!doc) return;
     if (it.kind === 'link') { const r = await linkDialog(it); if (r) { Object.assign(it, r); commitItem(doc, it); } }
     else if (it.kind === 'field') { const r = await fieldDialog(it.ftype, it); if (r) { Object.assign(it, r); commitItem(doc, it); } }
-    else if (it.kind === 'text' || it.kind === 'comment' || it.kind === 'textedit' || it.kind === 'note') { overlay.editing = it.id; await tick(); focusText(it.id); }
+    else if (it.kind === 'text' || it.kind === 'comment' || it.kind === 'textedit' || it.kind === 'note') {
+      if (overlay.editing === it.id) return; // schon in Bearbeitung: Doppelklick markiert ein Wort
+      overlay.editing = it.id; await tick(); focusText(it.id);
+    }
   }
 
   async function linkDialog(v: { url: string; toPage: number }) {
@@ -345,7 +360,18 @@
     return `M${x2 - len * Math.cos(a - 0.45)},${y2 - len * Math.sin(a - 0.45)} L${x2},${y2} L${x2 - len * Math.cos(a + 0.45)},${y2 - len * Math.sin(a + 0.45)}`;
   }
   /** Inhalt eines editierbaren Feldes nur einmal setzen, damit der Cursor beim Tippen bleibt */
-  function initText(node: HTMLElement, text: string) { node.textContent = text; }
+  /** Inhalt eines editierbaren Feldes setzen – beim Tippen nicht anfassen (Cursor), nach Rückgängig/Formatierung neu */
+  function initText(node: HTMLElement, v: { text: string; html?: string; rev?: number }) {
+    const set = (x: typeof v) => { if (x.html != null) node.innerHTML = x.html; else node.textContent = x.text; };
+    set(v);
+    return { update(x: typeof v) { if (document.activeElement !== node && (x.html ?? escapeHtml(x.text)) !== node.innerHTML) set(x); } };
+  }
+  /** Schrift der Vorschau: gewählte, sonst installierte Originalschrift, sonst ähnlicher Stapel */
+  function fontCss(it: any): string | null {
+    if (it.fontChoice) return it.choiceCss ? `"${it.choiceCss}", ${BUILTIN_STACK.Helvetica}` : BUILTIN_STACK[it.fontChoice] || null;
+    if (it.kind === 'textedit') return (it.css ? `"${it.css}", ` : '') + FONT_STACK[(it.family || 'sans') as 'sans'];
+    return null;
+  }
   const FIELD_LABEL: Record<string, string> = { text: L("Textfeld"), check: '☐', radio: '◯', choice: L("Auswahl ▾"), signature: L("Unterschrift") };
 </script>
 
@@ -415,18 +441,24 @@
           <div class="fieldbox" class:small={it.ftype === 'check' || it.ftype === 'radio'}><span>{it.ftype === 'check' || it.ftype === 'radio' ? FIELD_LABEL[it.ftype] : it.name}</span></div>
         {:else if it.kind === 'text' || it.kind === 'comment' || it.kind === 'textedit'}
           {#if it.kind === 'textedit'}<div class="cover"></div>{/if}
+          {#if it.kind === 'textedit' && !(it as any).fontChoice && (it as any).fstate === 'substitute'}<span class="subst" title={L("Die Originalschrift ist nicht verfügbar – es wird eine Ersatzschrift verwendet.")}>{L("Ersatzschrift")}</span>{/if}
           <div class="tx" contenteditable={!moving || overlay.editing === it.id ? 'true' : 'false'} spellcheck="false" role="textbox" tabindex="0"
-            style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:font-style={(it as any).italic ? 'italic' : null} style:font-family={it.kind === 'textedit' ? ((it as any).css ? `"${(it as any).css}", ` : '') + FONT_STACK[((it as any).family || 'sans') as 'sans'] : null} style:line-height={it.kind === 'textedit' ? ((it as any).multi ? (it as any).lineHeight * k : box.h * page!.h * k) + 'px' : 1.2}
+            style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:font-style={(it as any).italic ? 'italic' : null}
+            style:text-decoration={(it as any).underline ? 'underline' : null} style:text-align={(it as any).align || null}
+            style:font-family={fontCss(it)} style:line-height={(it as any).lh ? (it as any).lh : it.kind === 'textedit' ? ((it as any).multi ? (it as any).lineHeight * k : box.h * page!.h * k) + 'px' : 1.2}
             class:multi={(it as any).multi} class:plain={it.kind === 'comment' && (it as any).fill === 'transparent'}
             onpointerdown={e => { if (moving && overlay.editing !== it.id) return; e.stopPropagation(); overlay.selected = it.id; }}
             onfocus={() => { overlay.selected = it.id; if (!moving) overlay.editing = it.id; }}
-            oninput={e => { it.text = (e.target as HTMLElement).innerText.replace(/\n$/, ''); }}
+            oninput={e => { const el = e.target as HTMLElement; it.text = el.innerText.replace(/\n$/, ''); if (it.kind !== 'comment') (it as any).html = el.innerHTML; }}
+            onpaste={e => { e.preventDefault(); const t = e.clipboardData?.getData('text/plain') || ''; document.execCommand('insertText', false, t); }}
             onblur={e => { overlay.editing = null; if (it.kind === 'comment') (it as any).h = (e.currentTarget as HTMLElement).offsetHeight / host.clientHeight; if (!it.text.trim() && it.kind !== 'textedit') removeItem(doc!, it.id); else commitItem(doc!, it); }}
-            use:initText={it.text}></div>
+            use:initText={{ text: it.text, html: (it as any).html, rev: (it as any).htmlRev }}></div>
         {/if}
-        {#if sel}
+        {#if sel && (it.kind === 'text' || it.kind === 'textedit')}
+          <TextToolbar doc={doc!} {it} editor={() => host.querySelector(`[data-id="${it.id}"] .tx`)} />
+        {:else if sel}
           <div class="tools" onpointerdown={e => e.stopPropagation()} role="toolbar" aria-label={L("Element")}>
-            {#if it.kind === 'text' || it.kind === 'comment' || it.kind === 'textedit'}
+            {#if it.kind === 'comment'}
               <button title={L("Kleiner")} aria-label={L("Kleiner")} onclick={() => { it.size = Math.max(4, +(it.size - 1).toFixed(1)); commitItem(doc!, it); }}>A−</button>
               <button title={L("Größer")} aria-label={L("Größer")} onclick={() => { it.size = +(it.size + 1).toFixed(1); commitItem(doc!, it); }}>A+</button>
               <button title={L("Fett")} aria-label={L("Fett")} class:on={it.bold} onclick={() => { it.bold = !it.bold; commitItem(doc!, it); }}><b>B</b></button>
@@ -504,6 +536,8 @@
   .mk.underline { border-bottom: 2px solid var(--c); }
   .mk.strike::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px solid var(--c); }
   .mk.sel { outline: 1px dashed var(--accent); }
+  .subst { position: absolute; right: -2px; top: -18px; font-size: 10px; padding: 1px 6px; border-radius: 999px; background: color-mix(in srgb, #f08c00 22%, var(--surface)); color: #8a5000; pointer-events: none; white-space: nowrap; }
+  .item.textedit:has(.subst) { outline: 1.5px dashed #f08c00; outline-offset: 2px; }
   .tools.floating { bottom: auto; pointer-events: auto; }
   .mk.highlight { background: var(--c); opacity: 0.42; mix-blend-mode: multiply; }
   .item.comment .tx { background: #fffad1; border: 1px solid #d9bf59; border-radius: 2px; padding: 2px 4px; color: #222; }

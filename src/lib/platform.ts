@@ -230,6 +230,15 @@ export async function findSystemFont(name: string, bold: boolean, italic: boolea
   catch { return null; }
 }
 
+/** Namen der installierten Schriftfamilien (Desktop-App; Testbuilds: die vorgegebenen Schriften) */
+export async function listSystemFonts(): Promise<string[]> {
+  if (!isTauri) {
+    const fake = import.meta.env.VITE_WB_TEST ? (globalThis as any).__wbSystemFonts : null;
+    return fake ? Object.keys(fake).sort() : [];
+  }
+  try { return await invoke<string[]>('system_fonts'); } catch { return []; }
+}
+
 // Installiertes LibreOffice (nur Desktop-App)
 let officeInfoP: Promise<{ available: boolean; path?: string }> | null = null;
 export function officeInfo() {

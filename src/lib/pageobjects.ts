@@ -111,3 +111,34 @@ json.dumps(o)
 `, { files: { 'in.pdf': bytes }, outputs: ['out.pdf'], vars: { page: String(page), xref: String(xref) } });
   return { item: JSON.parse(r.result), bytes: r.files['out.pdf'] };
 }
+
+/** Ist die Schrift des Textes in diesem Bereich vollständig eingebettet (alle Zeichen des Textes vorhanden)? */
+export async function embeddedFontCovers(bytes: Uint8Array, page: number, box: { x: number; y: number; w: number; h: number }, text: string): Promise<{ name: string; complete: boolean }> {
+  const r = await pyRun(`
+page = open_in()[int(ARGS['page'])]
+W, H = page.rect.width, page.rect.height
+b = json.loads(ARGS['box'])
+r = pymupdf.Rect(b['x'] * W, b['y'] * H, (b['x'] + b['w']) * W, (b['y'] + b['h']) * H) * page.derotation_matrix
+best, cnt = None, 0
+for bl in page.get_text('dict', clip=r)['blocks']:
+    for l in bl.get('lines', []):
+        for sp in l['spans']:
+            n = len(sp['text'].strip())
+            if n > cnt:
+                best, cnt = sp, n
+name = best['font'] if best else ''
+complete = False
+for x in page.get_fonts():
+    if name and x[3].split('+')[-1] == name:
+        try:
+            buf = page.parent.extract_font(x[0])[3]
+            if buf:
+                f = pymupdf.Font(fontbuffer=buf)
+                complete = all(f.has_glyph(ord(c)) for c in ARGS['text'] if not c.isspace())
+        except Exception:
+            pass
+        break
+json.dumps({'name': name, 'complete': complete})
+`, { files: { 'in.pdf': bytes }, vars: { page: String(page), box: JSON.stringify(box), text } });
+  return JSON.parse(r.result);
+}

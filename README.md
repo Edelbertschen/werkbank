@@ -36,7 +36,7 @@ Deutsch und Englisch. Die App startet in der Systemsprache; unter Einstellungen 
 | Verschlüsselung | qpdf (WebAssembly) |
 | Signaturen | zgapdfsigner, node-forge |
 
-Beim Bearbeiten von Text behält Werkbank die Schrift: Ist die Originalschrift vollständig eingebettet, wird sie wiederverwendet; sonst eine installierte Schrift gleichen Namens (sofern ihre Lizenz das Einbetten erlaubt); sonst eine metrisch passende Ersatzschrift (Helvetica, Times oder Courier im gleichen Schnitt).
+Text bearbeiten und einfügen funktioniert wie in einer Textverarbeitung: Schriftart (eingebaut oder installiert), Größe, Fett, Kursiv, Unterstrichen, Farbe – für markierte Wörter oder den ganzen Block –, Ausrichtung und Zeilenabstand; Einfügen übernimmt reinen Text. Die Leiste zeigt die Schrift des Absatzes und ob sie eingebettet, installiert oder durch eine Ersatzschrift vertreten ist; Ersatz ist auch am Text markiert. Beim Bearbeiten von Text behält Werkbank die Schrift: Ist die Originalschrift vollständig eingebettet, wird sie wiederverwendet; sonst eine installierte Schrift gleichen Namens (sofern ihre Lizenz das Einbetten erlaubt); sonst eine metrisch passende Ersatzschrift (Helvetica, Times oder Courier im gleichen Schnitt).
 
 Ist LibreOffice installiert, nutzt Werkbank es automatisch für Office-Umwandlungen (etwa 1 Sekunde statt Startzeit der eingebauten Engine). Die PDF-Engine wird im Hintergrund vorbereitet, sobald ein Dokument offen ist.
 

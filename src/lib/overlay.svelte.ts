@@ -45,8 +45,10 @@ export function isPending(it: OItem) {
   if (isNoop(it)) return true;
   if ((it.kind === 'text' || it.kind === 'textedit' || it.kind === 'comment') && !(it as any).text?.trim()) return true;
   if (it.kind === 'textedit') {
+    // Unverändert, solange weder Text noch irgendeine Formatierung vom Original abweicht
     const t = it as any;
-    return t.text === t.orig && t.size === t.origSize && !!t.bold === !!t.origBold && t.color === t.origColor;
+    return t.text === t.orig && t.size === t.origSize && !!t.bold === !!t.origBold && !!t.italic === !!t.origItalic && t.color === t.origColor
+      && !t.fontChoice && !t.underline && !t.lh && (!t.align || t.align === 'left') && !(t.html && /<(b|i|u|span|font)[\s>]/i.test(t.html));
   }
   return false;
 }
@@ -108,8 +110,10 @@ const PY_KINDS = new Set(['rect', 'ellipse', 'line', 'arrow', 'note', 'redact', 
 export async function bakeObjects(bytes: Uint8Array, all: OItem[]): Promise<Uint8Array> {
   const items = all.filter(i => !isPending(i));
   if (!items.length) return bytes;
-  const contentItems = items.filter(i => !PY_KINDS.has(i.kind));
-  const pyItems = items.filter(i => PY_KINDS.has(i.kind));
+  // Text mit Formatierung oder Schriftwahl setzt MuPDF (HTML-Satz); schlichter Text bleibt bei pdf-lib
+  const isRich = (i: OItem) => i.kind === 'text' && ((i as any).html != null || (i as any).fontChoice || (i as any).italic || (i as any).underline || ((i as any).align && (i as any).align !== 'left') || (i as any).lh);
+  const contentItems = items.filter(i => !PY_KINDS.has(i.kind) && !isRich(i));
+  const pyItems = items.filter(i => PY_KINDS.has(i.kind) || isRich(i));
   if (contentItems.length) bytes = await bakeContent(bytes, contentItems);
   if (pyItems.length) bytes = await bakeWithMuPdf(bytes, pyItems);
   return bytes;
@@ -172,17 +176,31 @@ async function bakeContent(bytes: Uint8Array, items: OItem[]) {
 
 async function bakeWithMuPdf(bytes: Uint8Array, items: OItem[]) {
   const author = app.prefs.author || '';
-  const fontBytes: Record<string, Uint8Array> = items.some(i => i.kind === 'textedit' || i.kind === 'move')
+  const fontBytes: Record<string, Uint8Array> = items.some(i => i.kind === 'textedit' || i.kind === 'move' || i.kind === 'text')
     ? { 'sans.ttf': new Uint8Array(await (await fetch('/engines/pdfjs/standard_fonts/LiberationSans-Regular.ttf')).arrayBuffer()), 'sansb.ttf': new Uint8Array(await (await fetch('/engines/pdfjs/standard_fonts/LiberationSans-Bold.ttf')).arrayBuffer()) }
     : {};
-  // Installierte Schriften mit dem Namen der Originalschrift mitgeben (Desktop-App)
+  // Formatierter Text: HTML bereinigen, Schriften bestimmen und installierte Schriften (alle vier Schnitte) mitgeben
   const sysFiles: Record<string, Uint8Array> = {};
-  const sysPath = new Map<string, string>();
+  const rich = new Map<string, { html: string; families: string[]; sysmap: Record<string, string> }>();
   for (const i of items) {
-    if (i.kind !== 'textedit' || !i.fontName) continue;
+    if (i.kind !== 'textedit' && i.kind !== 'text') continue;
     const { systemFont } = await import('./sysfonts');
-    const b = await systemFont(i.fontName, i.bold, !!i.italic);
-    if (b) { const n = `sys${Object.keys(sysFiles).length}.font`; sysFiles[n] = b; sysPath.set(i.id, '/w/' + n); }
+    const { cleanHtml, escapeHtml, BUILTIN } = await import('./richtext');
+    const c = cleanHtml((i as any).html ?? escapeHtml(i.text), true);
+    const fams = new Set(c.families);
+    fams.add((i as any).fontChoice || (i.kind === 'textedit' ? '__orig__' : 'Helvetica'));
+    const sysmap: Record<string, string> = {};
+    for (const fam of fams) {
+      if ((BUILTIN as readonly string[]).includes(fam)) continue;
+      const name = fam === '__orig__' ? (i as any).fontName : fam;
+      if (!name) continue;
+      for (const [b, it2] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
+        const bytes = await systemFont(name, !!b, !!it2);
+        if (!bytes) continue;
+        const n = `sys${Object.keys(sysFiles).length}.font`; sysFiles[n] = bytes; sysmap[`${fam}|${b}|${it2}`] = '/w/' + n;
+      }
+    }
+    rich.set(i.id, { html: c.html, families: [...fams], sysmap });
   }
   // Verschobene Textblöcke: installierte Schriften je Schriftname
   const sysMaps = new Map<string, Record<string, string>>();
@@ -198,7 +216,7 @@ async function bakeWithMuPdf(bytes: Uint8Array, items: OItem[]) {
     }
     sysMaps.set(i.id, m);
   }
-  const data = items.map(i => ({ sysfont: sysPath.get(i.id), sysfonts: sysMaps.get(i.id), snap: undefined, ...i, ...('stroke' in i ? { strokeRgb: hexToRgb01(i.stroke) } : {}), ...('fill' in i && i.fill && i.fill !== 'transparent' ? { fillRgb: hexToRgb01(i.fill) } : {}), ...('color' in i ? { colorRgb: hexToRgb01((i as any).color) } : {}) }));
+  const data = items.map(i => ({ sysfonts: sysMaps.get(i.id), snap: undefined, origin: undefined, ...i, ...(rich.get(i.id) || {}), ...('stroke' in i ? { strokeRgb: hexToRgb01(i.stroke) } : {}), ...('fill' in i && i.fill && i.fill !== 'transparent' ? { fillRgb: hexToRgb01(i.fill) } : {}), ...('color' in i ? { colorRgb: hexToRgb01((i as any).color) } : {}) }));
   const r = await pyRun(`
 items = json.loads(ARGS['items'])
 author = ARGS['author']
@@ -218,21 +236,12 @@ BASE14 = {('sans', 0, 0): 'helv', ('sans', 1, 0): 'hebo', ('sans', 0, 1): 'heit'
 SERIF = ('times', 'serif', 'roman', 'georgia', 'garamond', 'cambria', 'minion', 'palatino', 'antiqua', 'baskerville', 'bodoni', 'century', 'caslon', 'tiro', 'nimbusrom')
 MONO = ('courier', 'mono', 'consol', 'menlo', 'code', 'fixed', 'typewriter', 'nimbusmon')
 BOLD = ('bold', 'black', 'heavy', 'semibold', 'demi', 'extrab')
-font_files = {}
 def font_style(name, flags=0):
     low = name.split('+')[-1].lower().replace(' ', '').replace('-', '')
     fam = 'mono' if (flags & 8) or any(w in low for w in MONO) else 'sans' if 'sans' in low else 'serif' if any(w in low for w in SERIF) else 'sans'
     return fam, int(bool(flags & 16) or any(w in low for w in BOLD)), int(bool(flags & 2) or 'italic' in low or 'oblique' in low)
-def use_font(page, key, buf):
-    # Als Datei ablegen: insert_text/insert_textbox betten sie je Seite einmal ein
-    if key not in font_files:
-        path = '/w/%s.font' % key
-        with open(path, 'wb') as fh:
-            fh.write(buf)
-        font_files[key] = path
-    return key, font_files[key]
-def text_font(page, r, text, want_bold, sysfont=None):
-    """Originalschrift (eingebettet, vollständig) > installierte Schrift gleichen Namens > passende Ersatzschrift"""
+def span_font(page, r):
+    """Schrift (Name, Flags) des längsten Textstücks im Bereich"""
     best, cnt = None, 0
     for b in page.get_text('dict', clip=r)['blocks']:
         for l in b.get('lines', []):
@@ -240,36 +249,70 @@ def text_font(page, r, text, want_bold, sysfont=None):
                 n = len(sp['text'].strip())
                 if n > cnt:
                     best, cnt = sp, n
-    name = best['font'] if best else ''
-    if name:
-        for x in page.get_fonts():
-            if x[3].split('+')[-1] == name:
-                try:
-                    buf = doc.extract_font(x[0])[3]
-                    if buf:
-                        f = pymupdf.Font(fontbuffer=buf)
-                        if all(f.has_glyph(ord(c)) for c in text if not c.isspace()):
-                            return use_font(page, 'WbO%d' % x[0], buf)
-                except Exception:
-                    pass
-                break
-    if sysfont:
-        try:
-            with open(sysfont, 'rb') as fh:
-                sb = fh.read()
-            f = pymupdf.Font(fontbuffer=sb)
-            if all(f.has_glyph(ord(c)) for c in text if not c.isspace()):
-                return use_font(page, 'WbS' + sysfont.split('/')[-1].split('.')[0], sb)
-        except Exception:
-            pass
-    fam, bold, italic = font_style(name, best['flags'] if best else 0)
-    code = BASE14[(fam, max(bold, int(bool(want_bold))), italic)]
+    return (best['font'], best['flags']) if best else ('', 0)
+written = {}
+def font_file(key, buf):
+    if key not in written:
+        path = '/w/%s.font' % key
+        with open(path, 'wb') as fh:
+            fh.write(buf)
+        written[key] = path
+    return written[key]
+def base14_file(fam, b, i):
+    code = BASE14[(fam, b, i)]
     try:
-        buf = pymupdf.Font(code).buffer
+        return font_file('b14' + code, pymupdf.Font(code).buffer)
     except Exception:
-        with open('/w/sansb.ttf' if bold else '/w/sans.ttf', 'rb') as fh:
-            buf = fh.read()
-    return use_font(page, 'Wb' + code, buf)
+        return '/w/sansb.ttf' if b else '/w/sans.ttf'
+def embedded_file(page, name, text):
+    """Eingebettete Originalschrift, wenn sie alle Zeichen des Textes enthält"""
+    for x in page.get_fonts():
+        if name and x[3].split('+')[-1] == name:
+            try:
+                buf = doc.extract_font(x[0])[3]
+                if buf and all(pymupdf.Font(fontbuffer=buf).has_glyph(ord(c)) for c in text if not c.isspace()):
+                    return font_file('emb%d' % x[0], buf)
+            except Exception:
+                pass
+            return None
+    return None
+GENERIC = {'Helvetica': 'sans', 'Times': 'serif', 'Courier': 'mono'}
+def rich_text(page, it, r, name, flags):
+    """Formatierten Text (HTML aus dem Editor) mit MuPDF setzen; Schriften: eingebettet > installiert > Ersatz"""
+    sysmap = it.get('sysmap') or {}
+    fams = set(it.get('families') or [])
+    box_fam = it.get('fontChoice') or ('__orig__' if it['kind'] == 'textedit' else 'Helvetica')
+    fams.add(box_fam)
+    ofam, ob, oi = font_style(name, flags)
+    rules = []
+    for fam in sorted(fams):
+        for b in (0, 1):
+            for i in (0, 1):
+                path = None
+                if fam == '__orig__':
+                    if (b, i) == (ob, oi):
+                        path = embedded_file(page, name, it['text'])
+                    path = path or sysmap.get('__orig__|%d|%d' % (b, i)) or base14_file(ofam, b, i)
+                elif fam in GENERIC:
+                    path = base14_file(GENERIC[fam], b, i)
+                else:
+                    path = sysmap.get('%s|%d|%d' % (fam, b, i)) or sysmap.get('%s|0|0' % fam) or base14_file('sans', b, i)
+                rules.append('@font-face{font-family:"%s";src:url(%s);font-weight:%s;font-style:%s;}' % (fam, path.split('/')[-1], 'bold' if b else 'normal', 'italic' if i else 'normal'))
+    size = it['size']
+    lh = it.get('lh') or (max(1.0, min(2.2, it['lineHeight'] / size)) if it.get('multi') and it.get('lineHeight') else 1.2)
+    css = ''.join(rules) + 'body,div,p{margin:0;padding:0;}body{font-family:"%s";font-size:%.2fpt;color:%s;line-height:%.3f;text-align:%s;font-weight:%s;font-style:%s;text-decoration:%s;}' % (
+        box_fam, size, it['color'], lh, it.get('align') or 'left', 'bold' if it.get('bold') else 'normal',
+        'italic' if it.get('italic') else 'normal', 'underline' if it.get('underline') else 'none')
+    # Erste Zeile wie im Original: halben Zeilenzwischenraum oben ausgleichen; einzeilig linksbündig darf nach rechts wachsen
+    top = r.y0 - ((lh - 1) * size / 2 if it['kind'] == 'textedit' else 0)
+    x1 = r.x1
+    if it['kind'] == 'textedit' and not it.get('multi') and (it.get('align') or 'left') == 'left':
+        x1 = max(r.x1, page.rect.width - 18)
+    box = pymupdf.Rect(r.x0, top, x1, page.rect.height - 6)
+    arch = pymupdf.Archive('/w')
+    spare, _ = page.insert_htmlbox(box, it['html'], css=css, archive=arch, rotate=page.rotation, scale_low=1)
+    if spare < 0:
+        page.insert_htmlbox(box, it['html'], css=css, archive=arch, rotate=page.rotation, scale_low=0)
 def erase_text(page, r):
     """Genau die Zeichen des Absatzes entfernen (Mitte im Kasten) – Nachbarzeilen bleiben unberührt"""
     hit = 0
@@ -450,24 +493,11 @@ for it in items:
         redact_pages.add(it['page'])
     elif k == 'textedit':
         r = R(page, it['x'], it['y'], it['w'], it['h'])
-        fname, ff = text_font(page, r, it['text'], it.get('bold'), it.get('sysfont'))
+        name, flags = span_font(page, r)
         erase_text(page, r)
-        if it.get('multi'):
-            # Absatz: neu umbrechen. Passt der Text nicht, erst leicht verkleinern, dann den Kasten nach unten verlängern.
-            size = it['size']
-            lh = max(1.0, min(2.2, it.get('lineHeight', size * 1.2) / size))
-            placed = False
-            for f in (1.0, 0.95, 0.9, 0.85):
-                rc = page.insert_textbox(r, it['text'], fontsize=size * f, fontname=fname, fontfile=ff, color=it['colorRgb'], rotate=page.rotation, lineheight=lh)
-                if rc >= 0:
-                    placed = True
-                    break
-            if not placed:
-                grow = R(page, it['x'], it['y'], it['w'], min(1 - it['y'], it['h'] * 3))
-                page.insert_textbox(grow, it['text'], fontsize=size * 0.85, fontname=fname, fontfile=ff, color=it['colorRgb'], rotate=page.rotation, lineheight=lh)
-        else:
-            base = P(page, it['x'], it['y'] + it['h'] * 0.80)
-            page.insert_text(base, it['text'], fontsize=it['size'], fontname=fname, fontfile=ff, color=it['colorRgb'], rotate=page.rotation)
+        rich_text(page, it, r, name, flags)
+    elif k == 'text':
+        rich_text(page, it, R(page, it['x'], it['y'], it['w'], max(it.get('h') or 0, 0.02)), '', 0)
     elif k == 'move':
         move_element(page, it)
 for pno in redact_pages:

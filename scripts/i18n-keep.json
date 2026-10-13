@@ -106,5 +106,8 @@
  "Ink",
  "Square",
  "Circle",
- "Line"
+ "Line",
+ "Helvetica",
+ "Times",
+ "Courier"
 ]
