@@ -1,3 +1,4 @@
+import { L } from '../i18n';
 // Minimales Anfrage/Antwort-Protokoll zwischen Oberfläche und Engine-Workern.
 export type Progress = (p: number, msg?: string) => void;
 
@@ -20,7 +21,7 @@ export class WorkerClient {
         data.error ? p.rej(Object.assign(new Error(data.error), { engine: this.name })) : p.res(data.result);
       };
       this.w.onerror = e => {
-        const err = new Error(`${this.name}: ${e.message || 'Worker-Fehler'}`);
+        const err = new Error(`${this.name}: ${e.message || L("Worker-Fehler")}`);
         for (const p of this.pending.values()) p.rej(err);
         this.pending.clear();
         this.w?.terminate(); this.w = null;
@@ -42,7 +43,7 @@ export class WorkerClient {
   /** Worker beenden (z. B. um Speicher freizugeben oder eine Endlosschleife abzubrechen) */
   reset() {
     this.w?.terminate(); this.w = null;
-    for (const p of this.pending.values()) p.rej(new Error('Abgebrochen'));
+    for (const p of this.pending.values()) p.rej(new Error(L("Abgebrochen")));
     this.pending.clear();
   }
 }
@@ -55,7 +56,7 @@ export function serve(handlers: Record<string, (payload: any, progress: Progress
     const progress: Progress = (p, msg) => post({ id, progress: p, msg });
     try {
       const h = handlers[op];
-      if (!h) throw new Error('Unbekannte Operation ' + op);
+      if (!h) throw new Error(L("Unbekannte Operation ") + op);
       const result = await h(payload, progress);
       post({ id, result }, collectTransfer(result));
     } catch (e: any) {
@@ -65,7 +66,7 @@ export function serve(handlers: Record<string, (payload: any, progress: Progress
 }
 
 function cleanError(e: any): string {
-  const s = String(e?.message || e || 'Fehler');
+  const s = String(e?.message || e || L("Fehler"));
   // Python-Tracebacks auf die letzte, aussagekräftige Zeile kürzen
   const lines = s.split('\n').map(l => l.trim()).filter(Boolean);
   const last = [...lines].reverse().find(l => /Error|Exception|error:/i.test(l));

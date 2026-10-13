@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { app, dismissToast } from '../lib/app.svelte';
   import { menu, closeMenu } from '../lib/menu.svelte';
   import * as I from '../lib/icons';
@@ -25,7 +26,7 @@
       {#if t.kind === 'ok'}<I.Check size={14} strokeWidth={2.4} />{:else if t.kind === 'error'}<I.CircleAlert size={14} strokeWidth={2.2} />{/if}
       <span>{t.text}</span>
       {#if t.action}<button class="act" onclick={() => { t.action!.run(); dismissToast(t.id); }}>{t.action.label}</button>{/if}
-      <button class="x" aria-label="Schließen" onclick={() => dismissToast(t.id)}><I.X size={12} /></button>
+      <button class="x" aria-label={L("Schließen")} onclick={() => dismissToast(t.id)}><I.X size={12} /></button>
     </div>
   {/each}
 </div>

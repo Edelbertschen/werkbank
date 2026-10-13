@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../../lib/i18n';
   import type { Doc } from '../../lib/doc.svelte';
   import { viewer } from '../../lib/viewer.svelte';
   import * as I from '../../lib/icons';
@@ -28,9 +29,9 @@
 
 <div class="list scroll">
   {#if !groups.length}
-    <p class="empty">Dieses Dokument hat keine Ebenen. Ebenen kommen vor allem in CAD-Plänen, Karten und Druckvorlagen vor.</p>
+    <p class="empty">{L("Dieses Dokument hat keine Ebenen. Ebenen kommen vor allem in CAD-Plänen, Karten und Druckvorlagen vor.")}</p>
   {:else}
-    <p class="hint">Ein- und Ausblenden ändert nur die Anzeige.</p>
+    <p class="hint">{L("Ein- und Ausblenden ändert nur die Anzeige.")}</p>
     {#each groups as g (g.id)}
       <button class="row" onclick={() => toggle(g)} aria-pressed={g.visible}>
         {#if g.visible}<I.Eye size={14} />{:else}<I.EyeOff size={14} />{/if}

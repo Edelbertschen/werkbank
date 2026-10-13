@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../../lib/i18n';
   import { active } from '../../lib/app.svelte';
   import { plLoad } from '../../lib/ops';
   import { pageTexts } from '../../lib/pdf';
@@ -21,14 +22,14 @@
     let outline = 0; try { outline = ((await doc.pdf!.getOutline()) || []).length; } catch { /* egal */ }
     const linearized = /\/Linearized/.test(new TextDecoder('latin1').decode(b.subarray(0, 1024)));
     info = {
-      'Datei': doc.name, 'Ort': doc.path || 'noch nicht gespeichert', 'Größe': fmtSize(b.length), 'PDF-Version': ver,
+      'Datei': doc.name, 'Ort': doc.path || L("noch nicht gespeichert"), 'Größe': fmtSize(b.length), 'PDF-Version': ver,
       'Seiten': String(doc.numPages), 'Titel': meta.Title || '–', 'Autor': meta.Author || '–', 'Erstellt mit': meta.Creator || '–', 'PDF-Erzeuger': meta.Producer || '–',
-      'Formularfelder': String(fields), 'Anhänge': String(att), 'Lesezeichen': outline ? `${outline} (1. Ebene)` : 'keine', 'Signaturen': String(countSignatures(b)),
-      'Schutz': doc.protection ? 'wird beim Speichern verschlüsselt' : doc.wasEncrypted ? 'war geschützt, Arbeitsfassung offen' : 'keiner',
-      'Web-optimiert': linearized ? 'ja' : 'nein', 'PDF/A': meta.Custom?.['pdfaid:part'] ? `PDF/A-${meta.Custom['pdfaid:part']}` : /pdfaid/.test(new TextDecoder('latin1').decode(b.subarray(0, Math.min(b.length, 200000)))) ? 'ja (laut XMP)' : 'nein',
+      'Formularfelder': String(fields), 'Anhänge': String(att), 'Lesezeichen': outline ? L("{0} (1. Ebene)", outline) : 'keine', 'Signaturen': String(countSignatures(b)),
+      'Schutz': doc.protection ? L("wird beim Speichern verschlüsselt") : doc.wasEncrypted ? L("war geschützt, Arbeitsfassung offen") : 'keiner',
+      'Web-optimiert': linearized ? 'ja' : 'nein', 'PDF/A': meta.Custom?.['pdfaid:part'] ? `PDF/A-${meta.Custom['pdfaid:part']}` : /pdfaid/.test(new TextDecoder('latin1').decode(b.subarray(0, Math.min(b.length, 200000)))) ? L("ja (laut XMP)") : 'nein',
     };
     const m = new Map<string, number>();
-    for (const p of doc.pages) { const k = `${paperName(p.w, p.h) || 'Eigenes'} · ${mm(p.w)} × ${mm(p.h)} mm`; m.set(k, (m.get(k) || 0) + 1); }
+    for (const p of doc.pages) { const k = `${paperName(p.w, p.h) || L("Eigenes")} · ${mm(p.w)} × ${mm(p.h)} mm`; m.set(k, (m.get(k) || 0) + 1); }
     formats = [...m.entries()].sort((a, b) => b[1] - a[1]);
     const texts = await pageTexts(doc.pdf!);
     const words = texts.reduce((a, t) => a + (t.match(/[\p{L}\p{N}]+/gu)?.length || 0), 0);
@@ -41,12 +42,12 @@
   <dl>{#each Object.entries(info) as [k, v] (k)}<dt>{k}</dt><dd title={v}>{v}</dd>{/each}</dl>
   <h3>Text</h3>
   <dl>
-    <dt>Wörter</dt><dd class="num">{fmtNum(stats.words)}</dd>
-    <dt>Zeichen</dt><dd class="num">{fmtNum(stats.chars)}</dd>
-    <dt>Lesezeit</dt><dd>{stats.words ? `etwa ${Math.max(1, Math.round(stats.words / 220))} Min.` : '–'}</dd>
-    <dt>Seiten ohne Text</dt><dd class="num">{stats.emptyPages}{stats.emptyPages ? ' (gescannt oder leer – Texterkennung hilft)' : ''}</dd>
+    <dt>{L("Wörter")}</dt><dd class="num">{fmtNum(stats.words)}</dd>
+    <dt>{L("Zeichen")}</dt><dd class="num">{fmtNum(stats.chars)}</dd>
+    <dt>{L("Lesezeit")}</dt><dd>{stats.words ? L("etwa {0} Min.", Math.max(1, Math.round(stats.words / 220))) : '–'}</dd>
+    <dt>{L("Seiten ohne Text")}</dt><dd class="num">{stats.emptyPages}{stats.emptyPages ? L(" (gescannt oder leer – Texterkennung hilft)") : ''}</dd>
   </dl>
-  <h3>Seitenformate</h3>
+  <h3>{L("Seitenformate")}</h3>
   <ul>{#each formats as [k, n] (k)}<li><span>{k}</span><span class="num">{n}×</span></li>{/each}</ul>
 </div>
 

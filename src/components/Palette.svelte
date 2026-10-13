@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { app, active } from '../lib/app.svelte';
   import { searchTools } from '../lib/search';
   import { RIBBON } from '../lib/ribbon';
@@ -33,8 +34,8 @@
 
 {#if app.palette}
   <div class="veil" role="presentation" onmousedown={e => { if (e.target === e.currentTarget) app.palette = false; }}>
-    <div class="pal" role="dialog" aria-label="Werkzeug suchen">
-      <div class="field"><I.Search size={16} strokeWidth={2} /><input bind:this={input} bind:value={q} onkeydown={key} placeholder="Was möchtest du tun? z. B. „schwärzen“, „word“, „seiten drehen“" aria-label="Suchbegriff" /></div>
+    <div class="pal" role="dialog" aria-label={L("Werkzeug suchen")}>
+      <div class="field"><I.Search size={16} strokeWidth={2} /><input bind:this={input} bind:value={q} onkeydown={key} placeholder={L("Was möchtest du tun? z. B. „schwärzen“, „word“, „seiten drehen“")} aria-label={L("Suchbegriff")} /></div>
       <div class="list scroll">
         {#each results as t, i (t.id)}
           {@const dis = (!t.noDoc && !doc) || t.disabled?.()}
@@ -44,7 +45,7 @@
             <span class="meta">{tabOf.get(t.id) || ''}{#if t.shortcut}<kbd>{scLabel(t.shortcut)}</kbd>{/if}</span>
           </button>
         {:else}
-          <p class="empty">Nichts gefunden.</p>
+          <p class="empty">{L("Nichts gefunden.")}</p>
         {/each}
       </div>
     </div>

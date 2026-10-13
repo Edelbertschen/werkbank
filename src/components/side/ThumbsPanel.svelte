@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../../lib/i18n';
   import type { Doc } from '../../lib/doc.svelte';
   import Thumb from '../Thumb.svelte';
   import Sortable from 'sortablejs';
@@ -41,7 +42,7 @@
         const target = ev.newIndex > ev.oldIndex ? ev.newIndex - moving.length + 1 : ev.newIndex;
         rest.splice(Math.max(0, Math.min(rest.length, target)), 0, ...moving);
         // Sortable hat das DOM verändert – Svelte zeichnet nach dem neuen Stand ohnehin neu
-        const bytes = await withBusy('Seiten werden verschoben', async () => movePages({ doc, bytes: doc.bytes, current: doc.current - 1, selection: doc.selection, progress: () => {} }, rest));
+        const bytes = await withBusy(L("Seiten werden verschoben"), async () => movePages({ doc, bytes: doc.bytes, current: doc.current - 1, selection: doc.selection, progress: () => {} }, rest));
         await applyResult(bytes);
       },
     });
@@ -59,20 +60,20 @@
     const n = doc.selection.length;
     const t = (id: string) => () => runTool(tool(id));
     showMenu(e, [
-      { label: n > 1 ? `${n} Seiten nach links drehen` : 'Nach links drehen', icon: I.RotateCcw, run: t('rotate-left') },
-      { label: n > 1 ? `${n} Seiten nach rechts drehen` : 'Nach rechts drehen', icon: I.RotateCw, run: t('rotate-right') },
+      { label: n > 1 ? L("{0} Seiten nach links drehen", n) : L("Nach links drehen"), icon: I.RotateCcw, run: t('rotate-left') },
+      { label: n > 1 ? L("{0} Seiten nach rechts drehen", n) : L("Nach rechts drehen"), icon: I.RotateCw, run: t('rotate-right') },
       { sep: true, label: '' },
-      { label: 'Leere Seite danach einfügen', icon: I.FilePlus2, run: async () => { doc.current = Math.max(...doc.selection) + 1; await runTool(tool('insert-blank'), { where: 'after', count: 1, size: 'same' }); } },
-      { label: 'Seiten aus Datei danach einfügen …', icon: I.FileUp, run: () => { doc.current = Math.max(...doc.selection) + 1; openTool('insert-file'); } },
-      { label: 'Duplizieren', icon: I.Copy, run: () => runTool(tool('duplicate'), { pages: { mode: 'sel', range: '' }, times: 1 }) },
-      { label: 'Als neues Dokument extrahieren', icon: I.FileOutput, run: () => runTool(tool('extract'), { pages: { mode: 'sel', range: '' }, each: false, remove: false }) },
+      { label: L("Leere Seite danach einfügen"), icon: I.FilePlus2, run: async () => { doc.current = Math.max(...doc.selection) + 1; await runTool(tool('insert-blank'), { where: 'after', count: 1, size: 'same' }); } },
+      { label: L("Seiten aus Datei danach einfügen …"), icon: I.FileUp, run: () => { doc.current = Math.max(...doc.selection) + 1; openTool('insert-file'); } },
+      { label: L("Duplizieren"), icon: I.Copy, run: () => runTool(tool('duplicate'), { pages: { mode: 'sel', range: '' }, times: 1 }) },
+      { label: L("Als neues Dokument extrahieren"), icon: I.FileOutput, run: () => runTool(tool('extract'), { pages: { mode: 'sel', range: '' }, each: false, remove: false }) },
       { sep: true, label: '' },
-      { label: n > 1 ? `${n} Seiten löschen` : 'Seite löschen', icon: I.Trash2, danger: true, disabled: n >= doc.numPages, run: t('delete-pages') },
+      { label: n > 1 ? L("{0} Seiten löschen", n) : L("Seite löschen"), icon: I.Trash2, danger: true, disabled: n >= doc.numPages, run: t('delete-pages') },
     ]);
   }
 </script>
 
-<div class="thumbs scroll" bind:this={list} role="listbox" aria-label="Seiten" aria-multiselectable="true">
+<div class="thumbs scroll" bind:this={list} role="listbox" aria-label={L("Seiten")} aria-multiselectable="true">
   {#each doc.pages as p, i (doc.rev + ':' + i)}
     <div class="item" class:cur={doc.current === i + 1} class:sel={doc.selection.includes(i)} role="option" aria-selected={doc.selection.includes(i)} tabindex="-1"
       onclick={e => select(i, e)} oncontextmenu={e => ctx(e, i)} ondblclick={() => { app.organize = false; viewer.goto(i + 1); }} onkeydown={() => {}}>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L, intlLocale } from '../../lib/i18n';
   import { active } from '../../lib/app.svelte';
   import { extractSignatures, validateSignature } from '../../lib/sign';
   import { pickFiles } from '../../lib/platform';
@@ -24,29 +25,29 @@
   $effect(() => { doc?.rev; trusted; run(); });
 
   async function loadTrusted() {
-    const [f] = await pickFiles({ filters: [{ name: 'Zertifikat', extensions: ['cer', 'crt', 'pem', 'der'] }] });
+    const [f] = await pickFiles({ filters: [{ name: L("Zertifikat"), extensions: ['cer', 'crt', 'pem', 'der'] }] });
     if (!f) return;
     try {
       const txt = new TextDecoder().decode(f.bytes);
       const cert = txt.includes('BEGIN CERTIFICATE') ? forge.pki.certificateFromPem(txt) : forge.pki.certificateFromAsn1(forge.asn1.fromDer(Array.from(f.bytes, b => String.fromCharCode(b)).join('')));
       trusted = { name: f.name, cert };
-    } catch { err = 'Das Zertifikat ließ sich nicht lesen.'; }
+    } catch { err = L("Das Zertifikat ließ sich nicht lesen."); }
   }
-  const fmt = (d?: Date) => (d && d.getTime() > 0 ? d.toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' }) : '–');
+  const fmt = (d?: Date) => (d && d.getTime() > 0 ? d.toLocaleString(intlLocale(), { dateStyle: 'medium', timeStyle: 'short' }) : '–');
   function verdict(r: SignatureValidationResult): ['ok' | 'warn' | 'bad', string] {
-    if (r.errorMessage && !r.cryptoVerified) return ['bad', 'Signatur nicht prüfbar'];
-    if (r.cryptoVerified === false || r.cryptoVerificationStatus === 'failed') return ['bad', 'Ungültig – Dokument oder Signatur verändert'];
-    if (r.coverageStatus === 'partial') return ['warn', 'Gültig, danach wurde das Dokument geändert'];
-    if (r.isExpired) return ['warn', 'Gültig, aber das Zertifikat ist abgelaufen'];
-    if (!r.isTrusted) return ['warn', r.isSelfSigned ? 'Gültig, Zertifikat selbstsigniert' : 'Gültig, Aussteller nicht geprüft'];
-    return ['ok', 'Gültig und vertrauenswürdig'];
+    if (r.errorMessage && !r.cryptoVerified) return ['bad', L("Signatur nicht prüfbar")];
+    if (r.cryptoVerified === false || r.cryptoVerificationStatus === 'failed') return ['bad', L("Ungültig – Dokument oder Signatur verändert")];
+    if (r.coverageStatus === 'partial') return ['warn', L("Gültig, danach wurde das Dokument geändert")];
+    if (r.isExpired) return ['warn', L("Gültig, aber das Zertifikat ist abgelaufen")];
+    if (!r.isTrusted) return ['warn', r.isSelfSigned ? L("Gültig, Zertifikat selbstsigniert") : L("Gültig, Aussteller nicht geprüft")];
+    return ['ok', L("Gültig und vertrauenswürdig")];
   }
 </script>
 
 <div class="p">
   {#if err}<p class="err">{err}</p>{/if}
   {#if results && !results.length}
-    <div class="none"><I.ShieldCheck size={26} strokeWidth={1.4} /><p>Dieses Dokument enthält keine digitale Signatur.</p></div>
+    <div class="none"><I.ShieldCheck size={26} strokeWidth={1.4} /><p>{L("Dieses Dokument enthält keine digitale Signatur.")}</p></div>
   {/if}
   {#each results || [] as r (r.signatureIndex)}
     {@const [kind, text] = verdict(r)}
@@ -56,23 +57,23 @@
         <b>{text}</b>
       </div>
       <dl>
-        <dt>Unterzeichner</dt><dd>{r.signerName}{r.signerOrg ? ', ' + r.signerOrg : ''}</dd>
+        <dt>{L("Unterzeichner")}</dt><dd>{r.signerName}{r.signerOrg ? ', ' + r.signerOrg : ''}</dd>
         {#if r.signerEmail}<dt>E-Mail</dt><dd>{r.signerEmail}</dd>{/if}
-        <dt>Signiert am</dt><dd>{fmt(r.signatureDate)}</dd>
-        <dt>Aussteller</dt><dd>{r.issuer}{r.issuerOrg ? ', ' + r.issuerOrg : ''}</dd>
-        <dt>Zertifikat gültig</dt><dd>{fmt(r.validFrom)} – {fmt(r.validTo)}</dd>
-        {#if r.reason}<dt>Grund</dt><dd>{r.reason}</dd>{/if}
-        {#if r.location}<dt>Ort</dt><dd>{r.location}</dd>{/if}
-        <dt>Umfang</dt><dd>{r.coverageStatus === 'full' ? 'Ganzes Dokument' : r.coverageStatus === 'partial' ? 'Älterer Stand (danach geändert)' : 'Unbekannt'}</dd>
-        <dt>Verfahren</dt><dd>{r.algorithms.signature} · {r.algorithms.digest}{r.usesInsecureDigest ? ' (veraltet)' : ''}</dd>
+        <dt>{L("Signiert am")}</dt><dd>{fmt(r.signatureDate)}</dd>
+        <dt>{L("Aussteller")}</dt><dd>{r.issuer}{r.issuerOrg ? ', ' + r.issuerOrg : ''}</dd>
+        <dt>{L("Zertifikat gültig")}</dt><dd>{fmt(r.validFrom)} – {fmt(r.validTo)}</dd>
+        {#if r.reason}<dt>{L("Grund")}</dt><dd>{r.reason}</dd>{/if}
+        {#if r.location}<dt>{L("Ort")}</dt><dd>{r.location}</dd>{/if}
+        <dt>{L("Umfang")}</dt><dd>{r.coverageStatus === 'full' ? L("Ganzes Dokument") : r.coverageStatus === 'partial' ? L("Älterer Stand (danach geändert)") : L("Unbekannt")}</dd>
+        <dt>{L("Verfahren")}</dt><dd>{r.algorithms.signature} · {r.algorithms.digest}{r.usesInsecureDigest ? ' (veraltet)' : ''}</dd>
       </dl>
     </div>
   {/each}
   <section class="trust">
-    <h3>Vertrauen</h3>
-    <p class="hint">Ohne Vertrauensliste kann die Werkbank prüfen, ob das Dokument unverändert ist, aber nicht, ob der Aussteller vertrauenswürdig ist. Lade dazu das Zertifikat deiner Zertifizierungsstelle.</p>
+    <h3>{L("Vertrauen")}</h3>
+    <p class="hint">{L("Ohne Vertrauensliste kann die Werkbank prüfen, ob das Dokument unverändert ist, aber nicht, ob der Aussteller vertrauenswürdig ist. Lade dazu das Zertifikat deiner Zertifizierungsstelle.")}</p>
     <div class="row">
-      <button class="btn sm" onclick={loadTrusted}><I.KeyRound size={13} />{trusted ? 'Anderes Zertifikat' : 'Vertrauenswürdiges Zertifikat laden …'}</button>
+      <button class="btn sm" onclick={loadTrusted}><I.KeyRound size={13} />{trusted ? L("Anderes Zertifikat") : L("Vertrauenswürdiges Zertifikat laden …")}</button>
       {#if trusted}<span class="tn">{trusted.name}</span>{/if}
     </div>
   </section>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { app, active, savePrefs, type RibbonTab } from '../lib/app.svelte';
   import { RIBBON, visibleTabs, effectiveTab, type RibbonItem } from '../lib/ribbon';
   import { showMenu } from '../lib/menu.svelte';
@@ -16,9 +17,9 @@
   const tabDef = $derived(RIBBON.find(t => t.id === effectiveTab(app.tab, app.prefs.hiddenTabs || [])) || RIBBON[0]);
   function tabMenu(e: MouseEvent, id: RibbonTab, label: string) {
     showMenu(e, [
-      ...(id !== 'start' ? [{ label: `„${label}“ ausblenden`, run: () => { app.prefs.hiddenTabs = [...(app.prefs.hiddenTabs || []), id]; if (app.tab === id) app.tab = 'start'; savePrefs(); } }] : []),
-      ...((app.prefs.hiddenTabs || []).length ? [{ label: 'Alle Registerkarten zeigen', run: () => { app.prefs.hiddenTabs = []; savePrefs(); } }] : []),
-      { label: 'Bandleiste anpassen …', run: () => openTool('settings') },
+      ...(id !== 'start' ? [{ label: L("„{0}“ ausblenden", label), run: () => { app.prefs.hiddenTabs = [...(app.prefs.hiddenTabs || []), id]; if (app.tab === id) app.tab = 'start'; savePrefs(); } }] : []),
+      ...((app.prefs.hiddenTabs || []).length ? [{ label: L("Alle Registerkarten zeigen"), run: () => { app.prefs.hiddenTabs = []; savePrefs(); } }] : []),
+      { label: L("Bandleiste anpassen …"), run: () => openTool('settings') },
     ]);
   }
 
@@ -106,10 +107,10 @@
     {/each}
     <span class="spacer"></span>
     {#if doc && (app.mode !== 'select' && app.mode !== 'hand')}
-      <span class="modechip"><span class="pulse"></span>{({ 'text:edit': 'Text bearbeiten', 'text:add': 'Text hinzufügen', image: 'Bild platzieren', sign: 'Unterschrift platzieren', stamp: 'Stempel setzen', redact: 'Schwärzen', whiteout: 'Abdecken', link: 'Link', note: 'Notiz', 'shape:rect': 'Rechteck', 'shape:ellipse': 'Ellipse', 'shape:line': 'Linie', 'shape:arrow': 'Pfeil', 'pdfjs:freetext': 'Textkommentar', 'pdfjs:ink': 'Freihand', 'pdfjs:highlight': 'Textmarker', 'markup:underline': 'Unterstreichen', 'markup:strike': 'Durchstreichen', 'field:text': 'Textfeld', 'field:check': 'Kontrollkästchen', 'field:radio': 'Optionsfeld', 'field:choice': 'Auswahlliste', 'field:signature': 'Unterschriftsfeld' } as Record<string, string>)[app.mode] || app.mode}
-        <button onclick={() => (app.mode = 'select')} aria-label="Modus beenden" title="Beenden (Esc)"><I.X size={11} strokeWidth={2.2} /></button></span>
+      <span class="modechip"><span class="pulse"></span>{({ 'text:edit': L("Text bearbeiten"), 'text:add': L("Text hinzufügen"), image: L("Bild platzieren"), sign: L("Unterschrift platzieren"), stamp: L("Stempel setzen"), redact: L("Schwärzen"), whiteout: L("Abdecken"), link: 'Link', note: L("Notiz"), 'shape:rect': L("Rechteck"), 'shape:ellipse': L("Ellipse"), 'shape:line': L("Linie"), 'shape:arrow': L("Pfeil"), 'pdfjs:freetext': L("Textkommentar"), 'pdfjs:ink': L("Freihand"), 'pdfjs:highlight': L("Textmarker"), 'markup:underline': L("Unterstreichen"), 'markup:strike': L("Durchstreichen"), 'field:text': L("Textfeld"), 'field:check': L("Kontrollkästchen"), 'field:radio': L("Optionsfeld"), 'field:choice': L("Auswahlliste"), 'field:signature': L("Unterschriftsfeld") } as Record<string, string>)[app.mode] || app.mode}
+        <button onclick={() => (app.mode = 'select')} aria-label={L("Modus beenden")} title={L("Beenden (Esc)")}><I.X size={11} strokeWidth={2.2} /></button></span>
     {/if}
-    <button class="collapse" onclick={toggleCollapse} title={app.prefs.ribbonCollapsed ? 'Bandleiste anheften' : 'Bandleiste ausblenden'} aria-label="Bandleiste ein- oder ausblenden">
+    <button class="collapse" onclick={toggleCollapse} title={app.prefs.ribbonCollapsed ? L("Bandleiste anheften") : L("Bandleiste ausblenden")} aria-label={L("Bandleiste ein- oder ausblenden")}>
       {#if app.prefs.ribbonCollapsed}<I.ChevronDown size={14} />{:else}<I.ChevronUp size={14} />{/if}
     </button>
   </div>

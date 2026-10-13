@@ -2,6 +2,7 @@
 import { PyMuPDF } from '@bentopdf/pymupdf-wasm';
 import { serve } from './rpc';
 
+import { L } from '../i18n';
 let instP: Promise<any> | null = null;
 const inst = () => (instP ??= (async () => {
   const p = new (PyMuPDF as any)({ assetPath: '/engines/pymupdf/', ghostscriptUrl: '/engines/ghostscript/' });
@@ -36,7 +37,7 @@ serve({
 
 async function callImpl({ method, args }: any) {
     const p = await inst();
-    if (typeof p[method] !== 'function') throw new Error('PyMuPDF kennt ' + method + ' nicht');
+    if (typeof p[method] !== 'function') throw new Error(L("PyMuPDF kennt ") + method + ' nicht');
     return out(await p[method](...(args || []).map((a: any) => (Array.isArray(a) ? a.map(inp) : inp(a)))));
 }
 

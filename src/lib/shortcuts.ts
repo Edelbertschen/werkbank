@@ -1,6 +1,7 @@
 // Tastenkürzel: "Mod" = ⌘ auf dem Mac, Strg sonst
 import { isMac } from './platform';
 
+import { L } from './i18n';
 export function matches(e: KeyboardEvent, sc: string) {
   const parts = sc.split('+');
   const key = parts.pop()!.toLowerCase();
@@ -19,10 +20,10 @@ export function label(sc?: string) {
   if (!sc) return '';
   const mac = isMac();
   return sc.split('+').map(p => {
-    if (p === 'Mod') return mac ? '⌘' : 'Strg';
-    if (p === 'Shift') return mac ? '⇧' : 'Umschalt';
-    if (p === 'Alt') return mac ? '⌥' : 'Alt';
-    if (p === 'Ctrl') return mac ? '⌃' : 'Strg';
+    if (p === 'Mod') return mac ? '⌘' : L("Strg");
+    if (p === 'Shift') return mac ? '⇧' : L("Umschalt");
+    if (p === 'Alt') return mac ? '⌥' : L("Alt");
+    if (p === 'Ctrl') return mac ? '⌃' : L("Strg");
     if (p === 'Enter') return mac ? '↩' : 'Enter';
     return p.length === 1 ? p.toUpperCase() : p;
   }).join(mac ? '' : '+');

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import type { Doc } from '../lib/doc.svelte';
   import { clearOverlay, itemsOf } from '../lib/overlay.svelte';
   import { flush, withBusy } from '../lib/actions';
@@ -18,9 +19,9 @@
     try { await applyInner(); } finally { busy = false; }
   }
   async function applyInner() {
-    if (redactions && !(await confirm('Endgültig schwärzen?', `${redactions} Bereich(e) werden geschwärzt. Text und Bilddaten darunter werden aus dem Dokument entfernt.`, 'Schwärzen', { danger: true }))) return;
-    try { await withBusy('Änderungen werden übernommen', () => flush(doc)); app.mode = 'select'; }
-    catch (e: any) { toast('Übernehmen fehlgeschlagen: ' + (e.message || e), { kind: 'error' }); }
+    if (redactions && !(await confirm(L("Endgültig schwärzen?"), L("{0} Bereich(e) werden geschwärzt. Text und Bilddaten darunter werden aus dem Dokument entfernt.", redactions), L("Schwärzen"), { danger: true }))) return;
+    try { await withBusy(L("Änderungen werden übernommen"), () => flush(doc)); app.mode = 'select'; }
+    catch (e: any) { toast(L("Übernehmen fehlgeschlagen: ") + (e.message || e), { kind: 'error' }); }
   }
   async function discard() {
     clearOverlay(doc);
@@ -33,12 +34,12 @@
   <div class="cbar" role="status">
     <span class="dot"></span>
     <span class="t">
-      {#if count}{count} {count === 1 ? 'Änderung' : 'Änderungen'} offen{#if redactions}{redactions === 1 ? ' · davon 1 Schwärzung' : ` · davon ${redactions} Schwärzungen`}{/if}{/if}
+      {#if count}{count} {count === 1 ? L("Änderung") : L("Änderungen")} offen{#if redactions}{redactions === 1 ? L(" · davon 1 Schwärzung") : L(" · davon {0} Schwärzungen", redactions)}{/if}{/if}
       {#if count && doc.pendingEdits} · {/if}
-      {#if doc.pendingEdits}Anmerkungen oder Eingaben noch nicht übernommen{/if}
+      {#if doc.pendingEdits}{L("Anmerkungen oder Eingaben noch nicht übernommen")}{/if}
     </span>
-    <button class="btn sm ghost" onclick={discard}>Verwerfen</button>
-    <button class="btn sm primary" onclick={apply}><I.Check size={13} strokeWidth={2.2} />Übernehmen</button>
+    <button class="btn sm ghost" onclick={discard}>{L("Verwerfen")}</button>
+    <button class="btn sm primary" onclick={apply}><I.Check size={13} strokeWidth={2.2} />{L("Übernehmen")}</button>
   </div>
 {/if}
 

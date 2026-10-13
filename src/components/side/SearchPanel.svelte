@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../../lib/i18n';
   import type { Doc } from '../../lib/doc.svelte';
   import { viewer } from '../../lib/viewer.svelte';
   import { pageTexts } from '../../lib/pdf';
@@ -51,32 +52,32 @@
 <div class="box">
   <div class="field">
     <I.Search size={14} strokeWidth={2} />
-    <input id="find-input" class="input" type="search" placeholder="Im Dokument suchen" bind:value={q} oninput={onInput} onkeydown={key} />
+    <input id="find-input" class="input" type="search" placeholder={L("Im Dokument suchen")} bind:value={q} oninput={onInput} onkeydown={key} />
   </div>
   <div class="opts">
-    <label><input type="checkbox" bind:checked={caseS} onchange={run} /> Groß/klein</label>
-    <label><input type="checkbox" bind:checked={word} onchange={run} /> Ganzes Wort</label>
+    <label><input type="checkbox" bind:checked={caseS} onchange={run} /> {L("Groß/klein")}</label>
+    <label><input type="checkbox" bind:checked={word} onchange={run} /> {L("Ganzes Wort")}</label>
   </div>
   {#if q.trim().length >= 2}
     <div class="nav">
-      <span class="count num">{total ? `${viewer.findCurrent || 1} von ${total}` : viewer.findPending ? 'Suche …' : 'Keine Treffer'}</span>
-      <button class="btn sm icon" aria-label="Vorheriger Treffer" title="Vorheriger (⇧↩)" disabled={!total} onclick={() => viewer.search(q, { again: true, previous: true, caseSensitive: caseS, entireWord: word })}><I.ChevronUp size={14} /></button>
-      <button class="btn sm icon" aria-label="Nächster Treffer" title="Nächster (↩)" disabled={!total} onclick={() => viewer.search(q, { again: true, caseSensitive: caseS, entireWord: word })}><I.ChevronDown size={14} /></button>
+      <span class="count num">{total ? `${viewer.findCurrent || 1} von ${total}` : viewer.findPending ? L("Suche …") : L("Keine Treffer")}</span>
+      <button class="btn sm icon" aria-label={L("Vorheriger Treffer")} title={L("Vorheriger (⇧↩)")} disabled={!total} onclick={() => viewer.search(q, { again: true, previous: true, caseSensitive: caseS, entireWord: word })}><I.ChevronUp size={14} /></button>
+      <button class="btn sm icon" aria-label={L("Nächster Treffer")} title={L("Nächster (↩)")} disabled={!total} onclick={() => viewer.search(q, { again: true, caseSensitive: caseS, entireWord: word })}><I.ChevronDown size={14} /></button>
     </div>
     {#if total}
-      <button class="btn sm redact" onclick={() => (app.pane = { tool: 'find-redact', nonce: Date.now(), values: { terms: q } } as any)}><I.SquareX size={13} />Alle Treffer schwärzen …</button>
+      <button class="btn sm redact" onclick={() => (app.pane = { tool: 'find-redact', nonce: Date.now(), values: { terms: q } } as any)}><I.SquareX size={13} />{L("Alle Treffer schwärzen …")}</button>
     {/if}
   {/if}
 </div>
 <div class="results scroll">
   {#each results as r, k (k)}
     <button class="res" onclick={() => viewer.goto(r.page)}>
-      <span class="pg">Seite {r.page}</span>
+      <span class="pg">{L("Seite {0}", r.page)}</span>
       <!-- eslint-disable-next-line svelte/no-at-html-tags -->
       <span class="sn">{@html mark(r.snippet)}</span>
     </button>
   {/each}
-  {#if total > results.length}<p class="more">… und {total - results.length} weitere</p>{/if}
+  {#if total > results.length}<p class="more">{L("… und {0} weitere", total - results.length)}</p>{/if}
 </div>
 
 <style>

@@ -1,6 +1,7 @@
 // Modale Dialoge als Promise
 import type { Field } from './fields';
 
+import { L } from './i18n';
 export interface DialogButton { label: string; value: string; primary?: boolean; danger?: boolean }
 export interface DialogSpec {
   title: string;
@@ -33,17 +34,17 @@ export function closeDialog(id: number, r: DialogResult | null) {
 }
 
 export async function confirm(title: string, message: string, ok = 'OK', opts: { danger?: boolean; cancel?: string; detail?: string } = {}) {
-  const r = await dialog({ title, message, detail: opts.detail, icon: opts.danger ? 'warn' : 'question', buttons: [{ label: opts.cancel || 'Abbrechen', value: 'cancel' }, { label: ok, value: 'ok', primary: !opts.danger, danger: opts.danger }] });
+  const r = await dialog({ title, message, detail: opts.detail, icon: opts.danger ? 'warn' : 'question', buttons: [{ label: opts.cancel || L("Abbrechen"), value: 'cancel' }, { label: ok, value: 'ok', primary: !opts.danger, danger: opts.danger }] });
   return r?.button === 'ok';
 }
 
 export async function askPassword(name: string, retry: boolean): Promise<string | null> {
   const r = await dialog({
-    title: 'Passwort erforderlich', icon: 'lock',
-    message: `„${name}“ ist durch ein Passwort geschützt.`,
-    detail: retry ? 'Das eingegebene Passwort war nicht richtig.' : undefined,
-    fields: [{ key: 'pw', type: 'password', label: 'Passwort' }],
-    buttons: [{ label: 'Abbrechen', value: 'cancel' }, { label: 'Öffnen', value: 'ok', primary: true }],
+    title: L("Passwort erforderlich"), icon: 'lock',
+    message: L("„{0}“ ist durch ein Passwort geschützt.", name),
+    detail: retry ? L("Das eingegebene Passwort war nicht richtig.") : undefined,
+    fields: [{ key: 'pw', type: 'password', label: L("Passwort") }],
+    buttons: [{ label: L("Abbrechen"), value: 'cancel' }, { label: L("Öffnen"), value: 'ok', primary: true }],
   });
   return r && r.button === 'ok' ? (r.values.pw ?? '') : null;
 }

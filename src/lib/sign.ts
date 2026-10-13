@@ -3,6 +3,7 @@ import * as PDFLib from 'pdf-lib';
 import forge from 'node-forge';
 import { httpFetch } from './platform';
 
+import { L, intlLocale } from './i18n';
 let zgaP: Promise<any> | null = null;
 async function zga() {
   return (zgaP ??= (async () => {
@@ -10,7 +11,7 @@ async function zga() {
     (globalThis as any).forge = forge;
     await import('zgapdfsigner/dist/zgapdfsigner.min.js' as any);
     const Z = (globalThis as any).Zga;
-    if (!Z) throw new Error('Signaturbibliothek nicht geladen');
+    if (!Z) throw new Error(L("Signaturbibliothek nicht geladen"));
     // Netzwerkzugriffe (Zeitstempel, OCSP, Zertifikatsketten) über die App statt über fetch
     Z.urlFetch = async (url: string, params?: { method?: string; payload?: any; headers?: Record<string, string> }) => {
       const ctype = params?.headers?.['Content-Type'] || params?.headers?.['content-type'];
@@ -30,10 +31,10 @@ export function readP12(p12: Uint8Array, password: string): CertInfo {
   for (let i = 0; i < p12.length; i++) bin += String.fromCharCode(p12[i]);
   let p: forge.pkcs12.Pkcs12Pfx;
   try { p = forge.pkcs12.pkcs12FromAsn1(forge.asn1.fromDer(bin), password); }
-  catch (e: any) { throw new Error(/Invalid password|MAC/i.test(String(e?.message)) ? 'Das Zertifikatspasswort ist falsch' : 'Die Zertifikatsdatei ist nicht lesbar'); }
+  catch (e: any) { throw new Error(/Invalid password|MAC/i.test(String(e?.message)) ? L("Das Zertifikatspasswort ist falsch") : L("Die Zertifikatsdatei ist nicht lesbar")); }
   const bags = p.getBags({ bagType: forge.pki.oids.certBag })[forge.pki.oids.certBag] || [];
   const cert = bags.map(b => b.cert!).find(Boolean);
-  if (!cert) throw new Error('Kein Zertifikat in der Datei');
+  if (!cert) throw new Error(L("Kein Zertifikat in der Datei"));
   const f = (o: any, k: string) => o.getField(k)?.value as string | undefined;
   return { cn: f(cert.subject, 'CN') || '—', org: f(cert.subject, 'O'), email: f(cert.subject, 'E') || f(cert.subject, 'emailAddress'), issuer: f(cert.issuer, 'CN') || f(cert.issuer, 'O') || '—', validFrom: cert.validity.notBefore, validTo: cert.validity.notAfter, selfSigned: cert.isIssuer(cert) };
 }
@@ -110,12 +111,12 @@ export async function signatureAppearance(o: { name: string; reason?: string; lo
   x.strokeStyle = '#1F4FD1'; x.lineWidth = 1.2 * S; x.beginPath(); x.moveTo(left - 4 * S, 4 * S); x.lineTo(left - 4 * S, c.height - 4 * S); x.stroke();
   x.fillStyle = '#1C1C1E';
   const lines: [string, number, string][] = [
-    [`Digital signiert von`, 7, '#555'],
+    [L("Digital signiert von"), 7, '#555'],
     [o.name, 10, '#111'],
-    [`Datum: ${o.date.toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' })}`, 7, '#333'],
+    [L("Datum: {0}", o.date.toLocaleString(intlLocale(), { dateStyle: 'medium', timeStyle: 'short' })), 7, '#333'],
   ];
-  if (o.reason) lines.push([`Grund: ${o.reason}`, 7, '#333']);
-  if (o.location) lines.push([`Ort: ${o.location}`, 7, '#333']);
+  if (o.reason) lines.push([L("Grund: {0}", o.reason), 7, '#333']);
+  if (o.location) lines.push([L("Ort: {0}", o.location), 7, '#333']);
   const total = lines.reduce((a, l) => a + l[1] * 1.3, 0);
   const fit = Math.min(1, (o.h - 6) / total);
   let y = (c.height - total * fit * S) / 2;

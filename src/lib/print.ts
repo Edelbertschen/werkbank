@@ -6,27 +6,28 @@ import { printView } from './platform';
 import { dialog } from './dialogs.svelte';
 import { parseRange } from './util';
 
+import { L } from './i18n';
 export async function printDoc() {
   const doc = active(); if (!doc) return;
   await flush(doc);
   const r = await dialog({
-    title: 'Drucken', icon: 'info',
+    title: L("Drucken"), icon: 'info',
     fields: [
-      { key: 'range', type: 'text', label: 'Seiten', def: '', ph: `alle (1–${doc.numPages}) oder z. B. 1-3, 5` },
-      { key: 'quality', type: 'seg', label: 'Qualität', opts: [['150', 'Normal'], ['300', 'Hoch']], def: '150' },
-      { key: 'forms', type: 'check', label: 'Formularfelder und Kommentare mitdrucken', def: true },
+      { key: 'range', type: 'text', label: L("Seiten"), def: '', ph: L("alle (1–{0}) oder z. B. 1-3, 5", doc.numPages) },
+      { key: 'quality', type: 'seg', label: L("Qualität"), opts: [['150', 'Normal'], ['300', L("Hoch")]], def: '150' },
+      { key: 'forms', type: 'check', label: L("Formularfelder und Kommentare mitdrucken"), def: true },
     ],
-    buttons: [{ label: 'Abbrechen', value: 'cancel' }, { label: 'Weiter zum Druckdialog', value: 'ok', primary: true }],
+    buttons: [{ label: L("Abbrechen"), value: 'cancel' }, { label: L("Weiter zum Druckdialog"), value: 'ok', primary: true }],
   });
   if (!r || r.button !== 'ok') return;
   const idx = r.values.range?.trim() ? parseRange(r.values.range, doc.numPages) : [...Array(doc.numPages).keys()];
-  if (!idx.length) { toast('Keine Seiten ausgewählt', { kind: 'error' }); return; }
+  if (!idx.length) { toast(L("Keine Seiten ausgewählt"), { kind: 'error' }); return; }
   document.getElementById('print-host')?.remove();
   document.getElementById('print-style')?.remove();
   const host = document.createElement('div');
   host.id = 'print-host';
   const urls: string[] = [];
-  await withBusy('Druck wird vorbereitet', async progress => {
+  await withBusy(L("Druck wird vorbereitet"), async progress => {
     const pdf = await openPdf(doc.bytes);
     for (const [k, i] of idx.entries()) {
       const page = await pdf.getPage(i + 1);
@@ -38,7 +39,7 @@ export async function printDoc() {
       sheet.className = 'print-sheet';
       sheet.style.setProperty('--w', v.width + 'pt'); sheet.style.setProperty('--h', v.height + 'pt');
       const img = document.createElement('img'); img.src = url; sheet.append(img); host.append(sheet);
-      progress((k + 1) / idx.length, `Seite ${i + 1}`);
+      progress((k + 1) / idx.length, L("Seite {0}", i + 1));
     }
     pdf.destroy();
     document.body.append(host);

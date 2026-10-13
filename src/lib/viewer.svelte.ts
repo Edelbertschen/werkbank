@@ -5,21 +5,22 @@ import { app } from './app.svelte';
 import { openExternal } from './platform';
 import { clamp } from './util';
 
+import { L, getLocale, intlLocale } from './i18n';
 type ViewerMod = typeof import('pdfjs-dist/legacy/web/pdf_viewer.mjs');
 let V: ViewerMod | null = null;
 
 // pdf.js erwartet eine Übersetzungsschicht; wir liefern deutsche Texte für das Wenige, was sichtbar wird.
 const L10N_DE: Record<string, string> = {
-  'pdfjs-editor-alt-text-button-label': 'Alternativtext',
-  'pdfjs-editor-remove-ink-button': { toString: () => 'Entfernen' } as any,
-  'pdfjs-editor-remove-freetext-button': 'Entfernen',
-  'pdfjs-editor-remove-stamp-button': 'Entfernen',
-  'pdfjs-editor-remove-highlight-button': 'Entfernen',
-  'pdfjs-free-text2': { toString: () => 'Text eingeben …' } as any,
-  'pdfjs-editor-free-text-default-content': 'Text eingeben …',
+  'pdfjs-editor-alt-text-button-label': L("Alternativtext"),
+  'pdfjs-editor-remove-ink-button': { toString: () => L("Entfernen") } as any,
+  'pdfjs-editor-remove-freetext-button': L("Entfernen"),
+  'pdfjs-editor-remove-stamp-button': L("Entfernen"),
+  'pdfjs-editor-remove-highlight-button': L("Entfernen"),
+  'pdfjs-free-text2': { toString: () => L("Text eingeben …") } as any,
+  'pdfjs-editor-free-text-default-content': L("Text eingeben …"),
 };
 const l10n = {
-  getLanguage: () => 'de',
+  getLanguage: () => getLocale(),
   getDirection: () => 'ltr',
   get: async (ids: any, _args?: any, fallback?: string) => (typeof ids === 'string' ? (L10N_DE[ids] as string) : '') || fallback || '',
   translate: async (_el: HTMLElement) => {},
@@ -65,7 +66,7 @@ class ViewerController {
       maxCanvasPixels: 2 ** 26,
       enableHWA: true,
       imageResourcesPath: '/pdfjs-images/',
-      annotationEditorHighlightColors: 'gelb=#FFF066,grün=#5BFF7C,blau=#86E2FF,rosa=#FF98C8,rot=#FF4F5F',
+      annotationEditorHighlightColors: L("gelb=#FFF066,grün=#5BFF7C,blau=#86E2FF,rosa=#FF98C8,rot=#FF4F5F"),
     } as any);
     link.setViewer(inst);
     Object.assign(this, { inst, bus, link, find });

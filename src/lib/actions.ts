@@ -12,6 +12,7 @@ import { defaults } from './fields';
 import type { Tool, ToolCtx, ToolResult, OutFile } from './tools/types';
 import JSZip from 'jszip';
 
+import { L } from './i18n';
 // ---------------------------------------------------------------------------
 // Fortschritt
 // ---------------------------------------------------------------------------
@@ -55,7 +56,7 @@ export function activate(doc: Doc) {
 export async function openBytes(name: string, bytes: Uint8Array, path: string | null, opts: { focus?: boolean } = {}): Promise<Doc | null> {
   const existing = path ? app.docs.find(d => d.path === path) : null;
   if (existing) { activate(existing); return existing; }
-  return withBusy(`„${name}“ wird geöffnet`, async progress => {
+  return withBusy(L("„{0}“ wird geöffnet", name), async progress => {
     const kind = kindOf(name);
     const isPdf = kind === 'pdf' || hasPdfHeader(bytes);
     let pdfBytes = bytes;
@@ -89,9 +90,9 @@ export async function openBytes(name: string, bytes: Uint8Array, path: string | 
     app.docs.push(doc);
     if (opts.focus !== false) activate(doc);
     if (path && isPdf) recordRecent(doc);
-    if (doc.wasEncrypted && doc.protection) toast('Passwort erkannt. Beim Speichern wird das Dokument wieder mit diesem Passwort geschützt.', { ms: 7000 });
-    else if (doc.wasEncrypted) toast('Bearbeitungssperre aufgehoben. Beim Speichern entsteht eine Fassung ohne Einschränkungen – mit „Schützen › Passwort“ lässt sie sich neu setzen.', { ms: 9000 });
-    if (!isPdf) toast(`Aus ${extOf(name).toUpperCase()} umgewandelt. Speichern legt eine neue PDF-Datei an.`);
+    if (doc.wasEncrypted && doc.protection) toast(L("Passwort erkannt. Beim Speichern wird das Dokument wieder mit diesem Passwort geschützt."), { ms: 7000 });
+    else if (doc.wasEncrypted) toast(L("Bearbeitungssperre aufgehoben. Beim Speichern entsteht eine Fassung ohne Einschränkungen – mit „Schützen › Passwort“ lässt sie sich neu setzen."), { ms: 9000 });
+    if (!isPdf) toast(L("Aus {0} umgewandelt. Speichern legt eine neue PDF-Datei an.", extOf(name).toUpperCase()));
     return doc;
   });
 }
@@ -102,16 +103,16 @@ export async function openPaths(paths: string[]) {
   let last: Doc | null = null;
   for (const p of paths) {
     try { const bytes = await P.readPath(p); last = (await openBytes(p.split(/[\\/]/).pop() || p, bytes, p)) || last; }
-    catch (e: any) { toast(`„${p}“ ließ sich nicht öffnen: ${e.message || e}`, { kind: 'error' }); }
+    catch (e: any) { toast(L("„{0}“ ließ sich nicht öffnen: {1}", p, e.message || e), { kind: 'error' }); }
   }
   if (last) activate(last);
 }
 
 export async function openDialog() {
-  const files = await P.pickFiles({ multiple: true, filters: P.FILTERS.openable, title: 'Öffnen' });
+  const files = await P.pickFiles({ multiple: true, filters: P.FILTERS.openable, title: L("Öffnen") });
   for (const f of files) {
     try { await openBytes(f.name, f.bytes, f.path); }
-    catch (e: any) { toast(`„${f.name}“ ließ sich nicht öffnen: ${e.message || e}`, { kind: 'error' }); }
+    catch (e: any) { toast(L("„{0}“ ließ sich nicht öffnen: {1}", f.name, e.message || e), { kind: 'error' }); }
   }
 }
 
@@ -119,7 +120,7 @@ export async function openDropped(payload: { paths?: string[]; files?: File[] })
   if (payload.paths?.length) return openPaths(payload.paths);
   for (const f of payload.files || []) {
     try { await openBytes(f.name, new Uint8Array(await f.arrayBuffer()), null); }
-    catch (e: any) { toast(`„${f.name}“ ließ sich nicht öffnen: ${e.message || e}`, { kind: 'error' }); }
+    catch (e: any) { toast(L("„{0}“ ließ sich nicht öffnen: {1}", f.name, e.message || e), { kind: 'error' }); }
   }
 }
 
@@ -134,8 +135,8 @@ export async function newBlankDoc() {
   const { PDFDocument } = await import('pdf-lib');
   const d = await PDFDocument.create();
   d.addPage([595.28, 841.89]);
-  const doc = new Doc('Unbenannt.pdf', await d.save(), null, 'neu');
-  doc.history[0].label = 'Neues Dokument';
+  const doc = new Doc(L("Unbenannt.pdf"), await d.save(), null, 'neu');
+  doc.history[0].label = L("Neues Dokument");
   await doc.load();
   app.docs.push(doc); activate(doc);
   return doc;
@@ -160,7 +161,7 @@ export async function save(doc: Doc | null = active(), as = false): Promise<bool
     if (!as && doc.path && P.isTauri) {
       await P.writePath(doc.path, bytes);
       doc.markSaved(doc.path);
-      toast(`Gespeichert`, { kind: 'ok', ms: 2000 });
+      toast(L("Gespeichert"), { kind: 'ok', ms: 2000 });
     } else {
       const dir = doc.path ? P.dirOf(doc.path) : (doc.sourcePath ? P.dirOf(doc.sourcePath) : app.prefs.lastDir || undefined);
       const p = await P.saveAs(doc.name, bytes, P.FILTERS.pdf, dir);
@@ -168,14 +169,14 @@ export async function save(doc: Doc | null = active(), as = false): Promise<bool
       const name = p.split(/[\\/]/).pop() || doc.name;
       if (P.isTauri) { doc.markSaved(p, name); app.prefs.lastDir = P.dirOf(p); savePrefs(); }
       else doc.markSaved(doc.path || name, name);
-      toast(`Gespeichert als „${name}“`, { kind: 'ok' });
+      toast(L("Gespeichert als „{0}“", name), { kind: 'ok' });
     }
     recordRecent(doc);
     clearRecovery(doc);
     P.setWindowTitle(`${doc.title} – Werkbank`);
     return true;
   } catch (e: any) {
-    toast('Speichern fehlgeschlagen: ' + (e.message || e), { kind: 'error' });
+    toast(L("Speichern fehlgeschlagen: ") + (e.message || e), { kind: 'error' });
     return false;
   }
 }
@@ -188,30 +189,30 @@ export async function saveFiles(files: OutFile[], zipName?: string) {
   if (files.length === 1) {
     const f = files[0];
     const p = await P.saveAs(f.name, f.data, f.filters || filtersFor(f.name), dir);
-    if (p) { toast(`„${p.split(/[\\/]/).pop()}“ gespeichert`, { kind: 'ok', action: P.isTauri ? { label: 'Im Ordner zeigen', run: () => P.revealInFolder(p) } : undefined }); if (P.isTauri) { app.prefs.lastDir = P.dirOf(p); savePrefs(); } }
+    if (p) { toast(L("„{0}“ gespeichert", p.split(/[\\/]/).pop()), { kind: 'ok', action: P.isTauri ? { label: L("Im Ordner zeigen"), run: () => P.revealInFolder(p) } : undefined }); if (P.isTauri) { app.prefs.lastDir = P.dirOf(p); savePrefs(); } }
     return;
   }
   // Mehrere Dateien: in einen Ordner oder als ZIP
   let folder: string | null = null;
   if (P.isTauri) {
-    const r = await dialog({ title: `${files.length} Dateien speichern`, message: 'Wie sollen die Dateien gespeichert werden?', buttons: [{ label: 'Abbrechen', value: 'cancel' }, { label: 'Als ZIP-Archiv', value: 'zip' }, { label: 'In einen Ordner', value: 'folder', primary: true }] });
+    const r = await dialog({ title: L("{0} Dateien speichern", files.length), message: L("Wie sollen die Dateien gespeichert werden?"), buttons: [{ label: L("Abbrechen"), value: 'cancel' }, { label: L("Als ZIP-Archiv"), value: 'zip' }, { label: L("In einen Ordner"), value: 'folder', primary: true }] });
     if (!r || r.button === 'cancel') return;
-    if (r.button === 'folder') { folder = await P.pickFolder('Zielordner wählen'); if (!folder) return; }
+    if (r.button === 'folder') { folder = await P.pickFolder(L("Zielordner wählen")); if (!folder) return; }
   }
   if (folder) {
     for (const f of files) await P.writePath(P.joinPath(folder, f.name), f.data);
-    toast(`${files.length} Dateien gespeichert`, { kind: 'ok', action: { label: 'Ordner öffnen', run: () => P.revealInFolder(P.joinPath(folder!, files[0].name)) } });
+    toast(L("{0} Dateien gespeichert", files.length), { kind: 'ok', action: { label: L("Ordner öffnen"), run: () => P.revealInFolder(P.joinPath(folder!, files[0].name)) } });
     return;
   }
   const zip = new JSZip(); const used = new Set<string>();
   for (const f of files) { let n = f.name, k = 2; while (used.has(n)) n = f.name.replace(/(\.[^.]+)$/, ` (${k++})$1`); used.add(n); zip.file(n, f.data); }
   const blob = await zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
-  await saveFiles([{ name: zipName || 'Werkbank-Export.zip', data: blob }]);
+  await saveFiles([{ name: zipName || L("Werkbank-Export.zip"), data: blob }]);
 }
 
 function filtersFor(name: string) {
   const e = extOf(name);
-  const label: Record<string, string> = { pdf: 'PDF', docx: 'Word', xlsx: 'Excel', pptx: 'PowerPoint', odt: 'OpenDocument Text', ods: 'OpenDocument Tabelle', odp: 'OpenDocument Präsentation', png: 'PNG-Bild', jpg: 'JPEG-Bild', webp: 'WebP-Bild', tif: 'TIFF', tiff: 'TIFF', svg: 'SVG', txt: 'Text', md: 'Markdown', html: 'HTML', json: 'JSON', csv: 'CSV', zip: 'ZIP-Archiv', rtf: 'RTF', epub: 'EPUB', cbz: 'Comic-Archiv', bmp: 'BMP' };
+  const label: Record<string, string> = { pdf: 'PDF', docx: 'Word', xlsx: 'Excel', pptx: 'PowerPoint', odt: L("OpenDocument Text"), ods: L("OpenDocument Tabelle"), odp: L("OpenDocument Präsentation"), png: L("PNG-Bild"), jpg: L("JPEG-Bild"), webp: 'WebP-Bild', tif: 'TIFF', tiff: 'TIFF', svg: 'SVG', txt: 'Text', md: 'Markdown', html: 'HTML', json: 'JSON', csv: 'CSV', zip: L("ZIP-Archiv"), rtf: 'RTF', epub: 'EPUB', cbz: L("Comic-Archiv"), bmp: 'BMP' };
   return e ? [{ name: label[e] || e.toUpperCase(), extensions: [e] }] : undefined;
 }
 
@@ -223,9 +224,9 @@ export async function closeDoc(doc: Doc | null = active()): Promise<boolean> {
   if (doc.dirty) {
     activate(doc);
     const r = await dialog({
-      title: `Änderungen an „${doc.title}“ speichern?`, icon: 'warn',
-      message: 'Wenn du nicht speicherst, gehen die Änderungen verloren.',
-      buttons: [{ label: 'Nicht speichern', value: 'discard', danger: true }, { label: 'Abbrechen', value: 'cancel' }, { label: 'Speichern', value: 'save', primary: true }],
+      title: L("Änderungen an „{0}“ speichern?", doc.title), icon: 'warn',
+      message: L("Wenn du nicht speicherst, gehen die Änderungen verloren."),
+      buttons: [{ label: L("Nicht speichern"), value: 'discard', danger: true }, { label: L("Abbrechen"), value: 'cancel' }, { label: L("Speichern"), value: 'save', primary: true }],
     });
     if (!r || r.button === 'cancel') return false;
     if (r.button === 'save' && !(await save(doc))) return false;
@@ -251,12 +252,12 @@ export async function closeAll(): Promise<boolean> {
 export async function undo() {
   const d = active(); if (!d) return;
   if (d.overlayCount) { const { overlay } = await import('./overlay.svelte'); overlay.undoLast(d); return; }
-  if (d.pendingEdits) { toast('Erst die Eingaben übernehmen oder mit Esc verwerfen'); return; }
-  const l = await d.undo(); if (l) toast('Rückgängig: ' + l);
+  if (d.pendingEdits) { toast(L("Erst die Eingaben übernehmen oder mit Esc verwerfen")); return; }
+  const l = await d.undo(); if (l) toast(L("Rückgängig: ") + l);
 }
 export async function redo() {
   const d = active(); if (!d) return;
-  const l = await d.redo(); if (l) toast('Wiederholt: ' + l);
+  const l = await d.redo(); if (l) toast(L("Wiederholt: ") + l);
 }
 
 // ---------------------------------------------------------------------------
@@ -264,15 +265,15 @@ export async function redo() {
 // ---------------------------------------------------------------------------
 export async function runTool(tool: Tool, values?: Record<string, any>): Promise<boolean> {
   const doc = active();
-  if (!doc && !tool.noDoc) { toast('Öffne zuerst ein Dokument'); return false; }
+  if (!doc && !tool.noDoc) { toast(L("Öffne zuerst ein Dokument")); return false; }
   if (!tool.run) return false;
   const v = values ?? defaults(tool.fields);
-  const engineHint = tool.engine === 'libreoffice' ? 'Office-Engine' : tool.engine === 'pymupdf' ? 'PDF-Engine' : tool.engine === 'tesseract' ? 'Texterkennung' : '';
+  const engineHint = tool.engine === 'libreoffice' ? L("Office-Engine") : tool.engine === 'pymupdf' ? L("PDF-Engine") : tool.engine === 'tesseract' ? L("Texterkennung") : '';
   try {
     if (doc) await flush(doc);
     if (tool.noBusy) { const r = await tool.run({ ...v }, { doc, bytes: doc?.bytes || new Uint8Array(), current: (doc?.current || 1) - 1, selection: doc ? [...doc.selection] : [], progress: () => {} }); if (r) await applyResult(r, tool); return true; }
     const result = await withBusy(tool.label, async progress => {
-      if (engineHint) progress(-1, `${engineHint} wird vorbereitet …`);
+      if (engineHint) progress(-1, L("{0} wird vorbereitet …", engineHint));
       const ctx: ToolCtx = { doc, bytes: doc?.bytes || new Uint8Array(), current: (doc?.current || 1) - 1, selection: doc ? [...doc.selection] : [], progress };
       return tool.run!(v, ctx);
     });
@@ -281,7 +282,7 @@ export async function runTool(tool: Tool, values?: Record<string, any>): Promise
     return true;
   } catch (e: any) {
     console.error(e);
-    const msg = String(e?.message || e);
+    const msg = L(String(e?.message || e)); // Meldungen aus den Engines (Python) ebenfalls übersetzen
     toast(`${tool.label}: ${msg}`, { kind: 'error' });
     return false;
   }
@@ -291,9 +292,9 @@ export async function applyResult(r: ToolResult, tool?: Tool) {
   const doc = active();
   if (r.bytes && doc) {
     const before = doc.bytes.length;
-    await doc.commit(r.bytes, r.label || tool?.label || 'Bearbeitet', { selection: r.selection, current: r.current });
+    await doc.commit(r.bytes, r.label || tool?.label || L("Bearbeitet"), { selection: r.selection, current: r.current });
     app.viewerRev++;
-    toast(r.label || tool?.label || 'Erledigt', { kind: 'ok', action: { label: 'Rückgängig', run: () => undo() } });
+    toast(r.label || tool?.label || L("Erledigt"), { kind: 'ok', action: { label: L("Rückgängig"), run: () => undo() } });
     scheduleRecovery(doc);
     void before;
   }
@@ -301,12 +302,12 @@ export async function applyResult(r: ToolResult, tool?: Tool) {
   let first: Doc | null = null;
   for (const d of list) {
     const nd = new Doc(d.name, d.bytes, null, 'neu');
-    nd.history[0].label = d.label || 'Erstellt';
+    nd.history[0].label = d.label || L("Erstellt");
     await nd.load();
     app.docs.push(nd);
     first ||= nd;
   }
-  if (first) { activate(first); toast(list.length === 1 ? `„${first.name}“ geöffnet – noch nicht gespeichert` : `${list.length} neue Dokumente geöffnet`); }
+  if (first) { activate(first); toast(list.length === 1 ? L("„{0}“ geöffnet – noch nicht gespeichert", first.name) : L("{0} neue Dokumente geöffnet", list.length)); }
   if (r.files?.length) await saveFiles(r.files, r.zipName);
   if (r.message) toast(r.message, { ms: 8000 });
 }
@@ -339,10 +340,10 @@ export async function offerRecovery() {
   const idx = await P.stateLoad<{ list: any[] }>('recovery', { list: [] });
   if (!idx.list.length) return;
   const r = await dialog({
-    title: 'Ungesicherte Dokumente wiederherstellen?', icon: 'info',
-    message: idx.list.length === 1 ? 'Beim letzten Mal wurde die Werkbank beendet, während ein Dokument ungespeicherte Änderungen hatte.' : `Beim letzten Mal wurde die Werkbank beendet, während ${idx.list.length} Dokumente ungespeicherte Änderungen hatten.`,
+    title: L("Ungesicherte Dokumente wiederherstellen?"), icon: 'info',
+    message: idx.list.length === 1 ? L("Beim letzten Mal wurde die Werkbank beendet, während ein Dokument ungespeicherte Änderungen hatte.") : L("Beim letzten Mal wurde die Werkbank beendet, während {0} Dokumente ungespeicherte Änderungen hatten.", idx.list.length),
     detail: idx.list.map((x: any) => `${x.name} (${fmtSize(x.size)})`).join('\n'),
-    buttons: [{ label: 'Verwerfen', value: 'discard', danger: true }, { label: 'Wiederherstellen', value: 'restore', primary: true }],
+    buttons: [{ label: L("Verwerfen"), value: 'discard', danger: true }, { label: L("Wiederherstellen"), value: 'restore', primary: true }],
   });
   for (const x of idx.list) {
     const bytes = await P.blobLoad('rec-' + x.id + '.pdf');
@@ -350,7 +351,7 @@ export async function offerRecovery() {
       try {
         await openPdf(bytes).then(p => p.destroy());
         const d = new Doc(x.name, bytes, null, 'wiederhergestellt');
-        d.history[0].label = 'Wiederhergestellt';
+        d.history[0].label = L("Wiederhergestellt");
         if (x.path) d.sourcePath = x.path;
         await d.load(); app.docs.push(d); activate(d);
       } catch { /* defekt */ }
@@ -368,9 +369,9 @@ export async function confirmQuit(): Promise<boolean> {
   if (!dirty.length) return true;
   if (dirty.length === 1) return closeDoc(dirty[0]);
   const r = await dialog({
-    title: `${dirty.length} Dokumente haben ungespeicherte Änderungen`, icon: 'warn',
+    title: L("{0} Dokumente haben ungespeicherte Änderungen", dirty.length), icon: 'warn',
     message: dirty.map(d => d.title).join(', '),
-    buttons: [{ label: 'Alle verwerfen', value: 'discard', danger: true }, { label: 'Abbrechen', value: 'cancel' }, { label: 'Einzeln prüfen …', value: 'review', primary: true }],
+    buttons: [{ label: L("Alle verwerfen"), value: 'discard', danger: true }, { label: L("Abbrechen"), value: 'cancel' }, { label: L("Einzeln prüfen …"), value: 'review', primary: true }],
   });
   if (!r || r.button === 'cancel') return false;
   if (r.button === 'discard') return true;

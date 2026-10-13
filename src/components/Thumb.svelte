@@ -11,6 +11,7 @@
 </script>
 
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import type { Doc } from '../lib/doc.svelte';
   import { onMount } from 'svelte';
 
@@ -36,7 +37,7 @@
 </script>
 
 <div class="thumb" bind:this={el} style:aspect-ratio={p ? `${p.w} / ${p.h}` : '0.707'}>
-  {#if url}<img src={url} alt={`Seite ${index + 1}`} draggable="false" />{/if}
+  {#if url}<img src={url} alt={L("Seite {0}", index + 1)} draggable="false" />{/if}
 </div>
 
 <style>

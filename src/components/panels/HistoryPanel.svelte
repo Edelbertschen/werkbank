@@ -1,16 +1,17 @@
 <script lang="ts">
+  import { L, intlLocale } from '../../lib/i18n';
   import { active, app } from '../../lib/app.svelte';
   import { fmtSize } from '../../lib/util';
   import * as I from '../../lib/icons';
 
   const doc = $derived(active());
   const list = $derived(doc ? (doc.rev, doc.versions()) : []);
-  const time = (t: number) => new Date(t).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const time = (t: number) => new Date(t).toLocaleTimeString(intlLocale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   async function go(i: number) { if (!doc) return; await doc.goto(i); app.viewerRev++; }
 </script>
 
 {#if doc}
-  <p class="hint">Klick auf einen Eintrag springt zu diesem Stand. Spätere Schritte bleiben erhalten, bis du etwas Neues änderst.</p>
+  <p class="hint">{L("Klick auf einen Eintrag springt zu diesem Stand. Spätere Schritte bleiben erhalten, bis du etwas Neues änderst.")}</p>
   <ol class="hist">
     {#each list as v (v.i)}
       <li>

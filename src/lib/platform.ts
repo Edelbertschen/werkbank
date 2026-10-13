@@ -4,6 +4,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { open as dialogOpen, save as dialogSave } from '@tauri-apps/plugin-dialog';
 
+import { L } from './i18n';
 export const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
 
 export type OS = 'macos' | 'windows' | 'linux' | 'web';
@@ -22,19 +23,19 @@ export async function initPlatform() {
   document.documentElement.dataset.os = os;
 }
 export const isMac = () => os === 'macos' || (os === 'web' && navigator.platform.toLowerCase().includes('mac'));
-export const modKey = () => (isMac() ? '⌘' : 'Strg+');
+export const modKey = () => (isMac() ? '⌘' : L("Strg+"));
 
 export interface FileFilter { name: string; extensions: string[] }
 export interface PickedFile { name: string; path: string | null; bytes: Uint8Array; size: number }
 
 export const FILTERS = {
-  pdf: [{ name: 'PDF-Dokumente', extensions: ['pdf'] }],
+  pdf: [{ name: L("PDF-Dokumente"), extensions: ['pdf'] }],
   openable: [
-    { name: 'Alle unterstützten Dateien', extensions: ['pdf', 'docx', 'doc', 'odt', 'rtf', 'xlsx', 'xls', 'ods', 'csv', 'pptx', 'ppt', 'odp', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'heic', 'heif', 'svg', 'txt', 'md', 'markdown', 'html', 'htm', 'epub', 'mobi', 'fb2', 'cbz', 'xps', 'oxps', 'eml', 'msg', 'json', 'xml'] },
-    { name: 'PDF-Dokumente', extensions: ['pdf'] },
-    { name: 'Office-Dokumente', extensions: ['docx', 'doc', 'odt', 'rtf', 'xlsx', 'xls', 'ods', 'csv', 'pptx', 'ppt', 'odp'] },
-    { name: 'Bilder', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'heic', 'heif', 'svg'] },
-    { name: 'Text und E-Books', extensions: ['txt', 'md', 'markdown', 'html', 'htm', 'epub', 'mobi', 'fb2', 'cbz', 'xps', 'oxps', 'eml', 'msg', 'json', 'xml'] },
+    { name: L("Alle unterstützten Dateien"), extensions: ['pdf', 'docx', 'doc', 'odt', 'rtf', 'xlsx', 'xls', 'ods', 'csv', 'pptx', 'ppt', 'odp', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'heic', 'heif', 'svg', 'txt', 'md', 'markdown', 'html', 'htm', 'epub', 'mobi', 'fb2', 'cbz', 'xps', 'oxps', 'eml', 'msg', 'json', 'xml'] },
+    { name: L("PDF-Dokumente"), extensions: ['pdf'] },
+    { name: L("Office-Dokumente"), extensions: ['docx', 'doc', 'odt', 'rtf', 'xlsx', 'xls', 'ods', 'csv', 'pptx', 'ppt', 'odp'] },
+    { name: L("Bilder"), extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'heic', 'heif', 'svg'] },
+    { name: L("Text und E-Books"), extensions: ['txt', 'md', 'markdown', 'html', 'htm', 'epub', 'mobi', 'fb2', 'cbz', 'xps', 'oxps', 'eml', 'msg', 'json', 'xml'] },
   ] as FileFilter[],
 };
 
@@ -133,6 +134,12 @@ export async function stateLoad<T>(name: string, fallback: T): Promise<T> {
   } catch { return fallback; }
 }
 const saveTimers = new Map<string, ReturnType<typeof setTimeout>>();
+/** Sofort speichern und abwarten (z. B. vor einem Neustart) */
+export async function stateSaveNow(name: string, value: unknown) {
+  clearTimeout(saveTimers.get(name));
+  const json = JSON.stringify(value);
+  if (isTauri) await invoke('state_save', { name: name + '.json', content: json }); else localStorage.setItem('werkbank.' + name, json);
+}
 export function stateSave(name: string, value: unknown, delay = 300) {
   clearTimeout(saveTimers.get(name));
   saveTimers.set(name, setTimeout(async () => {

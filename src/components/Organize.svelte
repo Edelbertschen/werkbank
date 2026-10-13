@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import type { Doc } from '../lib/doc.svelte';
   import Thumb from './Thumb.svelte';
   import Sortable from 'sortablejs';
@@ -42,7 +43,7 @@
         const rest = [...Array(n).keys()].filter(i => !moving.includes(i));
         const target = ev.newIndex > ev.oldIndex ? ev.newIndex - moving.length + 1 : ev.newIndex;
         rest.splice(Math.max(0, Math.min(rest.length, target)), 0, ...moving);
-        const r = await withBusy('Seiten werden verschoben', () => movePages(ctx(), rest));
+        const r = await withBusy(L("Seiten werden verschoben"), () => movePages(ctx(), rest));
         await applyResult(r);
       },
     });
@@ -58,22 +59,22 @@
     const s = [...doc.selection].sort((a, b) => a - b);
     const rest = [...Array(doc.numPages).keys()].filter(i => !s.includes(i));
     const order = where === 'start' ? [...s, ...rest] : [...rest, ...s];
-    await applyResult(await withBusy('Seiten werden verschoben', () => movePages(ctx(), order)));
+    await applyResult(await withBusy(L("Seiten werden verschoben"), () => movePages(ctx(), order)));
   }
   function ctxMenu(e: MouseEvent, i: number) {
     if (!doc.selection.includes(i)) doc.selection = [i];
     const n = doc.selection.length;
     showMenu(e, [
-      { label: 'Öffnen', icon: I.BookOpen, run: () => open(i) },
+      { label: L("Öffnen"), icon: I.BookOpen, run: () => open(i) },
       { sep: true, label: '' },
-      { label: 'Nach links drehen', icon: I.RotateCcw, run: () => runTool(tool('rotate-left')) },
-      { label: 'Nach rechts drehen', icon: I.RotateCw, run: () => runTool(tool('rotate-right')) },
-      { label: 'An den Anfang', icon: I.ChevronUp, run: () => moveTo('start') },
-      { label: 'Ans Ende', icon: I.ChevronDown, run: () => moveTo('end') },
-      { label: 'Duplizieren', icon: I.Copy, run: () => runTool(tool('duplicate'), { pages: { mode: 'sel', range: '' }, times: 1 }) },
-      { label: 'Extrahieren', icon: I.FileOutput, run: () => runTool(tool('extract'), { pages: { mode: 'sel', range: '' }, each: false, remove: false }) },
+      { label: L("Nach links drehen"), icon: I.RotateCcw, run: () => runTool(tool('rotate-left')) },
+      { label: L("Nach rechts drehen"), icon: I.RotateCw, run: () => runTool(tool('rotate-right')) },
+      { label: L("An den Anfang"), icon: I.ChevronUp, run: () => moveTo('start') },
+      { label: L("Ans Ende"), icon: I.ChevronDown, run: () => moveTo('end') },
+      { label: L("Duplizieren"), icon: I.Copy, run: () => runTool(tool('duplicate'), { pages: { mode: 'sel', range: '' }, times: 1 }) },
+      { label: L("Extrahieren"), icon: I.FileOutput, run: () => runTool(tool('extract'), { pages: { mode: 'sel', range: '' }, each: false, remove: false }) },
       { sep: true, label: '' },
-      { label: n > 1 ? `${n} Seiten löschen` : 'Löschen', icon: I.Trash2, danger: true, disabled: n >= doc.numPages, run: () => runTool(tool('delete-pages')) },
+      { label: n > 1 ? L("{0} Seiten löschen", n) : L("Löschen"), icon: I.Trash2, danger: true, disabled: n >= doc.numPages, run: () => runTool(tool('delete-pages')) },
     ]);
   }
 </script>
@@ -82,28 +83,28 @@
 
 <div class="org">
   <div class="bar">
-    <span class="info num">{sel.length ? `${sel.length} von ${doc.numPages} ausgewählt` : `${doc.numPages} Seiten`}</span>
+    <span class="info num">{sel.length ? L("{0} von {1} ausgewählt", sel.length, doc.numPages) : L("{0} Seiten", doc.numPages)}</span>
     <div class="grp">
-      <button class="btn sm" onclick={() => (doc.selection = [...Array(doc.numPages).keys()])}>Alle</button>
-      <button class="btn sm" onclick={() => (doc.selection = [...Array(doc.numPages).keys()].filter(i => i % 2 === 0))}>Ungerade</button>
-      <button class="btn sm" onclick={() => (doc.selection = [...Array(doc.numPages).keys()].filter(i => i % 2 === 1))}>Gerade</button>
-      <button class="btn sm" disabled={!sel.length} onclick={() => (doc.selection = [])}>Keine</button>
+      <button class="btn sm" onclick={() => (doc.selection = [...Array(doc.numPages).keys()])}>{L("Alle")}</button>
+      <button class="btn sm" onclick={() => (doc.selection = [...Array(doc.numPages).keys()].filter(i => i % 2 === 0))}>{L("Ungerade")}</button>
+      <button class="btn sm" onclick={() => (doc.selection = [...Array(doc.numPages).keys()].filter(i => i % 2 === 1))}>{L("Gerade")}</button>
+      <button class="btn sm" disabled={!sel.length} onclick={() => (doc.selection = [])}>{L("Keine")}</button>
     </div>
     <span class="sep"></span>
     <div class="grp">
-      <button class="btn sm icon" title="Nach links drehen" aria-label="Nach links drehen" disabled={!sel.length} onclick={() => runTool(tool('rotate-left'))}><I.RotateCcw size={14} /></button>
-      <button class="btn sm icon" title="Nach rechts drehen" aria-label="Nach rechts drehen" disabled={!sel.length} onclick={() => runTool(tool('rotate-right'))}><I.RotateCw size={14} /></button>
-      <button class="btn sm" disabled={!sel.length} onclick={() => runTool(tool('duplicate'), { pages: { mode: 'sel', range: '' }, times: 1 })}><I.Copy size={13} />Duplizieren</button>
-      <button class="btn sm" disabled={!sel.length} onclick={() => runTool(tool('extract'), { pages: { mode: 'sel', range: '' }, each: false, remove: false })}><I.FileOutput size={13} />Extrahieren</button>
-      <button class="btn sm" onclick={() => runTool(tool('insert-blank'), { where: 'after', count: 1, size: 'same' })}><I.FilePlus2 size={13} />Leere Seite</button>
-      <button class="btn sm" onclick={() => openTool('insert-file')}><I.FileUp size={13} />Einfügen</button>
-      <button class="btn sm danger" disabled={!sel.length || sel.length >= doc.numPages} onclick={() => runTool(tool('delete-pages'))}><I.Trash2 size={13} />Löschen</button>
+      <button class="btn sm icon" title={L("Nach links drehen")} aria-label={L("Nach links drehen")} disabled={!sel.length} onclick={() => runTool(tool('rotate-left'))}><I.RotateCcw size={14} /></button>
+      <button class="btn sm icon" title={L("Nach rechts drehen")} aria-label={L("Nach rechts drehen")} disabled={!sel.length} onclick={() => runTool(tool('rotate-right'))}><I.RotateCw size={14} /></button>
+      <button class="btn sm" disabled={!sel.length} onclick={() => runTool(tool('duplicate'), { pages: { mode: 'sel', range: '' }, times: 1 })}><I.Copy size={13} />{L("Duplizieren")}</button>
+      <button class="btn sm" disabled={!sel.length} onclick={() => runTool(tool('extract'), { pages: { mode: 'sel', range: '' }, each: false, remove: false })}><I.FileOutput size={13} />{L("Extrahieren")}</button>
+      <button class="btn sm" onclick={() => runTool(tool('insert-blank'), { where: 'after', count: 1, size: 'same' })}><I.FilePlus2 size={13} />{L("Leere Seite")}</button>
+      <button class="btn sm" onclick={() => openTool('insert-file')}><I.FileUp size={13} />{L("Einfügen")}</button>
+      <button class="btn sm danger" disabled={!sel.length || sel.length >= doc.numPages} onclick={() => runTool(tool('delete-pages'))}><I.Trash2 size={13} />{L("Löschen")}</button>
     </div>
     <span class="grow"></span>
-    <label class="zoom" title="Vorschaugröße"><I.ZoomOut size={13} /><input type="range" min="100" max="320" bind:value={size} aria-label="Vorschaugröße" /><I.ZoomIn size={13} /></label>
-    <button class="btn sm primary" onclick={() => (app.organize = false)}>Fertig</button>
+    <label class="zoom" title={L("Vorschaugröße")}><I.ZoomOut size={13} /><input type="range" min="100" max="320" bind:value={size} aria-label={L("Vorschaugröße")} /><I.ZoomIn size={13} /></label>
+    <button class="btn sm primary" onclick={() => (app.organize = false)}>{L("Fertig")}</button>
   </div>
-  <div class="grid scroll" bind:this={grid} style:--size={size + 'px'} role="listbox" aria-multiselectable="true" aria-label="Seiten">
+  <div class="grid scroll" bind:this={grid} style:--size={size + 'px'} role="listbox" aria-multiselectable="true" aria-label={L("Seiten")}>
     {#each doc.pages as p, i (doc.rev + ':' + i)}
       <div class="cell" class:sel={sel.includes(i)} role="option" aria-selected={sel.includes(i)} tabindex="-1"
         onclick={e => select(i, e)} ondblclick={() => open(i)} oncontextmenu={e => ctxMenu(e, i)} onkeydown={() => {}}>
@@ -112,7 +113,7 @@
       </div>
     {/each}
   </div>
-  <p class="hint">Ziehen zum Umsortieren · {navigator.platform.includes('Mac') ? '⌘' : 'Strg'}-Klick oder Umschalt-Klick wählt mehrere · Doppelklick öffnet · Entf löscht</p>
+  <p class="hint">{L("Ziehen zum Umsortieren · {0}-Klick oder Umschalt-Klick wählt mehrere · Doppelklick öffnet · Entf löscht", navigator.platform.includes('Mac') ? '⌘' : L("Strg"))}</p>
 </div>
 
 <style>

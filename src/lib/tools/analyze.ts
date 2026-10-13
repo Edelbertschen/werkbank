@@ -11,13 +11,14 @@ import FontsPanel from '../../components/panels/FontsPanel.svelte';
 import BatchPanel from '../../components/panels/BatchPanel.svelte';
 import ComparePanel from '../../components/panels/ComparePanel.svelte';
 
+import { L } from '../i18n';
 export const analyzeTools: Tool[] = [
-  { id: 'compare', label: 'Dokumente vergleichen', short: 'Vergleichen', icon: I.GitCompare, desc: 'Zwei Fassungen nebeneinander, als Differenzbild oder als Textvergleich mit markierten Änderungen.', keys: 'unterschied diff version vergleich änderungen', panel: ComparePanel },
-  { id: 'info', label: 'Eigenschaften', short: 'Eigenschaften', icon: I.Info, desc: 'Datei, PDF-Version, Seitenformate, Schutz, Formulare, Anhänge und Statistik.', keys: 'details version info statistik wörter', panel: InfoPanel },
-  { id: 'fonts', label: 'Schriften', icon: I.Type, desc: 'Alle verwendeten Schriften mit Typ und Einbettung – wichtig für Druck und PDF/A.', keys: 'fonts eingebettet', panel: FontsPanel, engine: 'pymupdf' },
+  { id: 'compare', label: L("Dokumente vergleichen"), short: L("Vergleichen"), icon: I.GitCompare, desc: L("Zwei Fassungen nebeneinander, als Differenzbild oder als Textvergleich mit markierten Änderungen."), keys: L("unterschied diff version vergleich änderungen"), panel: ComparePanel },
+  { id: 'info', label: L("Eigenschaften"), short: L("Eigenschaften"), icon: I.Info, desc: L("Datei, PDF-Version, Seitenformate, Schutz, Formulare, Anhänge und Statistik."), keys: L("details version info statistik wörter"), panel: InfoPanel },
+  { id: 'fonts', label: L("Schriften"), icon: I.Type, desc: L("Alle verwendeten Schriften mit Typ und Einbettung – wichtig für Druck und PDF/A."), keys: L("fonts eingebettet"), panel: FontsPanel, engine: 'pymupdf' },
   {
-    id: 'extract-images', label: 'Bilder extrahieren', short: 'Bilder', icon: I.Images, engine: 'pymupdf', desc: 'Alle eingebetteten Bilder in Originalqualität speichern.', keys: 'fotos grafiken herausholen',
-    fields: [{ key: 'min', type: 'number', label: 'Kleinste Kantenlänge (Pixel)', def: 48, min: 1, max: 2000, hint: 'Kleinere Bilder (Linien, Symbole) überspringen.' }, PAGES('all')], action: 'Extrahieren',
+    id: 'extract-images', label: L("Bilder extrahieren"), short: L("Bilder"), icon: I.Images, engine: 'pymupdf', desc: L("Alle eingebetteten Bilder in Originalqualität speichern."), keys: L("fotos grafiken herausholen"),
+    fields: [{ key: 'min', type: 'number', label: L("Kleinste Kantenlänge (Pixel)"), def: 48, min: 1, max: 2000, hint: L("Kleinere Bilder (Linien, Symbole) überspringen.") }, PAGES('all')], action: L("Extrahieren"),
     run: async (v, ctx) => {
       const r = await pyRun<any[]>(`
 doc = open_in()
@@ -37,33 +38,33 @@ for pno in json.loads(ARGS['pages']):
         with open('/w/' + name, 'wb') as f: f.write(d['image'])
         out.append(name)
 out`, { files: { 'in.pdf': ctx.bytes }, vars: { pages: JSON.stringify(pagesOf(v.pages, ctx)), min: v.min } });
-      if (!r.result.length) return { message: 'Keine Bilder gefunden.' };
+      if (!r.result.length) return { message: L("Keine Bilder gefunden.") };
       const files = await pyRun(`0`, { outputs: r.result });
-      return { files: r.result.map((n: string) => ({ name: `${baseName(ctx.doc!.name)} – ${n}`, data: files.files[n] })).filter((f: any) => f.data), zipName: outName(ctx, 'Bilder', 'zip') };
+      return { files: r.result.map((n: string) => ({ name: `${baseName(ctx.doc!.name)} – ${n}`, data: files.files[n] })).filter((f: any) => f.data), zipName: outName(ctx, L("Bilder"), 'zip') };
     },
   },
   {
-    id: 'extract-tables', label: 'Tabellen extrahieren', short: 'Tabellen', icon: I.Table, engine: 'pymupdf', desc: 'Erkannte Tabellen als Excel-Datei (eine Tabelle je Blatt) oder CSV.', keys: 'tabelle excel csv daten',
-    fields: [{ key: 'fmt', type: 'seg', label: 'Format', opts: [['xlsx', 'Excel'], ['csv', 'CSV']], def: 'xlsx' }, PAGES('all')], action: 'Extrahieren',
+    id: 'extract-tables', label: L("Tabellen extrahieren"), short: L("Tabellen"), icon: I.Table, engine: 'pymupdf', desc: L("Erkannte Tabellen als Excel-Datei (eine Tabelle je Blatt) oder CSV."), keys: L("tabelle excel csv daten"),
+    fields: [{ key: 'fmt', type: 'seg', label: L("Format"), opts: [['xlsx', 'Excel'], ['csv', 'CSV']], def: 'xlsx' }, PAGES('all')], action: L("Extrahieren"),
     run: async (v, ctx) => {
       const r = await pyRun<{ page: number; rows: (string | null)[][] }[]>(PY_TABLES, { files: { 'in.pdf': ctx.bytes }, vars: { pages: JSON.stringify(pagesOf(v.pages, ctx)) }, progress: ctx.progress });
-      if (!r.result.length) return { message: 'Keine Tabellen erkannt.' };
+      if (!r.result.length) return { message: L("Keine Tabellen erkannt.") };
       const XLSX: any = await import('xlsx');
-      if (v.fmt === 'csv') return { files: r.result.map((t, k) => ({ name: outName(ctx, `Tabelle ${k + 1} (S${t.page + 1})`, 'csv'), data: new Blob(['﻿' + XLSX.utils.sheet_to_csv(XLSX.utils.aoa_to_sheet(t.rows), { FS: ';' })], { type: 'text/csv' }) })), zipName: outName(ctx, 'Tabellen', 'zip') };
+      if (v.fmt === 'csv') return { files: r.result.map((t, k) => ({ name: outName(ctx, L("Tabelle {0} (S{1})", k + 1, t.page + 1), 'csv'), data: new Blob(['﻿' + XLSX.utils.sheet_to_csv(XLSX.utils.aoa_to_sheet(t.rows), { FS: ';' })], { type: 'text/csv' }) })), zipName: outName(ctx, L("Tabellen"), 'zip') };
       const wb = XLSX.utils.book_new();
-      r.result.forEach((t, k) => XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(t.rows.map(row => row.map(c => c ?? ''))), `Tabelle ${k + 1} (S${t.page + 1})`.slice(0, 31)));
-      return { files: [{ name: outName(ctx, 'Tabellen', 'xlsx'), data: new Uint8Array(XLSX.write(wb, { type: 'array', bookType: 'xlsx' })) }], message: `${r.result.length} Tabelle(n) gefunden` };
+      r.result.forEach((t, k) => XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(t.rows.map(row => row.map(c => c ?? ''))), L("Tabelle {0} (S{1})", k + 1, t.page + 1).slice(0, 31)));
+      return { files: [{ name: outName(ctx, L("Tabellen"), 'xlsx'), data: new Uint8Array(XLSX.write(wb, { type: 'array', bookType: 'xlsx' })) }], message: L("{0} Tabelle(n) gefunden", r.result.length) };
     },
   },
   {
-    id: 'ai-prep', label: 'Für KI aufbereiten', short: 'Für KI', icon: I.Bot, engine: 'pymupdf', desc: 'Sauberes Markdown und Textabschnitte mit Seitenangaben – zum Einfügen in ChatGPT, Claude oder eigene Suchsysteme.', keys: 'ki llm rag chunks claude chatgpt markdown',
-    fields: [{ key: 'fmt', type: 'seg', label: 'Ausgabe', opts: [['md', 'Markdown'], ['chunks', 'Abschnitte (JSON)'], ['both', 'Beides']], def: 'md' }], action: 'Aufbereiten',
+    id: 'ai-prep', label: L("Für KI aufbereiten"), short: L("Für KI"), icon: I.Bot, engine: 'pymupdf', desc: L("Sauberes Markdown und Textabschnitte mit Seitenangaben – zum Einfügen in ChatGPT, Claude oder eigene Suchsysteme."), keys: L("ki llm rag chunks claude chatgpt markdown"),
+    fields: [{ key: 'fmt', type: 'seg', label: L("Ausgabe"), opts: [['md', 'Markdown'], ['chunks', L("Abschnitte (JSON)")], ['both', L("Beides")]], def: 'md' }], action: L("Aufbereiten"),
     run: async (v, ctx) => {
       const files: OutFile[] = [];
-      if (v.fmt !== 'chunks') files.push({ name: outName(ctx, 'für KI', 'md'), data: new Blob([await py<string>('pdfToMarkdown', ctx.bytes, { pageBreaks: true })], { type: 'text/markdown' }) });
-      if (v.fmt !== 'md') files.push({ name: outName(ctx, 'Abschnitte', 'json'), data: new Blob([JSON.stringify(await py<any[]>('pdfToLlmChunks', ctx.bytes), null, 1)], { type: 'application/json' }) });
+      if (v.fmt !== 'chunks') files.push({ name: outName(ctx, L("für KI"), 'md'), data: new Blob([await py<string>('pdfToMarkdown', ctx.bytes, { pageBreaks: true })], { type: 'text/markdown' }) });
+      if (v.fmt !== 'md') files.push({ name: outName(ctx, L("Abschnitte"), 'json'), data: new Blob([JSON.stringify(await py<any[]>('pdfToLlmChunks', ctx.bytes), null, 1)], { type: 'application/json' }) });
       return { files };
     },
   },
-  { id: 'batch', label: 'Stapelverarbeitung', short: 'Stapel', icon: I.Workflow, noDoc: true, desc: 'Ein Werkzeug auf viele Dateien auf einmal anwenden – z. B. 200 Scans mit Texterkennung versehen und komprimieren.', keys: 'stapel batch viele dateien automatisch ordner', panel: BatchPanel },
+  { id: 'batch', label: L("Stapelverarbeitung"), short: L("Stapel"), icon: I.Workflow, noDoc: true, desc: L("Ein Werkzeug auf viele Dateien auf einmal anwenden – z. B. 200 Scans mit Texterkennung versehen und komprimieren."), keys: L("stapel batch viele dateien automatisch ordner"), panel: BatchPanel },
 ];

@@ -5,7 +5,10 @@ import type { Tool } from './tools/types';
 
 const STOP = new Set(['wie', 'kann', 'ich', 'will', 'mochte', 'die', 'der', 'das', 'den', 'dem', 'des', 'ein', 'eine', 'einen', 'einem', 'und', 'oder',
   'mit', 'als', 'zu', 'zum', 'zur', 'in', 'im', 'ins', 'auf', 'aus', 'von', 'fur', 'mein', 'meine', 'meinen', 'pdf', 'pdfs', 'datei', 'dateien',
-  'dokument', 'dokumente', 'machen', 'mache', 'bitte', 'hier', 'alle', 'etwas', 'was', 'wo', 'man', 'eine', 'es', 'sie', 'neu', 'neue', 'neues']);
+  'dokument', 'dokumente', 'machen', 'mache', 'bitte', 'hier', 'alle', 'etwas', 'was', 'wo', 'man', 'eine', 'es', 'sie', 'neu', 'neue', 'neues',
+  // Englisch
+  'how', 'can', 'want', 'would', 'like', 'the', 'an', 'and', 'or', 'with', 'as', 'to', 'into', 'on', 'from', 'of', 'for', 'my', 'file', 'files',
+  'document', 'documents', 'make', 'please', 'all', 'some', 'what', 'where', 'it', 'this', 'new', 'do']);
 
 // Häufigste Befehle zuerst, wenn noch nichts eingegeben ist
 const POPULAR = ['open', 'save', 'merge', 'compress', 'to-word', 'ocr', 'sign', 'redact', 'protect', 'rotate-right', 'delete-pages', 'split', 'page-numbers', 'organize', 'find', 'text-edit', 'to-pdfa', 'create-office'];

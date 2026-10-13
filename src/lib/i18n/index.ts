@@ -31,3 +31,10 @@ export function L(source: string, ...args: unknown[]): string {
 
 /** Für Tests und das Extraktionsskript: alle bekannten Übersetzungen */
 export const dictionary = () => dict;
+
+/** Gebietsschema für Datums- und Zahlenformate passend zur Oberflächensprache */
+export function intlLocale(): string {
+  if (current === 'de') return 'de-DE';
+  const sys = typeof navigator !== 'undefined' ? navigator.language : '';
+  return /^en\b/i.test(sys) ? sys : 'en-GB';
+}

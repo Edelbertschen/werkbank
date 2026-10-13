@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { app, active, savePrefs } from '../lib/app.svelte';
   import { viewer } from '../lib/viewer.svelte';
   import { engineState, ENGINE_LABEL, type EngineName } from '../lib/engines/state.svelte';
@@ -19,37 +20,37 @@
 <footer class="status">
   {#if doc}
     <div class="seg-left">
-      <button class="nb" aria-label="Vorherige Seite" disabled={doc.current <= 1} onclick={() => viewer.prev()}><I.ChevronLeft size={13} /></button>
+      <button class="nb" aria-label={L("Vorherige Seite")} disabled={doc.current <= 1} onclick={() => viewer.prev()}><I.ChevronLeft size={13} /></button>
       {#if editing}
         <!-- svelte-ignore a11y_autofocus -->
-        <input class="pg num" bind:value={pageInput} autofocus onblur={commitPage} onkeydown={e => { if (e.key === 'Enter') commitPage(); if (e.key === 'Escape') editing = false; }} aria-label="Seite" />
+        <input class="pg num" bind:value={pageInput} autofocus onblur={commitPage} onkeydown={e => { if (e.key === 'Enter') commitPage(); if (e.key === 'Escape') editing = false; }} aria-label={L("Seite")} />
       {:else}
-        <button class="pgb num" onclick={() => { pageInput = String(doc.current); editing = true; }} title="Zu Seite springen">Seite {doc.current} von {doc.numPages}</button>
+        <button class="pgb num" onclick={() => { pageInput = String(doc.current); editing = true; }} title={L("Zu Seite springen")}>{L("Seite {0} von {1}", doc.current, doc.numPages)}</button>
       {/if}
-      <button class="nb" aria-label="Nächste Seite" disabled={doc.current >= doc.numPages} onclick={() => viewer.next()}><I.ChevronRight size={13} /></button>
+      <button class="nb" aria-label={L("Nächste Seite")} disabled={doc.current >= doc.numPages} onclick={() => viewer.next()}><I.ChevronRight size={13} /></button>
       {#if pinfo}<span class="dim num">{paperName(pinfo.w, pinfo.h) || ''} {mm(pinfo.w)} × {mm(pinfo.h)} mm</span>{/if}
-      {#if doc.selection.length > 1}<span class="dim">{doc.selection.length} Seiten ausgewählt</span>{/if}
+      {#if doc.selection.length > 1}<span class="dim">{L("{0} Seiten ausgewählt", doc.selection.length)}</span>{/if}
     </div>
   {/if}
   <div class="mid">
-    {#if loading.length}<span class="eng"><span class="spin"></span>{loading.join(', ')} wird geladen …</span>
+    {#if loading.length}<span class="eng"><span class="spin"></span>{L("{0} wird geladen …", loading.join(', '))}</span>
     {:else if doc}
       <span class="dim num">{fmtSize(doc.bytes.length)}</span>
-      {#if doc.protection}<span class="badge"><I.Lock size={11} />Geschützt beim Speichern</span>{/if}
-      {#if doc.dirty}<span class="badge warm">Nicht gespeichert</span>{:else if doc.path}<span class="dim">Gespeichert</span>{/if}
+      {#if doc.protection}<span class="badge"><I.Lock size={11} />{L("Geschützt beim Speichern")}</span>{/if}
+      {#if doc.dirty}<span class="badge warm">{L("Nicht gespeichert")}</span>{:else if doc.path}<span class="dim">{L("Gespeichert")}</span>{/if}
     {/if}
   </div>
   {#if doc}
     <div class="right">
-      <div class="views" role="group" aria-label="Seitenansicht">
-        <button title="Fortlaufend" aria-label="Fortlaufend" class:on={app.prefs.scroll === 0 && app.prefs.spread === 0} onclick={() => layout(0, 0)}><I.Rows3 size={13} /></button>
-        <button title="Einzelseite" aria-label="Einzelseite" class:on={app.prefs.scroll === 3} onclick={() => layout(3, 0)}><I.FileText size={13} /></button>
-        <button title="Doppelseite" aria-label="Doppelseite" class:on={app.prefs.spread > 0 && app.prefs.scroll !== 1} onclick={() => layout(0, 1)}><I.BookOpen size={13} /></button>
-        <button title="Seiten organisieren" aria-label="Seiten organisieren" class:on={app.organize} onclick={() => (app.organize = !app.organize)}><I.LayoutGrid size={13} /></button>
+      <div class="views" role="group" aria-label={L("Seitenansicht")}>
+        <button title={L("Fortlaufend")} aria-label={L("Fortlaufend")} class:on={app.prefs.scroll === 0 && app.prefs.spread === 0} onclick={() => layout(0, 0)}><I.Rows3 size={13} /></button>
+        <button title={L("Einzelseite")} aria-label={L("Einzelseite")} class:on={app.prefs.scroll === 3} onclick={() => layout(3, 0)}><I.FileText size={13} /></button>
+        <button title={L("Doppelseite")} aria-label={L("Doppelseite")} class:on={app.prefs.spread > 0 && app.prefs.scroll !== 1} onclick={() => layout(0, 1)}><I.BookOpen size={13} /></button>
+        <button title={L("Seiten organisieren")} aria-label={L("Seiten organisieren")} class:on={app.organize} onclick={() => (app.organize = !app.organize)}><I.LayoutGrid size={13} /></button>
       </div>
-      <button class="nb" aria-label="Verkleinern" onclick={() => viewer.zoomBy(1 / 1.15)}><I.Minus size={12} /></button>
+      <button class="nb" aria-label={L("Verkleinern")} onclick={() => viewer.zoomBy(1 / 1.15)}><I.Minus size={12} /></button>
       <input class="zs" type="range" min="10" max="400" value={zoomPct} oninput={e => viewer.setScale(+(e.target as HTMLInputElement).value / 100)} aria-label="Zoom" />
-      <button class="nb" aria-label="Vergrößern" onclick={() => viewer.zoomBy(1.15)}><I.Plus size={12} /></button>
+      <button class="nb" aria-label={L("Vergrößern")} onclick={() => viewer.zoomBy(1.15)}><I.Plus size={12} /></button>
       <span class="zp num">{zoomPct} %</span>
     </div>
   {/if}

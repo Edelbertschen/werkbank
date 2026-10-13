@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { app, active, saveRecent } from '../lib/app.svelte';
   import { openPaths, openDialog, newBlankDoc } from '../lib/actions';
   import { openTool } from '../lib/ui.svelte';
@@ -26,10 +27,10 @@
   }
   function ctx(e: MouseEvent, path: string) {
     showMenu(e, [
-      { label: 'Öffnen', icon: I.FolderOpen, run: () => openRecent(path) },
-      { label: 'Im Ordner zeigen', icon: I.FolderOpen, disabled: !isTauri, run: () => revealInFolder(path) },
+      { label: L("Öffnen"), icon: I.FolderOpen, run: () => openRecent(path) },
+      { label: L("Im Ordner zeigen"), icon: I.FolderOpen, disabled: !isTauri, run: () => revealInFolder(path) },
       { sep: true, label: '' },
-      { label: 'Aus der Liste entfernen', icon: I.X, run: () => { app.recent = app.recent.filter(r => r.path !== path); saveRecent(); } },
+      { label: L("Aus der Liste entfernen"), icon: I.X, run: () => { app.recent = app.recent.filter(r => r.path !== path); saveRecent(); } },
     ]);
   }
   const dirOf = (p: string) => p.replace(/[\\/][^\\/]*$/, '').replace(/^\/(Users|home)\/[^/]+/, '~');
@@ -41,28 +42,28 @@
       <img src="/icon.png" alt="" />
       <div>
         <h1>Werkbank</h1>
-        <p>PDFs lesen, bearbeiten, umwandeln und schützen – alles auf diesem Rechner.</p>
+        <p>{L("PDFs lesen, bearbeiten, umwandeln und schützen – alles auf diesem Rechner.")}</p>
       </div>
-      {#if doc}<button class="btn" onclick={() => (app.backstage = false)}>Zurück zum Dokument<I.ChevronRight size={14} /></button>{/if}
+      {#if doc}<button class="btn" onclick={() => (app.backstage = false)}>{L("Zurück zum Dokument")}<I.ChevronRight size={14} /></button>{/if}
     </header>
 
     <section class="actions">
       <button class="primary-tile" onclick={() => openDialog()}>
         <span class="pi"><I.FolderOpen size={22} strokeWidth={1.6} /></span>
-        <span><b>Datei öffnen</b><small>PDF, Word, Excel, PowerPoint, Bilder, E-Books, Mails – oder einfach ins Fenster ziehen</small></span>
+        <span><b>{L("Datei öffnen")}</b><small>{L("PDF, Word, Excel, PowerPoint, Bilder, E-Books, Mails – oder einfach ins Fenster ziehen")}</small></span>
       </button>
       <div class="mini">
-        <button onclick={() => newBlankDoc()}><I.FilePlus2 size={16} />Neues Dokument</button>
-        <button onclick={() => startTask('merge')}><I.Combine size={16} />Dateien zusammenführen</button>
-        <button onclick={() => startTask('create-office')}><I.FileText size={16} />Office in PDF</button>
-        <button onclick={() => startTask('create-images')}><I.Images size={16} />Bilder in PDF</button>
-        <button onclick={() => startTask('batch')}><I.Workflow size={16} />Stapelverarbeitung</button>
-        <button onclick={() => startTask('compare')}><I.GitCompare size={16} />Vergleichen</button>
+        <button onclick={() => newBlankDoc()}><I.FilePlus2 size={16} />{L("Neues Dokument")}</button>
+        <button onclick={() => startTask('merge')}><I.Combine size={16} />{L("Dateien zusammenführen")}</button>
+        <button onclick={() => startTask('create-office')}><I.FileText size={16} />{L("Office in PDF")}</button>
+        <button onclick={() => startTask('create-images')}><I.Images size={16} />{L("Bilder in PDF")}</button>
+        <button onclick={() => startTask('batch')}><I.Workflow size={16} />{L("Stapelverarbeitung")}</button>
+        <button onclick={() => startTask('compare')}><I.GitCompare size={16} />{L("Vergleichen")}</button>
       </div>
     </section>
 
     <section>
-      <h2>Häufige Aufgaben</h2>
+      <h2>{L("Häufige Aufgaben")}</h2>
       <div class="tasks">
         {#each tasks as id (id)}
           {@const t = tool(id)}
@@ -77,11 +78,11 @@
 
     <section>
       <div class="rhead">
-        <h2>Zuletzt geöffnet</h2>
-        {#if app.recent.length > 6}<input class="input sm" type="search" placeholder="Filtern" bind:value={filter} />{/if}
+        <h2>{L("Zuletzt geöffnet")}</h2>
+        {#if app.recent.length > 6}<input class="input sm" type="search" placeholder={L("Filtern")} bind:value={filter} />{/if}
       </div>
       {#if !recent.length}
-        <p class="empty">{app.recent.length ? 'Keine Treffer.' : 'Hier erscheinen deine zuletzt geöffneten Dokumente.'}</p>
+        <p class="empty">{app.recent.length ? L("Keine Treffer.") : L("Hier erscheinen deine zuletzt geöffneten Dokumente.")}</p>
       {:else}
         <div class="recent">
           {#each recent.slice(0, 18) as r (r.path)}

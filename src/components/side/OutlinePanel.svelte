@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../../lib/i18n';
   import type { Doc } from '../../lib/doc.svelte';
   import { viewer } from '../../lib/viewer.svelte';
   import { pyRun } from '../../lib/engines';
@@ -22,7 +23,7 @@
       for (const it of items || []) {
         let page = 1;
         try { let d = it.dest; if (typeof d === 'string') d = await pdf.getDestination(d); if (d) page = (typeof d[0] === 'object' ? await pdf.getPageIndex(d[0]) : d[0]) + 1; } catch { /* ohne Ziel */ }
-        out.push({ level: lvl, title: it.title || '(ohne Titel)', page, open: lvl < 2 });
+        out.push({ level: lvl, title: it.title || L("(ohne Titel)"), page, open: lvl < 2 });
         if (it.items?.length) await walk(it.items, lvl + 1);
       }
     };
@@ -46,7 +47,7 @@
 
   function add() {
     const at = entries.length;
-    entries.push({ level: 1, title: `Seite ${doc.current}`, page: doc.current, open: true });
+    entries.push({ level: 1, title: L("Seite {0}", doc.current), page: doc.current, open: true });
     dirty = true; editing = at;
   }
   function move(i: number, d: -1 | 1) {
@@ -64,11 +65,11 @@
   }
   async function apply() {
     const toc = normalize();
-    const r = await withBusy('Lesezeichen werden gespeichert', () => pyRun(`doc = open_in()\ndoc.set_toc(json.loads(ARGS['toc']))\nsave_out(doc)`, { files: { 'in.pdf': doc.bytes }, outputs: ['out.pdf'], vars: { toc: JSON.stringify(toc) } }));
-    await applyResult({ bytes: r.files['out.pdf'], label: 'Lesezeichen geändert' });
+    const r = await withBusy(L("Lesezeichen werden gespeichert"), () => pyRun(`doc = open_in()\ndoc.set_toc(json.loads(ARGS['toc']))\nsave_out(doc)`, { files: { 'in.pdf': doc.bytes }, outputs: ['out.pdf'], vars: { toc: JSON.stringify(toc) } }));
+    await applyResult({ bytes: r.files['out.pdf'], label: L("Lesezeichen geändert") });
   }
   async function fromHeadings() {
-    const r = await withBusy('Überschriften werden gesucht', () => pyRun<any[]>(`
+    const r = await withBusy(L("Überschriften werden gesucht"), () => pyRun<any[]>(`
 doc = open_in()
 sizes = {}
 for page in doc:
@@ -88,36 +89,36 @@ for page in doc:
             if sz in levels and 2 < len(txt) < 120:
                 out.append([levels.index(sz) + 1, txt, page.number + 1])
 out`, { files: { 'in.pdf': doc.bytes } }));
-    if (!r.result.length) { toast('Keine Überschriften erkannt'); return; }
+    if (!r.result.length) { toast(L("Keine Überschriften erkannt")); return; }
     entries = r.result.map(([level, title, page]: any) => ({ level, title, page, open: true })); dirty = true;
-    toast(`${r.result.length} Lesezeichen aus Überschriften vorgeschlagen – prüfen und übernehmen`);
+    toast(L("{0} Lesezeichen aus Überschriften vorgeschlagen – prüfen und übernehmen", r.result.length));
   }
   function ctx(e: MouseEvent, i: number) {
     showMenu(e, [
-      { label: 'Umbenennen', icon: I.Type, run: () => (editing = i) },
-      { label: 'Auf aktuelle Seite setzen', icon: I.Pin, run: () => { entries[i].page = doc.current; dirty = true; } },
-      { label: 'Nach oben', icon: I.ChevronUp, run: () => move(i, -1) },
-      { label: 'Nach unten', icon: I.ChevronDown, run: () => move(i, 1) },
-      { label: 'Einrücken', icon: I.ChevronRight, run: () => indent(i, 1) },
-      { label: 'Ausrücken', icon: I.ChevronLeft, run: () => indent(i, -1) },
+      { label: L("Umbenennen"), icon: I.Type, run: () => (editing = i) },
+      { label: L("Auf aktuelle Seite setzen"), icon: I.Pin, run: () => { entries[i].page = doc.current; dirty = true; } },
+      { label: L("Nach oben"), icon: I.ChevronUp, run: () => move(i, -1) },
+      { label: L("Nach unten"), icon: I.ChevronDown, run: () => move(i, 1) },
+      { label: L("Einrücken"), icon: I.ChevronRight, run: () => indent(i, 1) },
+      { label: L("Ausrücken"), icon: I.ChevronLeft, run: () => indent(i, -1) },
       { sep: true, label: '' },
-      { label: 'Löschen', icon: I.Trash2, danger: true, run: () => remove(i) },
+      { label: L("Löschen"), icon: I.Trash2, danger: true, run: () => remove(i) },
     ]);
   }
 </script>
 
 <div class="bar">
-  <button class="btn sm" onclick={add} title="Lesezeichen für die aktuelle Seite"><I.Plus size={13} />Neu</button>
-  <button class="btn sm" onclick={fromHeadings} title="Aus Überschriften erzeugen"><I.WandSparkles size={13} />Automatisch</button>
+  <button class="btn sm" onclick={add} title={L("Lesezeichen für die aktuelle Seite")}><I.Plus size={13} />{L("Neu")}</button>
+  <button class="btn sm" onclick={fromHeadings} title={L("Aus Überschriften erzeugen")}><I.WandSparkles size={13} />{L("Automatisch")}</button>
 </div>
 <div class="tree scroll">
-  {#if loading}<p class="empty">Lädt …</p>
-  {:else if !entries.length}<p class="empty">Keine Lesezeichen. Lege eines für die aktuelle Seite an oder lass sie aus den Überschriften erzeugen.</p>
+  {#if loading}<p class="empty">{L("Lädt …")}</p>
+  {:else if !entries.length}<p class="empty">{L("Keine Lesezeichen. Lege eines für die aktuelle Seite an oder lass sie aus den Überschriften erzeugen.")}</p>
   {:else}
     {#each visible as i (i)}
       {@const e = entries[i]}
       <div class="row" style:padding-left={(e.level - 1) * 14 + 4 + 'px'} oncontextmenu={ev => ctx(ev, i)} role="treeitem" aria-level={e.level} aria-selected="false" tabindex="-1">
-        {#if hasKids(i)}<button class="tw" aria-label={e.open ? 'Zuklappen' : 'Aufklappen'} onclick={() => (e.open = !e.open)}>{#if e.open}<I.ChevronDown size={12} />{:else}<I.ChevronRight size={12} />{/if}</button>{:else}<span class="tw"></span>{/if}
+        {#if hasKids(i)}<button class="tw" aria-label={e.open ? L("Zuklappen") : L("Aufklappen")} onclick={() => (e.open = !e.open)}>{#if e.open}<I.ChevronDown size={12} />{:else}<I.ChevronRight size={12} />{/if}</button>{:else}<span class="tw"></span>{/if}
         {#if editing === i}
           <!-- svelte-ignore a11y_autofocus -->
           <input class="input" value={e.title} autofocus onblur={ev => { e.title = (ev.target as HTMLInputElement).value || e.title; editing = null; dirty = true; }} onkeydown={ev => { if (ev.key === 'Enter') (ev.target as HTMLInputElement).blur(); if (ev.key === 'Escape') editing = null; }} />
@@ -130,7 +131,7 @@ out`, { files: { 'in.pdf': doc.bytes } }));
   {/if}
 </div>
 {#if dirty}
-  <div class="apply"><span>Geänderte Lesezeichen</span><button class="btn sm" onclick={load}>Verwerfen</button><button class="btn sm primary" onclick={apply}>Übernehmen</button></div>
+  <div class="apply"><span>{L("Geänderte Lesezeichen")}</span><button class="btn sm" onclick={load}>{L("Verwerfen")}</button><button class="btn sm primary" onclick={apply}>{L("Übernehmen")}</button></div>
 {/if}
 
 <style>

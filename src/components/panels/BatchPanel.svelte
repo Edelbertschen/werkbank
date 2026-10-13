@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../../lib/i18n';
   import { app, toast } from '../../lib/app.svelte';
   import { TOOLS } from '../../lib/tools';
   import { defaults, type Field } from '../../lib/fields';
@@ -36,7 +37,7 @@
   const failed = $derived(items.filter(i => i.state === 'error').length);
 
   async function addFiles() {
-    const picked = await pickFiles({ multiple: true, filters: FILTERS.openable, title: 'Dateien für die Stapelverarbeitung' });
+    const picked = await pickFiles({ multiple: true, filters: FILTERS.openable, title: L("Dateien für die Stapelverarbeitung") });
     const known = new Set(items.map(i => i.file.path || i.file.name));
     for (const f of picked) if (!known.has(f.path || f.name)) items.push({ file: f, state: 'wait' });
   }
@@ -85,7 +86,7 @@
   async function start() {
     if (!items.length || !steps.length) return;
     let folder: string | null = null;
-    if (target === 'folder') { folder = await pickFolder('Zielordner wählen'); if (!folder) return; }
+    if (target === 'folder') { folder = await pickFolder(L("Zielordner wählen")); if (!folder) return; }
     running = true; cancel = false;
     for (const it of items) { it.state = 'wait'; it.msg = undefined; it.out = undefined; }
     const collected: OutFile[] = [];
@@ -95,7 +96,7 @@
       if (cancel) break;
       const it = items[n];
       it.state = 'run';
-      app.busy = { label: `Stapel · Datei ${n + 1} von ${items.length}`, progress: n / items.length, detail: it.file.name, cancel: () => { cancel = true; } };
+      app.busy = { label: L("Stapel · Datei {0} von {1}", n + 1, items.length), progress: n / items.length, detail: it.file.name, cancel: () => { cancel = true; } };
       try {
         const outs = await processOne(it, (p, m) => { if (app.busy) { app.busy.progress = p < 0 ? -1 : (n + p) / items.length; app.busy.detail = `${it.file.name} · ${m || ''}`; } });
         let size = 0;
@@ -106,27 +107,27 @@
           if (folder) await writePath(joinPath(folder, nm), data);
           else collected.push({ name: nm, data });
         }
-        it.state = 'ok'; it.out = size; it.msg = outs.length > 1 ? `${outs.length} Dateien` : undefined;
+        it.state = 'ok'; it.out = size; it.msg = outs.length > 1 ? L("{0} Dateien", outs.length) : undefined;
       } catch (e: any) {
         it.state = 'error'; it.msg = String(e?.message || e);
       }
     }
     app.busy = null;
     running = false;
-    if (!folder && collected.length) await saveFiles(collected, 'Stapel.zip');
+    if (!folder && collected.length) await saveFiles(collected, L("Stapel.zip"));
     const ok = items.filter(i => i.state === 'ok').length;
-    if (cancel) toast(`Abgebrochen – ${ok} Datei(en) fertig`);
-    else toast(failed ? `${ok} fertig, ${failed} mit Fehler` : `Alle ${ok} Dateien verarbeitet`, { kind: failed ? 'error' : 'ok' });
+    if (cancel) toast(L("Abgebrochen – {0} Datei(en) fertig", ok));
+    else toast(failed ? L("{0} fertig, {1} mit Fehler", ok, failed) : L("Alle {0} Dateien verarbeitet", ok), { kind: failed ? 'error' : 'ok' });
   }
 </script>
 
 <div class="p">
   <section>
-    <div class="head"><h3>1 · Dateien</h3><span class="muted num">{items.length ? `${items.length} · ${fmtSize(items.reduce((a, i) => a + i.file.size, 0))}` : ''}</span></div>
+    <div class="head"><h3>{L("1 · Dateien")}</h3><span class="muted num">{items.length ? `${items.length} · ${fmtSize(items.reduce((a, i) => a + i.file.size, 0))}` : ''}</span></div>
     <div class="btns">
-      <button class="btn sm" disabled={running} onclick={addFiles}><I.Plus size={13} /> Dateien hinzufügen</button>
-      {#if app.docs.length}<button class="btn sm ghost" disabled={running} onclick={addOpenDocs}>Offene Dokumente</button>{/if}
-      {#if items.length && !running}<button class="btn sm ghost" onclick={() => (items = [])}>Leeren</button>{/if}
+      <button class="btn sm" disabled={running} onclick={addFiles}><I.Plus size={13} /> {L("Dateien hinzufügen")}</button>
+      {#if app.docs.length}<button class="btn sm ghost" disabled={running} onclick={addOpenDocs}>{L("Offene Dokumente")}</button>{/if}
+      {#if items.length && !running}<button class="btn sm ghost" onclick={() => (items = [])}>{L("Leeren")}</button>{/if}
     </div>
     {#if items.length}
       <ul class="files scroll">
@@ -137,48 +138,48 @@
             </span>
             <span class="nm" title={it.msg || it.file.path || it.file.name}>{it.file.name}{#if it.msg}<small>{it.msg}</small>{/if}</span>
             <span class="sz num">{it.out ? fmtSize(it.out) : fmtSize(it.file.size)}</span>
-            {#if !running}<button class="x" aria-label="Entfernen" onclick={() => items.splice(i, 1)}><I.X size={11} /></button>{/if}
+            {#if !running}<button class="x" aria-label={L("Entfernen")} onclick={() => items.splice(i, 1)}><I.X size={11} /></button>{/if}
           </li>
         {/each}
       </ul>
-    {:else}<p class="hint">PDFs, Office-Dateien, Bilder – alles, was Werkbank öffnen kann. Nicht-PDFs werden zuerst umgewandelt.</p>{/if}
+    {:else}<p class="hint">{L("PDFs, Office-Dateien, Bilder – alles, was Werkbank öffnen kann. Nicht-PDFs werden zuerst umgewandelt.")}</p>{/if}
   </section>
 
   <section>
-    <h3>2 · Arbeitsschritte</h3>
+    <h3>{L("2 · Arbeitsschritte")}</h3>
     {#each steps as s, i (s.key)}
       <div class="step" class:open={s.open}>
         <div class="sh">
           <button class="tg" onclick={() => (s.open = !s.open)}><span class="n num">{i + 1}</span><s.tool.icon size={14} /><span>{s.tool.label}</span></button>
-          <button class="btn sm icon ghost" aria-label="Nach oben" disabled={i === 0 || running} onclick={() => move(i, -1)}><I.ChevronUp size={13} /></button>
-          <button class="btn sm icon ghost" aria-label="Nach unten" disabled={i === steps.length - 1 || running} onclick={() => move(i, 1)}><I.ChevronDown size={13} /></button>
-          <button class="btn sm icon ghost" aria-label="Schritt entfernen" disabled={running} onclick={() => steps.splice(i, 1)}><I.Trash2 size={13} /></button>
+          <button class="btn sm icon ghost" aria-label={L("Nach oben")} disabled={i === 0 || running} onclick={() => move(i, -1)}><I.ChevronUp size={13} /></button>
+          <button class="btn sm icon ghost" aria-label={L("Nach unten")} disabled={i === steps.length - 1 || running} onclick={() => move(i, 1)}><I.ChevronDown size={13} /></button>
+          <button class="btn sm icon ghost" aria-label={L("Schritt entfernen")} disabled={running} onclick={() => steps.splice(i, 1)}><I.Trash2 size={13} /></button>
         </div>
         {#if s.open && s.tool.fields?.length}<div class="sf"><Fields fields={s.tool.fields} bind:values={s.values} /></div>{/if}
       </div>
     {/each}
     <div class="add">
       <select class="select" bind:value={adding} disabled={running}>
-        <option value="">Schritt hinzufügen …</option>
+        <option value="">{L("Schritt hinzufügen …")}</option>
         {#each available as t (t.id)}<option value={t.id}>{t.label}</option>{/each}
       </select>
-      <button class="btn sm" disabled={!adding} onclick={addStep}>Hinzufügen</button>
+      <button class="btn sm" disabled={!adding} onclick={addStep}>{L("Hinzufügen")}</button>
     </div>
-    {#if orderWarning}<p class="warn">Umwandlungen in Word, Bilder usw. beenden die Kette – setze sie ans Ende.</p>{/if}
+    {#if orderWarning}<p class="warn">{L("Umwandlungen in Word, Bilder usw. beenden die Kette – setze sie ans Ende.")}</p>{/if}
   </section>
 
   <section>
-    <h3>3 · Ausgabe</h3>
+    <h3>{L("3 · Ausgabe")}</h3>
     <div class="seg">
-      {#if isTauri}<button aria-pressed={target === 'folder'} onclick={() => (target = 'folder')}>In Ordner</button>{/if}
-      <button aria-pressed={target === 'zip'} onclick={() => (target = 'zip')}>{isTauri ? 'Als ZIP' : 'Herunterladen'}</button>
+      {#if isTauri}<button aria-pressed={target === 'folder'} onclick={() => (target = 'folder')}>{L("In Ordner")}</button>{/if}
+      <button aria-pressed={target === 'zip'} onclick={() => (target = 'zip')}>{isTauri ? L("Als ZIP") : L("Herunterladen")}</button>
     </div>
-    <label class="row"><span>Namenszusatz</span><input class="input" placeholder="z. B. ocr – leer lassen für gleichen Namen" bind:value={suffix} /></label>
-    <p class="hint">Die Originale bleiben unverändert.</p>
+    <label class="row"><span>{L("Namenszusatz")}</span><input class="input" placeholder={L("z. B. ocr – leer lassen für gleichen Namen")} bind:value={suffix} /></label>
+    <p class="hint">{L("Die Originale bleiben unverändert.")}</p>
   </section>
 
   <button class="btn primary" disabled={running || !items.length || !steps.length} onclick={start}>
-    {running ? `Läuft … ${done}/${items.length}` : `${items.length || ''} ${items.length === 1 ? 'Datei' : 'Dateien'} verarbeiten`}
+    {running ? L("Läuft … {0}/{1}", done, items.length) : `${items.length || ''} ${items.length === 1 ? L("Datei") : L("Dateien")} verarbeiten`}
   </button>
 </div>
 

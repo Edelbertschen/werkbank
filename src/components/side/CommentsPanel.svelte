@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L, intlLocale } from '../../lib/i18n';
   import type { Doc } from '../../lib/doc.svelte';
   import { viewer } from '../../lib/viewer.svelte';
   import { plLoad, plSave } from '../../lib/ops';
@@ -12,7 +13,7 @@
   let filter = $state('');
   let loading = $state(true);
 
-  const TYPES: Record<string, string> = { Text: 'Notiz', FreeText: 'Textkommentar', Highlight: 'Markierung', Underline: 'Unterstreichung', StrikeOut: 'Durchstreichung', Squiggly: 'Wellenlinie', Ink: 'Freihand', Square: 'Rechteck', Circle: 'Ellipse', Line: 'Linie', Polygon: 'Polygon', PolyLine: 'Linienzug', Stamp: 'Stempel', Caret: 'Einfügemarke', FileAttachment: 'Dateianhang' };
+  const TYPES: Record<string, string> = { Text: L("Notiz"), FreeText: L("Textkommentar"), Highlight: L("Markierung"), Underline: L("Unterstreichung"), StrikeOut: L("Durchstreichung"), Squiggly: L("Wellenlinie"), Ink: L("Freihand"), Square: L("Rechteck"), Circle: L("Ellipse"), Line: L("Linie"), Polygon: 'Polygon', PolyLine: L("Linienzug"), Stamp: L("Stempel"), Caret: L("Einfügemarke"), FileAttachment: L("Dateianhang") };
 
   async function load() {
     loading = true;
@@ -33,33 +34,33 @@
     const m = d && d.match(/D:(\d{4})(\d{2})(\d{2})(\d{2})?(\d{2})?/);
     if (!m) return '';
     const dt = new Date(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0));
-    return dt.toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' });
+    return dt.toLocaleString(intlLocale(), { dateStyle: 'short', timeStyle: 'short' });
   }
   $effect(() => { doc.rev; load(); });
 
   const shown = $derived(items.filter(c => !filter || (c.text + ' ' + c.author + ' ' + TYPES[c.type]).toLowerCase().includes(filter.toLowerCase())));
 
   async function remove(c: C) {
-    const r = await withBusy('Kommentar wird gelöscht', async () => {
+    const r = await withBusy(L("Kommentar wird gelöscht"), async () => {
       const pl = await plLoad(doc.bytes);
       const page = pl.getPage(c.page - 1); const arr = page.node.Annots();
       const num = parseInt(c.id, 10);
       if (arr) for (let k = arr.size() - 1; k >= 0; k--) { const ref: any = arr.get(k); if (ref?.objectNumber === num) arr.remove(k); }
       return plSave(pl);
     });
-    await applyResult({ bytes: r, label: `${TYPES[c.type]} gelöscht` });
+    await applyResult({ bytes: r, label: L("{0} gelöscht", TYPES[c.type]) });
   }
 </script>
 
 <div class="box">
-  <input class="input" type="search" placeholder="Kommentare filtern" bind:value={filter} />
-  {#if doc.pendingEdits}<p class="hint">Neue Anmerkungen erscheinen hier nach dem Speichern oder Übernehmen.</p>{/if}
+  <input class="input" type="search" placeholder={L("Kommentare filtern")} bind:value={filter} />
+  {#if doc.pendingEdits}<p class="hint">{L("Neue Anmerkungen erscheinen hier nach dem Speichern oder Übernehmen.")}</p>{/if}
 </div>
 <div class="list scroll">
-  {#if loading}<p class="empty">Lädt …</p>
+  {#if loading}<p class="empty">{L("Lädt …")}</p>
   {:else if !shown.length}
-    <p class="empty">{items.length ? 'Keine Treffer.' : 'Noch keine Kommentare.'}</p>
-    {#if !items.length}<div class="start"><button class="btn sm" onclick={() => openTool('highlight')}><I.Highlighter size={13} />Markieren</button><button class="btn sm" onclick={() => openTool('note')}><I.StickyNote size={13} />Notiz</button></div>{/if}
+    <p class="empty">{items.length ? L("Keine Treffer.") : L("Noch keine Kommentare.")}</p>
+    {#if !items.length}<div class="start"><button class="btn sm" onclick={() => openTool('highlight')}><I.Highlighter size={13} />{L("Markieren")}</button><button class="btn sm" onclick={() => openTool('note')}><I.StickyNote size={13} />{L("Notiz")}</button></div>{/if}
   {:else}
     {#each shown as c (c.id + c.page)}
       <div class="c" role="button" tabindex="0" onclick={() => viewer.goto(c.page)} onkeydown={e => e.key === 'Enter' && viewer.goto(c.page)}>
@@ -67,7 +68,7 @@
           <span class="sw" style:background={c.color || 'var(--text-3)'}></span>
           <span class="type">{TYPES[c.type]}</span>
           <span class="pg num">S. {c.page}</span>
-          <button class="del" aria-label="Kommentar löschen" title="Löschen" onclick={e => { e.stopPropagation(); remove(c); }}><I.Trash2 size={12} /></button>
+          <button class="del" aria-label={L("Kommentar löschen")} title={L("Löschen")} onclick={e => { e.stopPropagation(); remove(c); }}><I.Trash2 size={12} /></button>
         </div>
         {#if c.text}<p class="text">{c.text}</p>{/if}
         {#if c.author || c.date}<p class="meta">{c.author}{c.author && c.date ? ' · ' : ''}{c.date}</p>{/if}

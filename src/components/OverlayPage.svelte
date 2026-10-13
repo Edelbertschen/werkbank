@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L, intlLocale } from '../lib/i18n';
   import { onMount, tick } from 'svelte';
   import { app, active } from '../lib/app.svelte';
   import { overlay, itemsOf, addItem, removeItem, type OItem } from '../lib/overlay.svelte';
@@ -93,7 +94,7 @@
       let fw = w, fh = h;
       if (tiny) { fw = (ftype === 'check' || ftype === 'radio' ? 14 : ftype === 'signature' ? 180 : 160) / page!.w; fh = (ftype === 'check' || ftype === 'radio' ? 14 : ftype === 'signature' ? 40 : 20) / page!.h; }
       const n = itemsOf(doc).filter(i => i.kind === 'field').length + 1;
-      const props = await fieldDialog(ftype, { name: { text: 'Textfeld', check: 'Kontrollkästchen', radio: 'Option', choice: 'Auswahl', signature: 'Unterschrift' }[ftype as string] + ' ' + n, options: '', multiline: fh * page!.h > 40, group: 'Gruppe 1' });
+      const props = await fieldDialog(ftype, { name: { text: L("Textfeld"), check: L("Kontrollkästchen"), radio: 'Option', choice: L("Auswahl"), signature: L("Unterschrift") }[ftype as string] + ' ' + n, options: '', multiline: fh * page!.h > 40, group: L("Gruppe 1") });
       if (!props) return;
       addItem(doc, { page: index, kind: 'field', ftype, x, y, w: fw, h: fh, ...props } as any);
       return;
@@ -186,20 +187,20 @@
 
   async function linkDialog(v: { url: string; toPage: number }) {
     const r = await dialog({ title: 'Link', fields: [
-      { key: 'kind', type: 'seg', label: 'Ziel', opts: [['url', 'Webadresse'], ['page', 'Seite im Dokument']], def: v.url || !v.toPage ? 'url' : 'page' },
-      { key: 'url', type: 'text', label: 'Adresse', def: v.url || 'https://', when: x => x.kind === 'url' },
-      { key: 'toPage', type: 'number', label: 'Seite', def: v.toPage || 1, min: 1, max: doc!.numPages, when: x => x.kind === 'page' },
-    ], buttons: [{ label: 'Abbrechen', value: 'cancel' }, { label: 'OK', value: 'ok', primary: true }] });
+      { key: 'kind', type: 'seg', label: L("Ziel"), opts: [['url', L("Webadresse")], ['page', L("Seite im Dokument")]], def: v.url || !v.toPage ? 'url' : 'page' },
+      { key: 'url', type: 'text', label: L("Adresse"), def: v.url || 'https://', when: x => x.kind === 'url' },
+      { key: 'toPage', type: 'number', label: L("Seite"), def: v.toPage || 1, min: 1, max: doc!.numPages, when: x => x.kind === 'page' },
+    ], buttons: [{ label: L("Abbrechen"), value: 'cancel' }, { label: 'OK', value: 'ok', primary: true }] });
     if (!r || r.button !== 'ok') return null;
     return r.values.kind === 'url' ? { url: String(r.values.url || '').trim(), toPage: 0 } : { url: '', toPage: +r.values.toPage || 1 };
   }
   async function fieldDialog(ftype: string, v: any) {
-    const r = await dialog({ title: { text: 'Textfeld', check: 'Kontrollkästchen', radio: 'Optionsfeld', choice: 'Auswahlliste', signature: 'Unterschriftsfeld' }[ftype] || 'Feld', fields: [
-      { key: 'name', type: 'text', label: ftype === 'radio' ? 'Wert dieser Option' : 'Feldname', def: v.name },
-      { key: 'group', type: 'text', label: 'Gruppe (gleicher Name = eine Auswahl)', def: v.group || 'Gruppe 1', when: () => ftype === 'radio' },
-      { key: 'options', type: 'textarea', label: 'Einträge (je Zeile einer)', def: v.options || 'Option 1\nOption 2', when: () => ftype === 'choice' },
-      { key: 'multiline', type: 'check', label: 'Mehrzeilig', def: !!v.multiline, when: () => ftype === 'text' },
-    ], buttons: [{ label: 'Abbrechen', value: 'cancel' }, { label: 'OK', value: 'ok', primary: true }] });
+    const r = await dialog({ title: { text: L("Textfeld"), check: L("Kontrollkästchen"), radio: L("Optionsfeld"), choice: L("Auswahlliste"), signature: L("Unterschriftsfeld") }[ftype] || L("Feld"), fields: [
+      { key: 'name', type: 'text', label: ftype === 'radio' ? L("Wert dieser Option") : L("Feldname"), def: v.name },
+      { key: 'group', type: 'text', label: L("Gruppe (gleicher Name = eine Auswahl)"), def: v.group || L("Gruppe 1"), when: () => ftype === 'radio' },
+      { key: 'options', type: 'textarea', label: L("Einträge (je Zeile einer)"), def: v.options || L("Option 1\nOption 2"), when: () => ftype === 'choice' },
+      { key: 'multiline', type: 'check', label: L("Mehrzeilig"), def: !!v.multiline, when: () => ftype === 'text' },
+    ], buttons: [{ label: L("Abbrechen"), value: 'cancel' }, { label: 'OK', value: 'ok', primary: true }] });
     if (!r || r.button !== 'ok') return null;
     return { name: r.values.name || v.name, group: r.values.group || '', options: r.values.options || '', multiline: !!r.values.multiline };
   }
@@ -211,7 +212,7 @@
   }
   /** Inhalt eines editierbaren Feldes nur einmal setzen, damit der Cursor beim Tippen bleibt */
   function initText(node: HTMLElement, text: string) { node.textContent = text; }
-  const FIELD_LABEL: Record<string, string> = { text: 'Textfeld', check: '☐', radio: '◯', choice: 'Auswahl ▾', signature: 'Unterschrift' };
+  const FIELD_LABEL: Record<string, string> = { text: L("Textfeld"), check: '☐', radio: '◯', choice: L("Auswahl ▾"), signature: L("Unterschrift") };
 </script>
 
 <div class="ov" bind:this={host} onpointerdown={onDown} onpointermove={onMove} onpointerup={onUp} role="presentation">
@@ -237,8 +238,8 @@
         <I.StickyNote size={Math.max(14, 18 * k)} strokeWidth={1.6} />
         {#if overlay.editing === it.id || sel}
           <div class="pop" onpointerdown={e => e.stopPropagation()} role="presentation">
-            <textarea class="textarea tx" placeholder="Notiz schreiben …" bind:value={it.text} rows="4"></textarea>
-            <div class="by">{app.prefs.author || 'Ohne Namen'} · {new Date().toLocaleDateString('de-DE')}</div>
+            <textarea class="textarea tx" placeholder={L("Notiz schreiben …")} bind:value={it.text} rows="4"></textarea>
+            <div class="by">{app.prefs.author || L("Ohne Namen")} · {new Date().toLocaleDateString(intlLocale())}</div>
           </div>
         {/if}
       </div>
@@ -254,11 +255,11 @@
         {:else if it.kind === 'image'}
           <img src={it.src} alt="" draggable="false" />
         {:else if it.kind === 'redact'}
-          <div class="redactbox"><span>Wird geschwärzt</span></div>
+          <div class="redactbox"><span>{L("Wird geschwärzt")}</span></div>
         {:else if it.kind === 'whiteout'}
           <div class="whitebox"></div>
         {:else if it.kind === 'link'}
-          <div class="linkbox"><I.Link size={12} /><span>{it.url || `Seite ${it.toPage}`}</span></div>
+          <div class="linkbox"><I.Link size={12} /><span>{it.url || L("Seite {0}", it.toPage)}</span></div>
         {:else if it.kind === 'field'}
           <div class="fieldbox" class:small={it.ftype === 'check' || it.ftype === 'radio'}><span>{it.ftype === 'check' || it.ftype === 'radio' ? FIELD_LABEL[it.ftype] : it.name}</span></div>
         {:else if it.kind === 'text' || it.kind === 'textedit'}
@@ -273,15 +274,15 @@
             use:initText={it.text}></div>
         {/if}
         {#if sel}
-          <div class="tools" onpointerdown={e => e.stopPropagation()} role="toolbar" aria-label="Element">
+          <div class="tools" onpointerdown={e => e.stopPropagation()} role="toolbar" aria-label={L("Element")}>
             {#if it.kind === 'text' || it.kind === 'textedit'}
-              <button title="Kleiner" aria-label="Kleiner" onclick={() => (it.size = Math.max(4, +(it.size - 1).toFixed(1)))}>A−</button>
-              <button title="Größer" aria-label="Größer" onclick={() => (it.size = +(it.size + 1).toFixed(1))}>A+</button>
-              <button title="Fett" aria-label="Fett" class:on={it.bold} onclick={() => (it.bold = !it.bold)}><b>B</b></button>
-              <input type="color" title="Farbe" aria-label="Textfarbe" value={it.color} oninput={e => (it.color = (e.target as HTMLInputElement).value)} />
+              <button title={L("Kleiner")} aria-label={L("Kleiner")} onclick={() => (it.size = Math.max(4, +(it.size - 1).toFixed(1)))}>A−</button>
+              <button title={L("Größer")} aria-label={L("Größer")} onclick={() => (it.size = +(it.size + 1).toFixed(1))}>A+</button>
+              <button title={L("Fett")} aria-label={L("Fett")} class:on={it.bold} onclick={() => (it.bold = !it.bold)}><b>B</b></button>
+              <input type="color" title={L("Farbe")} aria-label={L("Textfarbe")} value={it.color} oninput={e => (it.color = (e.target as HTMLInputElement).value)} />
             {/if}
-            {#if it.kind === 'link' || it.kind === 'field'}<button title="Bearbeiten" aria-label="Bearbeiten" onclick={() => edit(it)}><I.Settings size={12} /></button>{/if}
-            <button class="del" title="Entfernen (Entf)" aria-label="Entfernen" onclick={() => removeItem(doc!, it.id)}><I.Trash2 size={12} /></button>
+            {#if it.kind === 'link' || it.kind === 'field'}<button title={L("Bearbeiten")} aria-label={L("Bearbeiten")} onclick={() => edit(it)}><I.Settings size={12} /></button>{/if}
+            <button class="del" title={L("Entfernen (Entf)")} aria-label={L("Entfernen")} onclick={() => removeItem(doc!, it.id)}><I.Trash2 size={12} /></button>
           </div>
           {#if it.kind !== 'text' && it.kind !== 'textedit'}<div class="rs" onpointerdown={e => startDrag(e, it, 'resize')} role="presentation"></div>{/if}
         {/if}

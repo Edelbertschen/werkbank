@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { onMount } from 'svelte';
   import { app, active, loadPersisted, toast } from '../lib/app.svelte';
   import { onOpenFiles, onFileDrop, onCloseRequested, closeWindowNow, isTauri } from '../lib/platform';
@@ -113,7 +114,7 @@
 </div>
 
 {#if app.dropping}
-  <div class="drop-veil"><div class="drop-card">Zum Öffnen loslassen<span>PDF, Office, Bilder, E-Books, Mails</span></div></div>
+  <div class="drop-veil"><div class="drop-card">{L("Zum Öffnen loslassen")}<span>{L("PDF, Office, Bilder, E-Books, Mails")}</span></div></div>
 {/if}
 <Palette />
 <DialogHost />

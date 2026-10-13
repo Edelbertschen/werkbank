@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { app, savePrefs } from '../lib/app.svelte';
   import type { Doc } from '../lib/doc.svelte';
   import ThumbsPanel from './side/ThumbsPanel.svelte';
@@ -11,7 +12,7 @@
   import * as I from '../lib/icons';
 
   let { doc }: { doc: Doc } = $props();
-  const TITLES: Record<string, string> = { pages: 'Seiten', outline: 'Lesezeichen', search: 'Suchen', comments: 'Kommentare', attachments: 'Anhänge', layers: 'Ebenen', history: 'Verlauf' };
+  const TITLES: Record<string, string> = { pages: L("Seiten"), outline: L("Lesezeichen"), search: L("Suchen"), comments: L("Kommentare"), attachments: L("Anhänge"), layers: L("Ebenen"), history: L("Verlauf") };
 
   let dragging = false;
   function startResize(e: PointerEvent) {
@@ -25,7 +26,7 @@
 <aside class="sidebar" style:width={app.prefs.sidebarWidth + 'px'}>
   <header>
     <h2>{TITLES[app.sidebar!]}</h2>
-    <button class="x" aria-label="Seitenleiste schließen" onclick={() => (app.sidebar = null)}><I.X size={13} strokeWidth={2} /></button>
+    <button class="x" aria-label={L("Seitenleiste schließen")} onclick={() => (app.sidebar = null)}><I.X size={13} strokeWidth={2} /></button>
   </header>
   <div class="content">
     {#key doc.id}

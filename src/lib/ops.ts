@@ -4,6 +4,7 @@ import fontkit from '@pdf-lib/fontkit';
 import { openPdf, renderPage, canvasBlob } from './pdf';
 import { hexToRgb01, MM, sleep, PAPER } from './util';
 
+import { L } from './i18n';
 export { PDFDocument, PDFName, PDFArray, degrees, rgb, StandardFonts };
 
 export async function plLoad(bytes: Uint8Array) {
@@ -56,7 +57,7 @@ export const color = (hex: string) => { const [r, g, b] = hexToRgb01(hex); retur
 // ---------------------------------------------------------------------------
 const fontBytes = new Map<string, Promise<Uint8Array>>();
 function loadFontFile(file: string) {
-  if (!fontBytes.has(file)) fontBytes.set(file, fetch('/engines/pdfjs/standard_fonts/' + file).then(r => { if (!r.ok) throw new Error('Schrift fehlt'); return r.arrayBuffer(); }).then(b => new Uint8Array(b)));
+  if (!fontBytes.has(file)) fontBytes.set(file, fetch('/engines/pdfjs/standard_fonts/' + file).then(r => { if (!r.ok) throw new Error(L("Schrift fehlt")); return r.arrayBuffer(); }).then(b => new Uint8Array(b)));
   return fontBytes.get(file)!;
 }
 export type FontKind = 'sans' | 'sans-bold' | 'sans-italic' | 'serif' | 'serif-bold' | 'mono';

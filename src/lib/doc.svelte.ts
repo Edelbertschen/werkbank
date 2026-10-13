@@ -2,6 +2,7 @@
 import { openPdf, renderPage, type PDFDocumentProxy } from './pdf';
 import { uid, baseName } from './util';
 
+import { L } from './i18n';
 export interface PageInfo { w: number; h: number; rot: number }
 export interface Protection { user: string; owner: string; print: boolean; copy: boolean; forms: boolean; annotate: boolean; modify: boolean }
 interface Version { bytes: Uint8Array; label: string; at: number }
@@ -17,7 +18,7 @@ const MAX_HISTORY_BYTES = 600 * 1024 * 1024;
 
 export class Doc {
   readonly id = uid();
-  name = $state('Dokument.pdf');
+  name = $state(L("Dokument.pdf"));
   /** Pfad auf der Festplatte, null = noch nie gespeichert */
   path = $state<string | null>(null);
   /** Herkunft, falls aus einem anderen Format umgewandelt (z. B. "docx") */
@@ -54,7 +55,7 @@ export class Doc {
     this.name = name;
     this.path = path;
     this.origin = origin;
-    this.history = [{ bytes, label: origin ? `Aus ${origin.toUpperCase()} erstellt` : 'Geöffnet', at: Date.now() }];
+    this.history = [{ bytes, label: origin ? L("Aus {0} erstellt", origin.toUpperCase()) : L("Geöffnet"), at: Date.now() }];
     this.pos = 0;
     this.savedPos = origin ? -1 : 0;
   }
@@ -113,7 +114,7 @@ export class Doc {
   versions() { return this.history.map((v, i) => ({ label: v.label, at: v.at, size: v.bytes.length, i })); }
 
   /** Formulareingaben und pdf.js-Anmerkungen in einen neuen Stand schreiben */
-  async flushEdits(label = 'Anmerkungen und Eingaben') {
+  async flushEdits(label = L("Anmerkungen und Eingaben")) {
     if (!this.pdf || !this.pendingEdits) return false;
     const bytes = await this.pdf.saveDocument();
     await this.commit(new Uint8Array(bytes), label);

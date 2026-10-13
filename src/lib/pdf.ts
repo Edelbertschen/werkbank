@@ -3,6 +3,7 @@ import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 import workerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 import type { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
 
+import { L } from './i18n';
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 (globalThis as any).pdfjsLib = pdfjsLib;
 
@@ -23,7 +24,7 @@ export const PDFJS_ASSETS = {
 };
 
 export class PasswordNeeded extends Error {
-  constructor(public retry: boolean) { super(retry ? 'Falsches Passwort' : 'Passwort nötig'); }
+  constructor(public retry: boolean) { super(retry ? L("Falsches Passwort") : L("Passwort nötig")); }
 }
 
 export async function openPdf(bytes: Uint8Array, password?: string): Promise<PDFDocumentProxy> {
@@ -60,7 +61,7 @@ export async function renderPage(pdf: PDFDocumentProxy, n: number, opts: { width
 }
 
 export async function canvasBlob(c: HTMLCanvasElement, type = 'image/png', q = 0.9): Promise<Blob> {
-  return new Promise((res, rej) => c.toBlob(b => (b ? res(b) : rej(new Error('Bild konnte nicht erzeugt werden'))), type, q));
+  return new Promise((res, rej) => c.toBlob(b => (b ? res(b) : rej(new Error(L("Bild konnte nicht erzeugt werden")))), type, q));
 }
 
 /** Text je Seite (mit Zeilenumbrüchen) */

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L, intlLocale } from '../../lib/i18n';
   import { onMount } from 'svelte';
   import { openPdf, renderPage, pageTexts, type PDFDocumentProxy } from '../../lib/pdf';
   import { diffWordsWithSpace } from 'diff';
@@ -45,12 +46,12 @@
     if (mode === 'side') {
       const w = Math.max(300, (left?.clientWidth || 500) - 8) * dpr;
       const [ca, cb] = await Promise.all([canvasFor(A, page, w), canvasFor(B, page, w)]);
-      left!.replaceChildren(ca || note('Seite fehlt in dieser Fassung'));
-      right!.replaceChildren(cb || note('Seite fehlt in dieser Fassung'));
+      left!.replaceChildren(ca || note(L("Seite fehlt in dieser Fassung")));
+      right!.replaceChildren(cb || note(L("Seite fehlt in dieser Fassung")));
     } else if (mode === 'diff') {
       const w = Math.max(400, Math.min(1100, (single?.clientWidth || 800) - 8)) * dpr;
       const [ca, cb] = await Promise.all([canvasFor(A, page, w), canvasFor(B, page, w)]);
-      if (!ca || !cb) { single!.replaceChildren(note('Diese Seite gibt es nur in einer Fassung.')); changedPct = 100; return; }
+      if (!ca || !cb) { single!.replaceChildren(note(L("Diese Seite gibt es nur in einer Fassung."))); changedPct = 100; return; }
       const out = document.createElement('canvas'); out.width = ca.width; out.height = ca.height;
       const o = out.getContext('2d', { willReadFrequently: true })!;
       o.drawImage(ca, 0, 0); const da = o.getImageData(0, 0, out.width, out.height);
@@ -68,7 +69,7 @@
     } else {
       const x = textsA[page] || '', y = textsB[page] || '';
       const esc = (s: string) => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
-      textHtml = diffWordsWithSpace(x, y).map(p => p.added ? `<ins>${esc(p.value)}</ins>` : p.removed ? `<del>${esc(p.value)}</del>` : esc(p.value)).join('') || '<em>Kein Text auf dieser Seite.</em>';
+      textHtml = diffWordsWithSpace(x, y).map(p => p.added ? `<ins>${esc(p.value)}</ins>` : p.removed ? `<del>${esc(p.value)}</del>` : esc(p.value)).join('') || L("<em>Kein Text auf dieser Seite.</em>");
     }
   }
   function note(t: string) { const d = document.createElement('div'); d.className = 'miss'; d.textContent = t; return d; }
@@ -81,32 +82,32 @@
 
 <div class="cv">
   <header>
-    <h2>Vergleich</h2>
-    <div class="seg"><button aria-pressed={mode === 'side'} onclick={() => (mode = 'side')}>Nebeneinander</button><button aria-pressed={mode === 'diff'} onclick={() => (mode = 'diff')}>Unterschiede</button><button aria-pressed={mode === 'text'} onclick={() => (mode = 'text')}>Text</button></div>
+    <h2>{L("Vergleich")}</h2>
+    <div class="seg"><button aria-pressed={mode === 'side'} onclick={() => (mode = 'side')}>{L("Nebeneinander")}</button><button aria-pressed={mode === 'diff'} onclick={() => (mode = 'diff')}>{L("Unterschiede")}</button><button aria-pressed={mode === 'text'} onclick={() => (mode = 'text')}>Text</button></div>
     <span class="grow"></span>
-    <button class="btn sm icon" aria-label="Vorherige Seite" disabled={page <= 0} onclick={() => (page = Math.max(0, page - 1))}><I.ChevronLeft size={14} /></button>
-    <span class="num pg">Seite {page + 1} von {max}</span>
-    <button class="btn sm icon" aria-label="Nächste Seite" disabled={page >= max - 1} onclick={() => (page = Math.min(max - 1, page + 1))}><I.ChevronRight size={14} /></button>
-    <button class="btn sm" onclick={() => done(null)}>Schließen</button>
+    <button class="btn sm icon" aria-label={L("Vorherige Seite")} disabled={page <= 0} onclick={() => (page = Math.max(0, page - 1))}><I.ChevronLeft size={14} /></button>
+    <span class="num pg">{L("Seite {0} von {1}", page + 1, max)}</span>
+    <button class="btn sm icon" aria-label={L("Nächste Seite")} disabled={page >= max - 1} onclick={() => (page = Math.min(max - 1, page + 1))}><I.ChevronRight size={14} /></button>
+    <button class="btn sm" onclick={() => done(null)}>{L("Schließen")}</button>
   </header>
   <div class="main">
     <aside class="side scroll">
-      <h3>Geänderte Seiten</h3>
-      {#if loading}<p class="muted">Wird analysiert …</p>
-      {:else if !changedPages.length}<p class="muted">Der Text ist auf allen Seiten gleich. Unterschiede in Bildern zeigt „Unterschiede“.</p>
+      <h3>{L("Geänderte Seiten")}</h3>
+      {#if loading}<p class="muted">{L("Wird analysiert …")}</p>
+      {:else if !changedPages.length}<p class="muted">{L("Der Text ist auf allen Seiten gleich. Unterschiede in Bildern zeigt „Unterschiede“.")}</p>
       {:else}
-        {#each changedPages as [i, s] (i)}<button class:on={i === page} onclick={() => (page = i)}><span>Seite {i + 1}</span><span class="bar"><i style:width={Math.min(100, s) + '%'}></i></span></button>{/each}
+        {#each changedPages as [i, s] (i)}<button class:on={i === page} onclick={() => (page = i)}><span>{L("Seite {0}", i + 1)}</span><span class="bar"><i style:width={Math.min(100, s) + '%'}></i></span></button>{/each}
       {/if}
     </aside>
     <div class="stage scroll">
-      {#if loading}<p class="muted center">Fassungen werden geladen …</p>
+      {#if loading}<p class="muted center">{L("Fassungen werden geladen …")}</p>
       {:else if mode === 'side'}
         <div class="two">
-          <figure><figcaption title={a.name}>Älter · {a.name}</figcaption><div class="cvs" bind:this={left}></div></figure>
-          <figure><figcaption title={b.name}>Neuer · {b.name}</figcaption><div class="cvs" bind:this={right}></div></figure>
+          <figure><figcaption title={a.name}>{L("Älter · {0}", a.name)}</figcaption><div class="cvs" bind:this={left}></div></figure>
+          <figure><figcaption title={b.name}>{L("Neuer · {0}", b.name)}</figcaption><div class="cvs" bind:this={right}></div></figure>
         </div>
       {:else if mode === 'diff'}
-        <figure><figcaption>{changedPct < 0.01 ? 'Keine sichtbaren Unterschiede' : `${changedPct.toLocaleString('de-DE', { maximumFractionDigits: 2 })} % der Fläche verändert`} · <span class="red">rot = entfernt</span> · <span class="blue">blau = neu</span></figcaption><div class="cvs" bind:this={single}></div></figure>
+        <figure><figcaption>{changedPct < 0.01 ? L("Keine sichtbaren Unterschiede") : L("{0} % der Fläche verändert", changedPct.toLocaleString(intlLocale(), { maximumFractionDigits: 2 }))} · <span class="red">{L("rot = entfernt")}</span> · <span class="blue">{L("blau = neu")}</span></figcaption><div class="cvs" bind:this={single}></div></figure>
       {:else}
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         <div class="text">{@html textHtml}</div>

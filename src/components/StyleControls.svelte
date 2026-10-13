@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { app, active } from '../lib/app.svelte';
   import { overlay, findItem } from '../lib/overlay.svelte';
   import { viewer } from '../lib/viewer.svelte';
@@ -25,22 +26,22 @@
 
 {#if kind === 'style-shape'}
   <div class="sc">
-    <div class="row"><span class="lbl">Linie</span>{#each COLORS as c (c)}<button class="sw" style:background={c} aria-label={`Farbe ${c}`} aria-pressed={app.style.stroke === c} onclick={() => setStroke(c)}></button>{/each}
-      <label class="pick" title="Eigene Farbe"><input type="color" value={app.style.stroke} oninput={e => setStroke((e.target as HTMLInputElement).value)} /></label></div>
-    <div class="row"><span class="lbl">Füllung</span><button class="sw none" aria-label="Keine Füllung" aria-pressed={app.style.fill === 'transparent'} onclick={() => setFill('transparent')}></button>{#each COLORS.slice(1) as c (c)}<button class="sw" style:background={c + '55'} aria-label={`Füllung ${c}`} aria-pressed={app.style.fill === c} onclick={() => setFill(c)}></button>{/each}</div>
-    <div class="row"><span class="lbl">Stärke</span>
-      <select class="select mini" value={String(app.style.width)} onchange={e => setWidth(+(e.target as HTMLSelectElement).value)} aria-label="Linienstärke">
+    <div class="row"><span class="lbl">{L("Linie")}</span>{#each COLORS as c (c)}<button class="sw" style:background={c} aria-label={L("Farbe {0}", c)} aria-pressed={app.style.stroke === c} onclick={() => setStroke(c)}></button>{/each}
+      <label class="pick" title={L("Eigene Farbe")}><input type="color" value={app.style.stroke} oninput={e => setStroke((e.target as HTMLInputElement).value)} /></label></div>
+    <div class="row"><span class="lbl">{L("Füllung")}</span><button class="sw none" aria-label={L("Keine Füllung")} aria-pressed={app.style.fill === 'transparent'} onclick={() => setFill('transparent')}></button>{#each COLORS.slice(1) as c (c)}<button class="sw" style:background={c + '55'} aria-label={L("Füllung {0}", c)} aria-pressed={app.style.fill === c} onclick={() => setFill(c)}></button>{/each}</div>
+    <div class="row"><span class="lbl">{L("Stärke")}</span>
+      <select class="select mini" value={String(app.style.width)} onchange={e => setWidth(+(e.target as HTMLSelectElement).value)} aria-label={L("Linienstärke")}>
         {#each [0.5, 1, 1.5, 2, 3, 4, 6, 8, 12] as w (w)}<option value={String(w)}>{w} pt</option>{/each}
       </select>
-      <span class="lbl">Marker</span>{#each HL as c (c)}<button class="sw sm" style:background={c} aria-label={`Markerfarbe ${c}`} aria-pressed={app.style.highlight === c} onclick={() => setHl(c)}></button>{/each}
+      <span class="lbl">Marker</span>{#each HL as c (c)}<button class="sw sm" style:background={c} aria-label={L("Markerfarbe {0}", c)} aria-pressed={app.style.highlight === c} onclick={() => setHl(c)}></button>{/each}
     </div>
   </div>
 {:else if kind === 'style-text'}
   <div class="sc">
-    <div class="row"><span class="lbl">Farbe</span>{#each COLORS as c (c)}<button class="sw" style:background={c} aria-label={`Textfarbe ${c}`} aria-pressed={app.style.textColor === c} onclick={() => setText(c)}></button>{/each}
-      <label class="pick" title="Eigene Farbe"><input type="color" value={app.style.textColor} oninput={e => setText((e.target as HTMLInputElement).value)} /></label></div>
-    <div class="row"><span class="lbl">Größe</span>
-      <select class="select mini" value={String(app.style.fontSize)} onchange={e => setSize(+(e.target as HTMLSelectElement).value)} aria-label="Schriftgröße">
+    <div class="row"><span class="lbl">{L("Farbe")}</span>{#each COLORS as c (c)}<button class="sw" style:background={c} aria-label={L("Textfarbe {0}", c)} aria-pressed={app.style.textColor === c} onclick={() => setText(c)}></button>{/each}
+      <label class="pick" title={L("Eigene Farbe")}><input type="color" value={app.style.textColor} oninput={e => setText((e.target as HTMLInputElement).value)} /></label></div>
+    <div class="row"><span class="lbl">{L("Größe")}</span>
+      <select class="select mini" value={String(app.style.fontSize)} onchange={e => setSize(+(e.target as HTMLSelectElement).value)} aria-label={L("Schriftgröße")}>
         {#each [7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 40, 48, 64] as s (s)}<option value={String(s)}>{s} pt</option>{/each}
       </select>
     </div>

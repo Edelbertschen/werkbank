@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../../lib/i18n';
   import { active } from '../../lib/app.svelte';
   import { pyRun } from '../../lib/engines';
 
@@ -29,15 +30,15 @@ list(seen.values())`, { files: { 'in.pdf': doc.bytes } });
 
 <div class="p">
   {#if err}<p class="err">{err}</p>
-  {:else if !fonts}<p class="muted">Schriften werden gelesen …</p>
-  {:else if !fonts.length}<p class="muted">Keine Schriften – das Dokument enthält vermutlich nur Bilder.</p>
+  {:else if !fonts}<p class="muted">{L("Schriften werden gelesen …")}</p>
+  {:else if !fonts.length}<p class="muted">{L("Keine Schriften – das Dokument enthält vermutlich nur Bilder.")}</p>
   {:else}
-    {#if missing}<p class="warn">{missing} Schrift(en) nicht eingebettet. Auf anderen Rechnern kann der Text anders aussehen; für PDF/A und Druckereien „In PDF/A umwandeln“ verwenden.</p>{/if}
+    {#if missing}<p class="warn">{L("{0} Schrift(en) nicht eingebettet. Auf anderen Rechnern kann der Text anders aussehen; für PDF/A und Druckereien „In PDF/A umwandeln“ verwenden.", missing)}</p>{/if}
     {#each fonts as f (f.name)}
       <div class="f">
         <b>{f.name}</b>
-        <span class="tags"><span class="tag">{f.type}</span><span class="tag" class:bad={!f.embedded}>{f.embedded ? (f.subset ? 'Teilmenge eingebettet' : 'eingebettet') : 'nicht eingebettet'}</span></span>
-        <span class="pg">Seiten {pages(f.pages)}</span>
+        <span class="tags"><span class="tag">{f.type}</span><span class="tag" class:bad={!f.embedded}>{f.embedded ? (f.subset ? L("Teilmenge eingebettet") : 'eingebettet') : L("nicht eingebettet")}</span></span>
+        <span class="pg">{L("Seiten {0}", pages(f.pages))}</span>
       </div>
     {/each}
   {/if}

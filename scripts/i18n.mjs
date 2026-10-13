@@ -29,6 +29,7 @@ export function isUiText(s) {
   if (/[äöüÄÖÜß„“…–]/.test(t)) return true;
   if (/\s/.test(t) && /[a-zäöü]{2,}/.test(t)) return true;
   if (/^[A-ZÄÖÜ][a-zäöüß]{2,}\b/.test(t)) return true;
+  if (/^[A-Z0-9]{2,}[-/][A-ZÄÖÜ]?[a-zäöüß]{3,}/.test(t)) return true; // „JSON-Datei“, „PDF-Engine“
   return false;
 }
 
@@ -232,7 +233,7 @@ function addImport(src, file) {
   const rel = relative(dirname(file), join(SRC, 'lib', 'i18n')).replace(/\\/g, '/');
   const spec = rel.startsWith('.') ? rel : './' + rel;
   const line = `import { L } from '${spec}';`;
-  if (src.includes(line)) return src;
+  if (src.includes(line) || /import \{[^}]*\bL\b[^}]*\} from '[^']*i18n'/.test(src)) return src;
   if (file.endsWith('.svelte')) {
     if (/<script(?![^>]*context=)(?![^>]*module)[^>]*>/.test(src)) return src.replace(/(<script(?![^>]*context=)(?![^>]*module)[^>]*>)/, `$1\n  ${line}`);
     return `<script lang="ts">\n  ${line}\n</script>\n\n` + src;

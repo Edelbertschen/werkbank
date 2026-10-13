@@ -4,7 +4,7 @@ import { WorkerClient, type Progress } from './rpc';
 import { engineState } from './state.svelte';
 
 const pyClient = new WorkerClient(() => new Worker(new URL('./pymupdf.worker.ts', import.meta.url), { type: 'module' }), 'PyMuPDF');
-const toolsClient = new WorkerClient(() => new Worker(new URL('./tools.worker.ts', import.meta.url), { type: 'module' }), 'Werkzeuge');
+const toolsClient = new WorkerClient(() => new Worker(new URL('./tools.worker.ts', import.meta.url), { type: 'module' }), L("Werkzeuge"));
 
 let pyReady: Promise<void> | null = null;
 /** PyMuPDF vorbereiten (beim ersten Mal ca. 5–15 s) */
@@ -48,6 +48,7 @@ def save_out(doc, name='out.pdf', **kw):
     doc.save('/w/' + name, **opts)
 `;
 
+import { L } from '../i18n';
 export async function gs(args: string[], input: Record<string, Uint8Array>, outputs: string[]) {
   engineState.set('ghostscript', 'loading');
   try { const r = await toolsClient.call<{ files: Record<string, Uint8Array>; log: string }>('gs', { args, input, outputs }); engineState.set('ghostscript', 'ready'); return r; }
@@ -68,14 +69,14 @@ let loQueue: Promise<any> = Promise.resolve();
 export function warmLibreOffice(progress?: Progress) {
   return (loP ??= (async () => {
     engineState.set('libreoffice', 'loading');
-    if (typeof SharedArrayBuffer === 'undefined') throw new Error('Diese Umgebung erlaubt kein SharedArrayBuffer – LibreOffice kann nicht starten.');
+    if (typeof SharedArrayBuffer === 'undefined') throw new Error(L("Diese Umgebung erlaubt kein SharedArrayBuffer – LibreOffice kann nicht starten."));
     const { WorkerBrowserConverter, createWasmPaths } = await import('@matbee/libreoffice-converter/browser');
     const c = new WorkerBrowserConverter({
       ...createWasmPaths('/engines/libreoffice/wasm/'),
       browserWorkerJs: '/engines/libreoffice/browser.worker.global.js',
       // Kein onProgress: der Callback verlangsamt die Umwandlung um ein Vielfaches.
     });
-    progress?.(-1, 'Office-Engine startet – beim ersten Mal kann das etwas dauern …');
+    progress?.(-1, L("Office-Engine startet – beim ersten Mal kann das etwas dauern …"));
     await c.initialize();
     // LibreOffice startet intern noch Hintergrunddienste; kurz Luft lassen
     await new Promise(r => setTimeout(r, (globalThis as any).__loDelay ?? 1200));
@@ -97,7 +98,7 @@ export async function libreConvert(data: Uint8Array, fileName: string, outputFor
   // 1. Wahl: installiertes LibreOffice – startet sofort und ist um ein Vielfaches schneller
   if ((await officeInfo()).available && !nativeOfficeBroken) {
     try {
-      opts.progress?.(-1, 'LibreOffice wandelt um …');
+      opts.progress?.(-1, L("LibreOffice wandelt um …"));
       const ext = (fileName.match(/\.([a-z0-9]+)$/i)?.[1] || 'docx').toLowerCase();
       const level = opts.pdfa ? (+opts.pdfa.charAt(6) as 1 | 2 | 3) : undefined;
       const out = await officeConvert(data, ext, outputFormat, level);
@@ -119,7 +120,7 @@ async function libreConvertWasm(data: Uint8Array, fileName: string, outputFormat
   const limit = (loConversions === 0 ? 90000 : 20000) + (data.length / 1048576) * 20000;
   const attempt = async (n: number): Promise<Uint8Array> => {
     const c = lo || await warmLibreOffice(opts.progress);
-    if (n > 0) opts.progress?.(-1, 'Office-Engine wird neu gestartet …');
+    if (n > 0) opts.progress?.(-1, L("Office-Engine wird neu gestartet …"));
     let timer: ReturnType<typeof setTimeout> | undefined;
     const timeout = new Promise<'timeout'>(r => { timer = setTimeout(() => r('timeout'), limit * [1, 3, 6][n]); });
     try {
@@ -127,7 +128,7 @@ async function libreConvertWasm(data: Uint8Array, fileName: string, outputFormat
       if (r === 'timeout') {
         killLibreOffice();
         if (n < 2) return attempt(n + 1);
-        throw new Error('Die Office-Engine antwortet nicht. Bitte erneut versuchen.');
+        throw new Error(L("Die Office-Engine antwortet nicht. Bitte erneut versuchen."));
       }
       loConversions++;
       return new Uint8Array((r as any).data);

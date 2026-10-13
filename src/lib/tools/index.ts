@@ -8,11 +8,12 @@ import { protectTools } from './protect';
 import { analyzeTools } from './analyze';
 import { appTools } from './app';
 
+import { L } from '../i18n';
 export const TOOLS: Tool[] = [...appTools, ...pageTools, ...editTools, ...convertTools, ...optimizeTools, ...protectTools, ...analyzeTools];
 const byId = new Map(TOOLS.map(t => [t.id, t]));
 export const tool = (id: string) => {
   const t = byId.get(id);
-  if (!t) throw new Error('Unbekanntes Werkzeug ' + id);
+  if (!t) throw new Error(L("Unbekanntes Werkzeug ") + id);
   return t;
 };
 export const hasTool = (id: string) => byId.has(id);

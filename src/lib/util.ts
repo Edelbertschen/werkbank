@@ -1,3 +1,4 @@
+import { L, intlLocale } from './i18n';
 // Kleine Helfer ohne Abhängigkeiten
 export const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 export const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
@@ -7,24 +8,24 @@ export const mm = (pt: number) => Math.round(pt / MM);
 
 // Endung = 1–5 Zeichen mit mindestens einem Buchstaben („Version 1.2“ hat keine Endung)
 const EXT = /\.((?=[a-z0-9]*[a-z])[a-z0-9]{1,5})$/i;
-export const baseName = (n: string) => String(n || 'Dokument').replace(EXT, '');
+export const baseName = (n: string) => String(n || L("Dokument")).replace(EXT, '');
 export const extOf = (n: string) => (String(n).match(EXT)?.[1] || '').toLowerCase();
 export const withExt = (n: string, ext: string) => baseName(n) + '.' + ext;
 
 export function fmtSize(b: number) {
   if (b < 1024) return b + ' B';
-  if (b < 1048576) return (b / 1024).toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' KB';
-  return (b / 1048576).toLocaleString('de-DE', { maximumFractionDigits: 1 }) + ' MB';
+  if (b < 1048576) return (b / 1024).toLocaleString(intlLocale(), { maximumFractionDigits: 0 }) + ' KB';
+  return (b / 1048576).toLocaleString(intlLocale(), { maximumFractionDigits: 1 }) + ' MB';
 }
 export function fmtAgo(t: number) {
   const s = (Date.now() - t) / 1000;
-  if (s < 50) return 'gerade eben';
-  if (s < 3600) return `vor ${Math.round(s / 60)} Min.`;
-  if (s < 86400) return `vor ${Math.round(s / 3600)} Std.`;
+  if (s < 50) return L("gerade eben");
+  if (s < 3600) return L("vor {0} Min.", Math.round(s / 60));
+  if (s < 86400) return L("vor {0} Std.", Math.round(s / 3600));
   if (s < 172800) return 'gestern';
-  return new Date(t).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(t).toLocaleDateString(intlLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
 }
-export const fmtNum = (n: number, d = 0) => n.toLocaleString('de-DE', { maximumFractionDigits: d, minimumFractionDigits: d });
+export const fmtNum = (n: number, d = 0) => n.toLocaleString(intlLocale(), { maximumFractionDigits: d, minimumFractionDigits: d });
 
 export const PAPER: [string, number, number][] = [['A3', 297, 420], ['A4', 210, 297], ['A5', 148, 210], ['A6', 105, 148], ['Letter', 215.9, 279.4], ['Legal', 215.9, 355.6], ['B5', 176, 250], ['Tabloid', 279.4, 431.8]];
 export function paperName(wPt: number, hPt: number) {
@@ -36,7 +37,7 @@ export function paperName(wPt: number, hPt: number) {
 /** "1-3, 5, 8-" -> 0-basierte, sortierte Indizes */
 export function parseRange(str: string, n: number): number[] {
   const out = new Set<number>();
-  const missing = (k: number) => new Error(n === 1 ? `Seite ${k} gibt es nicht – das Dokument hat nur eine Seite` : `Seite ${k} gibt es nicht – das Dokument hat ${n} Seiten`);
+  const missing = (k: number) => new Error(n === 1 ? L("Seite {0} gibt es nicht – das Dokument hat nur eine Seite", k) : L("Seite {0} gibt es nicht – das Dokument hat {1} Seiten", k, n));
   // „letzte“ als Seitenzahl; Leerzeichen um Bindestriche gehören zum Bereich („1 - 3“)
   const norm = String(str).replace(/\bletzte\b/gi, String(n)).replace(/\s*([-–])\s*/g, '$1');
   for (const part of norm.split(/[,;\s]+/).filter(Boolean)) {
@@ -52,7 +53,7 @@ export function parseRange(str: string, n: number): number[] {
       out.add(k - 1);
     } else if (/^ungerade$/i.test(part)) for (let k = 0; k < n; k += 2) out.add(k);
     else if (/^gerade$/i.test(part)) for (let k = 1; k < n; k += 2) out.add(k);
-    else throw new Error(`„${part}“ ist keine gültige Seitenangabe`);
+    else throw new Error(L("„{0}“ ist keine gültige Seitenangabe", part));
   }
   return [...out].sort((a, b) => a - b);
 }

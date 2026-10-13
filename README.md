@@ -18,6 +18,10 @@ Werkbank baut auf [BentoPDF](https://github.com/alam00000/bentopdf) auf und erg�
 
 Jede Änderung erzeugt einen Stand im Verlauf (Rückgängig/Wiederholen, Sprung zu jedem Stand). Nach einem Absturz werden ungesicherte Dokumente wiederhergestellt.
 
+## Sprachen
+
+Deutsch und Englisch. Die App startet in der Systemsprache; unter Einstellungen › Sprache lässt sie sich festlegen (wirksam nach einem Neustart). Der deutsche Text ist zugleich der Schlüssel der Übersetzung (`src/lib/i18n/en.ts`). Neue Texte: `node scripts/i18n.mjs extract` → übersetzen → `node scripts/i18n.mjs wrap`; `node scripts/i18n.mjs check` (läuft auch in `npm test`) meldet Texte ohne Übersetzung. Eine weitere Sprache ist eine zusätzliche Wörterbuchdatei.
+
 ## Technik
 
 | Teil | Umsetzung |

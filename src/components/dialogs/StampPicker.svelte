@@ -1,7 +1,8 @@
 <script lang="ts">
+  import { L, intlLocale } from '../../lib/i18n';
   let { title, done }: { title: string; done: (r: any) => void } = $props();
-  const today = new Date().toLocaleDateString('de-DE');
-  const PRESETS: [string, string][] = [['GENEHMIGT', '#1E7B45'], ['ABGELEHNT', '#C42B1C'], ['ENTWURF', '#6B7280'], ['VERTRAULICH', '#C42B1C'], ['GEPRÜFT', '#1F4FD1'], ['ERLEDIGT', '#1E7B45'], ['EINGANG', '#1F4FD1'], ['KOPIE', '#6B7280'], ['BEZAHLT', '#1E7B45'], ['ZUR KENNTNIS', '#B7791F']];
+  const today = new Date().toLocaleDateString(intlLocale());
+  const PRESETS: [string, string][] = [[L("GENEHMIGT"), '#1E7B45'], [L("ABGELEHNT"), '#C42B1C'], [L("ENTWURF"), '#6B7280'], [L("VERTRAULICH"), '#C42B1C'], [L("GEPRÜFT"), '#1F4FD1'], [L("ERLEDIGT"), '#1E7B45'], [L("EINGANG"), '#1F4FD1'], [L("KOPIE"), '#6B7280'], [L("BEZAHLT"), '#1E7B45'], [L("ZUR KENNTNIS"), '#B7791F']];
   let custom = $state('');
   let color = $state('#1F4FD1');
   let withDate = $state(true);
@@ -42,18 +43,18 @@
     {#each PRESETS as [t, c] (t)}<button class="stamp" style:color={c} class:round={style === 'round'} onclick={() => pick(t, c)}>{t}</button>{/each}
   </div>
   <div class="row">
-    <input class="input" placeholder="Eigener Stempeltext" bind:value={custom} onkeydown={e => e.key === 'Enter' && custom.trim() && pick(custom.trim().toUpperCase(), color)} />
-    <input type="color" bind:value={color} class="color" aria-label="Farbe" />
-    <button class="btn primary" disabled={!custom.trim()} onclick={() => pick(custom.trim().toUpperCase(), color)}>Verwenden</button>
+    <input class="input" placeholder={L("Eigener Stempeltext")} bind:value={custom} onkeydown={e => e.key === 'Enter' && custom.trim() && pick(custom.trim().toUpperCase(), color)} />
+    <input type="color" bind:value={color} class="color" aria-label={L("Farbe")} />
+    <button class="btn primary" disabled={!custom.trim()} onclick={() => pick(custom.trim().toUpperCase(), color)}>{L("Verwenden")}</button>
   </div>
   <div class="opts">
-    <label><input type="checkbox" bind:checked={withDate} /> Datum ({today})</label>
-    <label><input type="checkbox" bind:checked={withName} /> Name</label>
-    {#if withName}<input class="input sm" placeholder="Kürzel oder Name" bind:value={name} />{/if}
+    <label><input type="checkbox" bind:checked={withDate} /> {L("Datum ({0})", today)}</label>
+    <label><input type="checkbox" bind:checked={withName} /> {L("Name")}</label>
+    {#if withName}<input class="input sm" placeholder={L("Kürzel oder Name")} bind:value={name} />{/if}
     <span class="grow"></span>
-    <div class="seg"><button aria-pressed={style === 'box'} onclick={() => (style = 'box')}>Eckig</button><button aria-pressed={style === 'round'} onclick={() => (style = 'round')}>Rund</button></div>
+    <div class="seg"><button aria-pressed={style === 'box'} onclick={() => (style = 'box')}>{L("Eckig")}</button><button aria-pressed={style === 'round'} onclick={() => (style = 'round')}>{L("Rund")}</button></div>
   </div>
-  <div class="buttons"><button class="btn" onclick={() => done(null)}>Abbrechen</button></div>
+  <div class="buttons"><button class="btn" onclick={() => done(null)}>{L("Abbrechen")}</button></div>
 </div>
 
 <style>

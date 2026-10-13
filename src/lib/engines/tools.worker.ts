@@ -1,6 +1,7 @@
 // Ghostscript und qpdf im Worker (beides Emscripten-Programme mit Kommandozeile)
 import { serve } from './rpc';
 
+import { L } from '../i18n';
 async function loadModule(url: string, wasm: string, log: string[]) {
   const mod: any = await import(/* @vite-ignore */ url);
   const factory = mod.default || (self as any).Module;
@@ -32,7 +33,7 @@ serve({
     if ((outputs || []).some((o: string) => o.includes('%'))) {
       for (const f of m.FS.readdir('/')) if (/^out-\d+\./.test(f)) files[f] = m.FS.readFile('/' + f);
     }
-    if (rc !== 0 && !Object.keys(files).length) throw new Error('Ghostscript: ' + (log.slice(-4).join(' ') || 'Fehler ' + rc));
+    if (rc !== 0 && !Object.keys(files).length) throw new Error('Ghostscript: ' + (log.slice(-4).join(' ') || L("Fehler ") + rc));
     return { files, log: log.join('\n') };
   },
   async qpdf({ args, input }) {

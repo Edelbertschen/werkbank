@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import type { Field } from '../lib/fields';
   import { app, active } from '../lib/app.svelte';
   import { pickFiles } from '../lib/platform';
@@ -13,7 +14,7 @@
   const otherDocs = $derived(app.docs.filter(d => d.id !== app.activeId));
 
   async function addFiles(f: Field, single = false) {
-    const picked = await pickFiles({ multiple: !single, filters: f.accept ? [{ name: 'Passende Dateien', extensions: f.accept }] : undefined });
+    const picked = await pickFiles({ multiple: !single, filters: f.accept ? [{ name: L("Passende Dateien"), extensions: f.accept }] : undefined });
     if (!picked.length) return;
     const entries = picked.map(p => ({ id: uid(), name: p.name, bytes: p.bytes, size: p.size, path: p.path }));
     if (f.type === 'doc') values[f.key] = entries[0];
@@ -68,14 +69,14 @@
           <input id={'f-' + f.key} type="range" class="range" min={f.min} max={f.max} step={f.step || 1} bind:value={values[f.key]} />
         {:else if f.type === 'pages'}
           {@const v = values[f.key] || { mode: 'all', range: '' }}
-          <div class="seg wrap" role="group" aria-label="Seiten">
-            <button type="button" aria-pressed={v.mode === 'all'} onclick={() => (v.mode = 'all')}>Alle ({doc?.numPages || 0})</button>
-            <button type="button" aria-pressed={v.mode === 'cur'} onclick={() => (v.mode = 'cur')}>Aktuelle ({doc?.current || 1})</button>
-            <button type="button" aria-pressed={v.mode === 'sel'} disabled={!doc?.selection.length} onclick={() => (v.mode = 'sel')}>Auswahl ({doc?.selection.length || 0})</button>
-            <button type="button" aria-pressed={v.mode === 'range'} onclick={() => (v.mode = 'range')}>Bereich</button>
+          <div class="seg wrap" role="group" aria-label={L("Seiten")}>
+            <button type="button" aria-pressed={v.mode === 'all'} onclick={() => (v.mode = 'all')}>{L("Alle ({0})", doc?.numPages || 0)}</button>
+            <button type="button" aria-pressed={v.mode === 'cur'} onclick={() => (v.mode = 'cur')}>{L("Aktuelle ({0})", doc?.current || 1)}</button>
+            <button type="button" aria-pressed={v.mode === 'sel'} disabled={!doc?.selection.length} onclick={() => (v.mode = 'sel')}>{L("Auswahl ({0})", doc?.selection.length || 0)}</button>
+            <button type="button" aria-pressed={v.mode === 'range'} onclick={() => (v.mode = 'range')}>{L("Bereich")}</button>
           </div>
-          {#if v.mode === 'range'}<input class="input" placeholder="z. B. 1-3, 5, 8-letzte oder ungerade" bind:value={v.range} aria-label="Seitenbereich" />{/if}
-          {#if v.mode === 'sel' && !doc?.selection.length}<p class="hint">Keine Seiten markiert – es wird die aktuelle Seite verwendet.</p>{/if}
+          {#if v.mode === 'range'}<input class="input" placeholder={L("z. B. 1-3, 5, 8-letzte oder ungerade")} bind:value={v.range} aria-label={L("Seitenbereich")} />{/if}
+          {#if v.mode === 'sel' && !doc?.selection.length}<p class="hint">{L("Keine Seiten markiert – es wird die aktuelle Seite verwendet.")}</p>{/if}
         {:else if f.type === 'position'}
           <div class="pos" role="radiogroup" aria-label={f.label}>
             {#each POS as row, ri (ri)}
@@ -93,33 +94,33 @@
           <div class="flist">
             {#each values[f.key] || [] as it, i (it.id)}
               <div class="fi"><I.FileText size={13} /><span class="n" title={it.name}>{it.name}</span><span class="s num">{fmtSize(it.size || it.bytes?.length || 0)}</span>
-                <button class="ib" aria-label="Nach oben" disabled={i === 0} onclick={() => move(f.key, i, -1)}><I.ChevronUp size={12} /></button>
-                <button class="ib" aria-label="Entfernen" onclick={() => removeAt(f.key, i)}><I.X size={12} /></button></div>
+                <button class="ib" aria-label={L("Nach oben")} disabled={i === 0} onclick={() => move(f.key, i, -1)}><I.ChevronUp size={12} /></button>
+                <button class="ib" aria-label={L("Entfernen")} onclick={() => removeAt(f.key, i)}><I.X size={12} /></button></div>
             {/each}
-            <button type="button" class="btn sm" onclick={() => addFiles(f)}><I.Plus size={13} />Dateien wählen …</button>
+            <button type="button" class="btn sm" onclick={() => addFiles(f)}><I.Plus size={13} />{L("Dateien wählen …")}</button>
           </div>
         {:else if f.type === 'doc'}
           {@const cur = values[f.key]}
           <select id={'f-' + f.key} class="select" value={cur?.id || ''} onchange={e => { const id = (e.target as HTMLSelectElement).value; if (id === '__pick') { addFiles(f, true); return; } const d = app.docs.find(x => x.id === id); values[f.key] = d ? { id: d.id, name: d.name, open: true } : null; }}>
-            <option value="" disabled>Dokument wählen …</option>
-            {#each otherDocs as d (d.id)}<option value={d.id}>{d.title} (geöffnet)</option>{/each}
+            <option value="" disabled>{L("Dokument wählen …")}</option>
+            {#each otherDocs as d (d.id)}<option value={d.id}>{L("{0} (geöffnet)", d.title)}</option>{/each}
             {#if cur && !cur.open}<option value={cur.id}>{cur.name}</option>{/if}
-            <option value="__pick">Datei von der Festplatte …</option>
+            <option value="__pick">{L("Datei von der Festplatte …")}</option>
           </select>
         {:else if f.type === 'docs'}
           {@const list = values[f.key] || []}
           <div class="flist">
             {#each list as it, i (it.id)}
-              <div class="fi"><span class="ord num">{i + 1}</span><span class="n" title={it.name}>{it.name}</span>{#if it.open}<span class="tag">geöffnet</span>{/if}
-                <button class="ib" aria-label="Nach oben" disabled={i === 0} onclick={() => move(f.key, i, -1)}><I.ChevronUp size={12} /></button>
-                <button class="ib" aria-label="Nach unten" disabled={i === list.length - 1} onclick={() => move(f.key, i, 1)}><I.ChevronDown size={12} /></button>
-                <button class="ib" aria-label="Entfernen" onclick={() => removeAt(f.key, i)}><I.X size={12} /></button></div>
+              <div class="fi"><span class="ord num">{i + 1}</span><span class="n" title={it.name}>{it.name}</span>{#if it.open}<span class="tag">{L("geöffnet")}</span>{/if}
+                <button class="ib" aria-label={L("Nach oben")} disabled={i === 0} onclick={() => move(f.key, i, -1)}><I.ChevronUp size={12} /></button>
+                <button class="ib" aria-label={L("Nach unten")} disabled={i === list.length - 1} onclick={() => move(f.key, i, 1)}><I.ChevronDown size={12} /></button>
+                <button class="ib" aria-label={L("Entfernen")} onclick={() => removeAt(f.key, i)}><I.X size={12} /></button></div>
             {/each}
-            {#if !list.length}<p class="hint">Noch keine Dokumente gewählt.</p>{/if}
+            {#if !list.length}<p class="hint">{L("Noch keine Dokumente gewählt.")}</p>{/if}
             <div class="row">
-              <button type="button" class="btn sm" onclick={() => addFiles(f)}><I.Plus size={13} />Dateien …</button>
+              <button type="button" class="btn sm" onclick={() => addFiles(f)}><I.Plus size={13} />{L("Dateien …")}</button>
               {#each app.docs.filter(d => !list.some((x: any) => x.id === d.id)).slice(0, 6) as d (d.id)}
-                <button type="button" class="btn sm ghost chip" onclick={() => toggleDoc(f.key, d)} title={`„${d.name}“ hinzufügen`}><I.Plus size={11} />{d.title}</button>
+                <button type="button" class="btn sm ghost chip" onclick={() => toggleDoc(f.key, d)} title={L("„{0}“ hinzufügen", d.name)}><I.Plus size={11} />{d.title}</button>
               {/each}
             </div>
           </div>

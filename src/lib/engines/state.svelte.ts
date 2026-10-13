@@ -1,3 +1,4 @@
+import { L } from '../i18n';
 // Ladezustand der Engines für die Statusleiste
 export type EngineName = 'pymupdf' | 'libreoffice' | 'ghostscript' | 'tesseract';
 export type EngineStatus = 'idle' | 'loading' | 'ready' | 'error';
@@ -11,8 +12,8 @@ export const engineState = {
 };
 
 export const ENGINE_LABEL: Record<EngineName, string> = {
-  pymupdf: 'PDF-Engine',
-  libreoffice: 'Office-Engine',
+  pymupdf: L("PDF-Engine"),
+  libreoffice: L("Office-Engine"),
   ghostscript: 'Ghostscript',
-  tesseract: 'Texterkennung',
+  tesseract: L("Texterkennung"),
 };

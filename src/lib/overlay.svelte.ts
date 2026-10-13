@@ -6,6 +6,7 @@ import { plLoad, plSave, geom, embedFont, wrapText, safeText, color, degrees, rg
 import { pyRun } from './engines';
 import { uid, dataUrlToBytes, hexToRgb01 } from './util';
 
+import { L } from './i18n';
 interface Base { id: string; page: number }
 export type OItem = Base & (
   | { kind: 'rect' | 'ellipse'; x: number; y: number; w: number; h: number; stroke: string; fill: string; width: number; opacity: number }
@@ -86,15 +87,15 @@ async function applyOverlayNow(doc: Doc) {
   overlay.selected = null;
   sync(doc);
   const redactions = items.filter(i => i.kind === 'redact').length;
-  const label = redactions === items.length ? `${redactions} ${redactions === 1 ? 'Stelle' : 'Stellen'} geschwärzt`
+  const label = redactions === items.length ? L("{0} {1} geschwärzt", redactions, redactions === 1 ? L("Stelle") : L("Stellen"))
     : items.length === 1 ? labelOf(items[0])
-    : `${items.length} Änderungen übernommen${redactions ? `, davon ${redactions} geschwärzt` : ''}`;
+    : L("{0} Änderungen übernommen{1}", items.length, redactions ? L(", davon {0} geschwärzt", redactions) : '');
   await doc.commit(bytes, label);
   app.viewerRev++;
 }
 
 function labelOf(it: OItem) {
-  return ({ rect: 'Rechteck', ellipse: 'Ellipse', line: 'Linie', arrow: 'Pfeil', note: 'Notiz', image: 'Bild', redact: 'Schwärzung', whiteout: 'Abdeckung', text: 'Text', textedit: 'Text geändert', link: 'Link', field: 'Formularfeld', underline: 'Unterstreichung', strike: 'Durchstreichung' } as any)[it.kind] + ' eingefügt';
+  return ({ rect: L("Rechteck"), ellipse: L("Ellipse"), line: L("Linie"), arrow: L("Pfeil"), note: L("Notiz"), image: L("Bild"), redact: L("Schwärzung"), whiteout: L("Abdeckung"), text: 'Text', textedit: L("Text geändert"), link: 'Link', field: L("Formularfeld"), underline: L("Unterstreichung"), strike: L("Durchstreichung") } as any)[it.kind] + L(" eingefügt");
 }
 
 async function bakeContent(bytes: Uint8Array, items: OItem[]) {
@@ -104,7 +105,7 @@ async function bakeContent(bytes: Uint8Array, items: OItem[]) {
   const imgs = new Map<string, any>();
   const form = items.some(i => i.kind === 'field') ? pl.getForm() : null;
   const names = new Set(form ? form.getFields().map(f => f.getName()) : []);
-  const uniq = (n: string) => { let s = n || 'Feld', k = 2; while (names.has(s)) s = `${n || 'Feld'}_${k++}`; names.add(s); return s; };
+  const uniq = (n: string) => { let s = n || L("Feld"), k = 2; while (names.has(s)) s = `${n || L("Feld")}_${k++}`; names.add(s); return s; };
   const radios = new Map<string, any>();
 
   for (const it of items) {
@@ -131,21 +132,21 @@ async function bakeContent(bytes: Uint8Array, items: OItem[]) {
       const r = { x: Math.min(a.x, b.x), y: Math.min(a.y, b.y), width: Math.abs(b.x - a.x), height: Math.abs(b.y - a.y), borderColor: rgb(0.55, 0.6, 0.68), borderWidth: 0.75, backgroundColor: rgb(0.95, 0.97, 1) };
       const helv = await font(false);
       if (it.ftype === 'text' || it.ftype === 'signature') {
-        const f = form.createTextField(uniq(it.name || (it.ftype === 'signature' ? 'Unterschrift' : 'Textfeld')));
+        const f = form.createTextField(uniq(it.name || (it.ftype === 'signature' ? L("Unterschrift") : L("Textfeld"))));
         if (it.multiline) f.enableMultiline();
         f.addToPage(page, { ...r, font: helv });
       } else if (it.ftype === 'check') {
-        form.createCheckBox(uniq(it.name || 'Kontrollkästchen')).addToPage(page, r);
+        form.createCheckBox(uniq(it.name || L("Kontrollkästchen"))).addToPage(page, r);
       } else if (it.ftype === 'choice') {
-        const f = form.createDropdown(uniq(it.name || 'Auswahl'));
+        const f = form.createDropdown(uniq(it.name || L("Auswahl")));
         const opts = it.options.split(/[,;\n]/).map(s => s.trim()).filter(Boolean);
         if (opts.length) f.addOptions(opts);
         f.addToPage(page, { ...r, font: helv });
       } else if (it.ftype === 'radio') {
-        const gname = it.group || 'Optionsgruppe';
+        const gname = it.group || L("Optionsgruppe");
         let grp = radios.get(gname);
         if (!grp) { try { grp = form.getRadioGroup(gname); } catch { grp = form.createRadioGroup(uniq(gname)); } radios.set(gname, grp); }
-        grp.addOptionToPage(it.name || `Option ${grp.getOptions().length + 1}`, page, r);
+        grp.addOptionToPage(it.name || L("Option {0}", grp.getOptions().length + 1), page, r);
       }
     }
   }
@@ -241,10 +242,10 @@ save_out(doc)
 len(items)
 `, { files: { 'in.pdf': bytes, ...fontBytes }, outputs: ['out.pdf'], vars: { items: JSON.stringify(data), author } });
   const out = r.files['out.pdf'];
-  if (!out) { console.error('bake: keine Ausgabe', r.result); throw new Error('Änderungen konnten nicht geschrieben werden'); }
+  if (!out) { console.error('bake: keine Ausgabe', r.result); throw new Error(L("Änderungen konnten nicht geschrieben werden")); }
   return out;
 }
 
 export function warnIfLarge(doc: Doc) {
-  if ((overlay.items[doc.id]?.length || 0) > 200) toast('Sehr viele offene Elemente – „Übernehmen“ schreibt sie ins PDF.');
+  if ((overlay.items[doc.id]?.length || 0) > 200) toast(L("Sehr viele offene Elemente – „Übernehmen“ schreibt sie ins PDF."));
 }

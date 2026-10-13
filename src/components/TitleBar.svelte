@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { app } from '../lib/app.svelte';
   import { activate, closeDoc } from '../lib/actions';
   import { openTool } from '../lib/ui.svelte';
@@ -18,7 +19,7 @@
 
 <header class="titlebar" class:mac data-tauri-drag-region ondblclick={dbl}>
   <div class="quick" data-tauri-drag-region>
-    <button class="brand" title="Start" aria-label="Startseite" onclick={() => (app.backstage = !app.backstage)} class:on={app.backstage}>
+    <button class="brand" title={L("Start")} aria-label={L("Startseite")} onclick={() => (app.backstage = !app.backstage)} class:on={app.backstage}>
       <img src="/icon.png" alt="" />
     </button>
     {#each quick as id (id)}
@@ -34,14 +35,14 @@
         title={d.path || d.name} onclick={() => activate(d)} onmousedown={e => onTabMouse(e, d)} onkeydown={e => e.key === 'Enter' && activate(d)}>
         {#if d.protection}<I.Lock size={11} strokeWidth={2} />{/if}
         <span class="name">{d.title}</span>
-        {#if d.dirty}<span class="dot" title="Ungespeicherte Änderungen"></span>{/if}
-        <button class="x" aria-label={`${d.title} schließen`} onclick={e => { e.stopPropagation(); closeDoc(d); }}><I.X size={12} strokeWidth={2} /></button>
+        {#if d.dirty}<span class="dot" title={L("Ungespeicherte Änderungen")}></span>{/if}
+        <button class="x" aria-label={L("{0} schließen", d.title)} onclick={e => { e.stopPropagation(); closeDoc(d); }}><I.X size={12} strokeWidth={2} /></button>
       </div>
     {/each}
-    <button class="newtab" title="Öffnen" aria-label="Datei öffnen" onclick={() => openTool('open')}><I.Plus size={14} strokeWidth={2} /></button>
+    <button class="newtab" title={L("Öffnen")} aria-label={L("Datei öffnen")} onclick={() => openTool('open')}><I.Plus size={14} strokeWidth={2} /></button>
   </div>
-  <button class="search" onclick={() => (app.palette = true)} title="Befehl oder Werkzeug suchen">
-    <I.Search size={13} strokeWidth={2} /><span>Werkzeug suchen</span><kbd>{scLabel('Mod+K')}</kbd>
+  <button class="search" onclick={() => (app.palette = true)} title={L("Befehl oder Werkzeug suchen")}>
+    <I.Search size={13} strokeWidth={2} /><span>{L("Werkzeug suchen")}</span><kbd>{scLabel('Mod+K')}</kbd>
   </button>
 </header>
 

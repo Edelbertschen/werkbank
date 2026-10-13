@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { onMount, mount, unmount } from 'svelte';
   import { viewer, type PageHost } from '../lib/viewer.svelte';
   import { app, active } from '../lib/app.svelte';
@@ -124,7 +125,7 @@
 </script>
 
 <div class="vc scroll mode-{app.mode.replace(':', '-')}" class:hand={app.mode === 'hand'} class:fieldhl={app.prefs.showFieldHighlight}
-  bind:this={container} onpointerdown={down} onpointermove={move} onpointerup={up} onpointercancel={up} onwheel={wheel} onmouseup={mouseup} role="document" aria-label="Dokumentansicht">
+  bind:this={container} onpointerdown={down} onpointermove={move} onpointerup={up} onpointercancel={up} onwheel={wheel} onmouseup={mouseup} role="document" aria-label={L("Dokumentansicht")}>
   <div class="pdfViewer"></div>
 </div>
 

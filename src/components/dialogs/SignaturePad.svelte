@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../../lib/i18n';
   import { onMount } from 'svelte';
   import { app, savePrefs } from '../../lib/app.svelte';
   import { pickFiles } from '../../lib/platform';
@@ -49,7 +50,7 @@
     return c;
   }
   async function loadImage() {
-    const [f] = await pickFiles({ filters: [{ name: 'Bilder', extensions: ['png', 'jpg', 'jpeg', 'webp'] }] });
+    const [f] = await pickFiles({ filters: [{ name: L("Bilder"), extensions: ['png', 'jpg', 'jpeg', 'webp'] }] });
     if (!f) return;
     // Weißen Hintergrund transparent machen, damit die Unterschrift sauber auf dem Papier liegt
     const bmp = await createImageBitmap(new Blob([f.bytes as BlobPart]));
@@ -78,44 +79,44 @@
 <div class="sp">
   <h2>{title}</h2>
   <div class="seg" role="tablist">
-    {#if app.prefs.signatures.length}<button role="tab" aria-selected={(mode as any) === 'saved'} onclick={() => (mode = 'saved' as any)}>Gespeichert</button>{/if}
-    <button role="tab" aria-selected={mode === 'draw'} onclick={() => (mode = 'draw')}>Zeichnen</button>
-    <button role="tab" aria-selected={mode === 'type'} onclick={() => (mode = 'type')}>Tippen</button>
-    <button role="tab" aria-selected={mode === 'image'} onclick={() => (mode = 'image')}>Bild</button>
+    {#if app.prefs.signatures.length}<button role="tab" aria-selected={(mode as any) === 'saved'} onclick={() => (mode = 'saved' as any)}>{L("Gespeichert")}</button>{/if}
+    <button role="tab" aria-selected={mode === 'draw'} onclick={() => (mode = 'draw')}>{L("Zeichnen")}</button>
+    <button role="tab" aria-selected={mode === 'type'} onclick={() => (mode = 'type')}>{L("Tippen")}</button>
+    <button role="tab" aria-selected={mode === 'image'} onclick={() => (mode = 'image')}>{L("Bild")}</button>
   </div>
 
   {#if (mode as any) === 'saved'}
     <div class="saved">
       {#each app.prefs.signatures as s (s)}
-        <div class="sv"><button class="use" onclick={() => useSaved(s)} aria-label="Diese Unterschrift verwenden"><img src={s} alt="Gespeicherte Unterschrift" /></button>
-          <button class="del" aria-label="Löschen" title="Löschen" onclick={() => delSaved(s)}><I.X size={12} /></button></div>
+        <div class="sv"><button class="use" onclick={() => useSaved(s)} aria-label={L("Diese Unterschrift verwenden")}><img src={s} alt={L("Gespeicherte Unterschrift")} /></button>
+          <button class="del" aria-label={L("Löschen")} title={L("Löschen")} onclick={() => delSaved(s)}><I.X size={12} /></button></div>
       {/each}
     </div>
-    <p class="hint">Unterschrift anklicken, um sie zu platzieren.</p>
+    <p class="hint">{L("Unterschrift anklicken, um sie zu platzieren.")}</p>
   {:else if mode === 'draw'}
     <div class="padwrap">
       <canvas bind:this={pad} width="1200" height="380" class="pad" onpointerdown={pd} onpointermove={pm} onpointerup={pu} onpointercancel={pu}></canvas>
       <div class="line"></div>
-      {#if !hasInk}<span class="ph">Hier unterschreiben – mit Maus, Trackpad oder Stift</span>{/if}
+      {#if !hasInk}<span class="ph">{L("Hier unterschreiben – mit Maus, Trackpad oder Stift")}</span>{/if}
     </div>
-    <div class="row"><button class="btn sm" onclick={clear} disabled={!hasInk}>Leeren</button>
-      <span class="grow"></span>{#each ['#13235F', '#1C1C1E', '#1F4FD1'] as c (c)}<button class="sw" style:background={c} aria-label={`Farbe ${c}`} aria-pressed={color === c} onclick={() => (color = c)}></button>{/each}</div>
+    <div class="row"><button class="btn sm" onclick={clear} disabled={!hasInk}>{L("Leeren")}</button>
+      <span class="grow"></span>{#each ['#13235F', '#1C1C1E', '#1F4FD1'] as c (c)}<button class="sw" style:background={c} aria-label={L("Farbe {0}", c)} aria-pressed={color === c} onclick={() => (color = c)}></button>{/each}</div>
   {:else if mode === 'type'}
-    <input class="input" placeholder="Vor- und Nachname" bind:value={typed} />
+    <input class="input" placeholder={L("Vor- und Nachname")} bind:value={typed} />
     <div class="fonts">
-      {#each FONTS as f (f)}<button class="font" class:on={font === f} style:font-family={stack(f)} onclick={() => (font = f)}>{typed || 'Unterschrift'}</button>{/each}
+      {#each FONTS as f (f)}<button class="font" class:on={font === f} style:font-family={stack(f)} onclick={() => (font = f)}>{typed || L("Unterschrift")}</button>{/each}
     </div>
   {:else}
-    <div class="img">{#if imgSrc}<img src={imgSrc} alt="Vorschau" />{:else}<p class="hint">Foto oder Scan einer Unterschrift auf weißem Papier. Der Hintergrund wird automatisch entfernt.</p>{/if}</div>
-    <button class="btn sm" onclick={loadImage}><I.Upload size={13} />Bild wählen …</button>
+    <div class="img">{#if imgSrc}<img src={imgSrc} alt={L("Vorschau")} />{:else}<p class="hint">{L("Foto oder Scan einer Unterschrift auf weißem Papier. Der Hintergrund wird automatisch entfernt.")}</p>{/if}</div>
+    <button class="btn sm" onclick={loadImage}><I.Upload size={13} />{L("Bild wählen …")}</button>
   {/if}
 
   {#if (mode as any) !== 'saved'}
-    <label class="keep"><input type="checkbox" bind:checked={keep} /> Für später speichern (nur auf diesem Rechner)</label>
+    <label class="keep"><input type="checkbox" bind:checked={keep} /> {L("Für später speichern (nur auf diesem Rechner)")}</label>
   {/if}
   <div class="buttons">
-    <button class="btn" onclick={() => done(null)}>Abbrechen</button>
-    {#if (mode as any) !== 'saved'}<button class="btn primary" onclick={ok}>Platzieren</button>{/if}
+    <button class="btn" onclick={() => done(null)}>{L("Abbrechen")}</button>
+    {#if (mode as any) !== 'saved'}<button class="btn primary" onclick={ok}>{L("Platzieren")}</button>{/if}
   </div>
 </div>
 

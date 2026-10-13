@@ -11,13 +11,14 @@ import StampPicker from '../components/dialogs/StampPicker.svelte';
 import { pickFiles } from './platform';
 import { bytesToDataUrl } from './util';
 
+import { L } from './i18n';
 let nonce = 0;
 
 /** Werkzeug über Bandleiste, Palette oder Kürzel auslösen */
 export async function openTool(id: string) {
   const t = tool(id);
   if (t.disabled?.()) return;
-  if (!t.noDoc && !active()) { toast('Öffne zuerst ein Dokument'); return; }
+  if (!t.noDoc && !active()) { toast(L("Öffne zuerst ein Dokument")); return; }
   if (t.mode) { if (t.mode !== 'select' && t.mode !== 'hand') app.pane = null; await setMode(app.mode === t.mode ? 'select' : t.mode); return; }
   if (t.direct) { await runTool(t); return; }
   app.pane = { tool: id, nonce: ++nonce };
@@ -29,7 +30,7 @@ const PLACE_MODES: EditMode[] = ['sign', 'stamp', 'image'];
 let hintToast = 0;
 export async function setMode(m: EditMode) {
   if (m !== 'select' && m !== 'hand') {
-    if (viewer.inst?.pagesRotation) { toast('Bitte zuerst die Ansichtsdrehung zurücksetzen (Ansicht › Ansicht drehen).'); return; }
+    if (viewer.inst?.pagesRotation) { toast(L("Bitte zuerst die Ansichtsdrehung zurücksetzen (Ansicht › Ansicht drehen).")); return; }
     app.organize = false;
   }
   if (PLACE_MODES.includes(m)) {
@@ -43,23 +44,23 @@ export async function setMode(m: EditMode) {
 }
 
 export const MODE_HINT: Partial<Record<EditMode, string>> = {
-  'text:edit': 'Auf eine Textzeile klicken, um sie zu ändern.',
-  'text:add': 'Auf die Seite klicken und schreiben.',
-  image: 'Auf die Seite klicken, um das Bild zu platzieren.',
-  sign: 'Auf die Seite klicken, um die Unterschrift zu platzieren.',
-  stamp: 'Auf die Seite klicken, um den Stempel zu setzen.',
-  redact: 'Bereiche aufziehen, die geschwärzt werden sollen.',
-  whiteout: 'Bereich aufziehen, der weiß abgedeckt wird.',
-  link: 'Bereich für den Link aufziehen.',
-  note: 'Klicken, um eine Notiz anzuheften.',
-  'shape:rect': 'Rechteck aufziehen.', 'shape:ellipse': 'Ellipse aufziehen – mit Umschalt ein Kreis.', 'shape:line': 'Linie ziehen.', 'shape:arrow': 'Pfeil ziehen.',
-  'markup:underline': 'Text auswählen, um ihn zu unterstreichen.', 'markup:strike': 'Text auswählen, um ihn durchzustreichen.',
-  'field:text': 'Textfeld aufziehen.', 'field:check': 'Kontrollkästchen aufziehen.', 'field:radio': 'Optionsfeld aufziehen.', 'field:choice': 'Auswahlliste aufziehen.', 'field:signature': 'Unterschriftsfeld aufziehen.',
+  'text:edit': L("Auf eine Textzeile klicken, um sie zu ändern."),
+  'text:add': L("Auf die Seite klicken und schreiben."),
+  image: L("Auf die Seite klicken, um das Bild zu platzieren."),
+  sign: L("Auf die Seite klicken, um die Unterschrift zu platzieren."),
+  stamp: L("Auf die Seite klicken, um den Stempel zu setzen."),
+  redact: L("Bereiche aufziehen, die geschwärzt werden sollen."),
+  whiteout: L("Bereich aufziehen, der weiß abgedeckt wird."),
+  link: L("Bereich für den Link aufziehen."),
+  note: L("Klicken, um eine Notiz anzuheften."),
+  'shape:rect': L("Rechteck aufziehen."), 'shape:ellipse': L("Ellipse aufziehen – mit Umschalt ein Kreis."), 'shape:line': L("Linie ziehen."), 'shape:arrow': L("Pfeil ziehen."),
+  'markup:underline': L("Text auswählen, um ihn zu unterstreichen."), 'markup:strike': L("Text auswählen, um ihn durchzustreichen."),
+  'field:text': L("Textfeld aufziehen."), 'field:check': L("Kontrollkästchen aufziehen."), 'field:radio': L("Optionsfeld aufziehen."), 'field:choice': L("Auswahlliste aufziehen."), 'field:signature': L("Unterschriftsfeld aufziehen."),
 };
 
 async function pickPlacement(kind: 'sign' | 'stamp' | 'image') {
   if (kind === 'image') {
-    const [f] = await pickFiles({ filters: [{ name: 'Bilder', extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'heic'] }], title: 'Bild einfügen' });
+    const [f] = await pickFiles({ filters: [{ name: L("Bilder"), extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'heic'] }], title: L("Bild einfügen") });
     if (!f) return null;
     const { imagesToPdf } = await import('./convert');
     // Bild normalisieren (Drehung aus EXIF, HEIC …) über einen Canvas
@@ -67,7 +68,7 @@ async function pickPlacement(kind: 'sign' | 'stamp' | 'image') {
     const url = await normalizeImage(f.bytes, f.name);
     return { ...url, width: 0.35, kind } as const;
   }
-  const r = await dialog({ title: kind === 'sign' ? 'Unterschrift' : 'Stempel', component: kind === 'sign' ? SignaturePad : StampPicker, width: kind === 'sign' ? 560 : 520 });
+  const r = await dialog({ title: kind === 'sign' ? L("Unterschrift") : L("Stempel"), component: kind === 'sign' ? SignaturePad : StampPicker, width: kind === 'sign' ? 560 : 520 });
   if (!r || r.button !== 'ok' || !r.values.src) return null;
   if (kind === 'sign' && r.values.keep) {
     app.prefs.signatures = [r.values.src, ...app.prefs.signatures.filter(s => s !== r.values.src)].slice(0, 8);

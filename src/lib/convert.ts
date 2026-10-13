@@ -5,6 +5,7 @@ import { libreConvert, py } from './engines';
 import { MM, extOf, baseName } from './util';
 import type { Progress } from './engines/rpc';
 
+import { L, intlLocale } from './i18n';
 export const OFFICE_EXT = ['docx', 'doc', 'docm', 'dotx', 'odt', 'ott', 'rtf', 'wpd', 'xlsx', 'xls', 'xlsm', 'ods', 'csv', 'pptx', 'ppt', 'pps', 'ppsx', 'odp', 'odg', 'vsd', 'vsdx', 'pub', 'wps'];
 export const IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'avif', 'tif', 'tiff', 'heic', 'heif', 'svg', 'ico'];
 export const MUPDF_EXT = ['epub', 'mobi', 'fb2', 'cbz', 'xps', 'oxps'];
@@ -56,7 +57,7 @@ async function decodeToCanvas(bytes: Uint8Array, name: string): Promise<HTMLCanv
   try { src = await createImageBitmap(blob, { imageOrientation: 'from-image' } as any); }
   catch {
     const url = URL.createObjectURL(blob);
-    src = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error(`„${name}“ ist kein lesbares Bild`)); im.src = url; });
+    src = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error(L("„{0}“ ist kein lesbares Bild", name))); im.src = url; });
   }
   let w = src.width || 1000, h = src.height || 1000;
   if (e === 'svg') { const s = Math.max(1, 2000 / Math.max(w, h)); w *= s; h *= s; }
@@ -120,7 +121,7 @@ export async function markdownToHtml(md: string) {
 async function emlToHtml(bytes: Uint8Array) {
   const PostalMime = (await import('postal-mime')).default as any;
   const m = await PostalMime.parse(bytes);
-  const head = `<div class="meta"><b>Von:</b> ${esc(m.from?.address ? `${m.from.name || ''} <${m.from.address}>` : '')}<br><b>An:</b> ${esc((m.to || []).map((t: any) => t.address).join(', '))}<br><b>Datum:</b> ${esc(m.date ? new Date(m.date).toLocaleString('de-DE') : '')}<br><b>Betreff:</b> ${esc(m.subject || '')}${m.attachments?.length ? `<br><b>Anhänge:</b> ${esc(m.attachments.map((a: any) => a.filename).join(', '))}` : ''}</div>`;
+  const head = L("<div class=\"meta\"><b>Von:</b> {0}<br><b>An:</b> {1}<br><b>Datum:</b> {2}<br><b>Betreff:</b> {3}{4}</div>", esc(m.from?.address ? `${m.from.name || ''} <${m.from.address}>` : ''), esc((m.to || []).map((t: any) => t.address).join(', ')), esc(m.date ? new Date(m.date).toLocaleString(intlLocale()) : ''), esc(m.subject || ''), m.attachments?.length ? L("<br><b>Anhänge:</b> {0}", esc(m.attachments.map((a: any) => a.filename).join(', '))) : '');
   const body = m.html ? m.html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '') : `<pre>${esc(m.text || '')}</pre>`;
   return `<h1>${esc(m.subject || 'E-Mail')}</h1>${head}${body}`;
 }
@@ -128,7 +129,7 @@ async function msgToHtml(bytes: Uint8Array) {
   const MsgReader = ((await import('@kenjiuno/msgreader')) as any).default;
   const r = new MsgReader(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
   const d = r.getFileData();
-  const head = `<div class="meta"><b>Von:</b> ${esc(`${d.senderName || ''} <${d.senderEmail || ''}>`)}<br><b>An:</b> ${esc((d.recipients || []).map((x: any) => x.email || x.name).join(', '))}<br><b>Betreff:</b> ${esc(d.subject || '')}</div>`;
+  const head = L("<div class=\"meta\"><b>Von:</b> {0}<br><b>An:</b> {1}<br><b>Betreff:</b> {2}</div>", esc(`${d.senderName || ''} <${d.senderEmail || ''}>`), esc((d.recipients || []).map((x: any) => x.email || x.name).join(', ')), esc(d.subject || ''));
   return `<h1>${esc(d.subject || 'E-Mail')}</h1>${head}<pre style="white-space:pre-wrap;font-family:sans-serif;font-size:10.5pt">${esc(d.body || '')}</pre>`;
 }
 
@@ -140,16 +141,16 @@ export async function anyToPdf(name: string, bytes: Uint8Array, progress?: Progr
   const k = kindOf(name);
   if (k === 'pdf' || hasPdfHeader(bytes)) return bytes;
   if (k === 'office') {
-    progress?.(-1, 'Office-Dokument wird umgewandelt …');
+    progress?.(-1, L("Office-Dokument wird umgewandelt …"));
     return libreConvert(bytes, name, 'pdf', { progress });
   }
-  if (k === 'image') { progress?.(-1, 'Bild wird umgewandelt …'); return imagesToPdf([{ name, bytes }]); }
+  if (k === 'image') { progress?.(-1, L("Bild wird umgewandelt …")); return imagesToPdf([{ name, bytes }]); }
   if (k === 'mupdf') {
-    progress?.(-1, 'Wird gesetzt …');
+    progress?.(-1, L("Wird gesetzt …"));
     return py<Uint8Array>('convertToPdf', bytes, { filetype: e === 'oxps' ? 'xps' : e });
   }
   if (k === 'text') {
-    progress?.(-1, 'Wird gesetzt …');
+    progress?.(-1, L("Wird gesetzt …"));
     const text = new TextDecoder('utf-8').decode(bytes);
     let html: string;
     if (e === 'md' || e === 'markdown') html = await markdownToHtml(text);
@@ -161,5 +162,5 @@ export async function anyToPdf(name: string, bytes: Uint8Array, progress?: Progr
     else html = `<pre style="white-space:pre-wrap;font-family:monospace;font-size:9.5pt">${esc(text)}</pre>`;
     return htmlToPdf(html);
   }
-  throw new Error(`Dateien vom Typ „.${e || '?'}“ kann die Werkbank nicht öffnen.`);
+  throw new Error(L("Dateien vom Typ „.{0}“ kann die Werkbank nicht öffnen.", e || '?'));
 }

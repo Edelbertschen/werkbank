@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { L } from '../lib/i18n';
   import { app, active, savePrefs } from '../lib/app.svelte';
   import { tool } from '../lib/tools';
   import { runTool } from '../lib/actions';
@@ -27,7 +28,7 @@
     running = true; done = '';
     const ok = await runTool(t, $state.snapshot(values));
     running = false;
-    if (ok) done = 'Erledigt';
+    if (ok) done = L("Erledigt");
   }
 
   let w0 = 0, x0 = 0;
@@ -45,12 +46,12 @@
     <header>
       <span class="ic"><t.icon size={18} strokeWidth={1.6} /></span>
       <h2>{t.label}</h2>
-      <button class="x" aria-label="Schließen" title="Schließen (Esc)" onclick={() => (app.pane = null)}><I.X size={14} strokeWidth={2} /></button>
+      <button class="x" aria-label={L("Schließen")} title={L("Schließen (Esc)")} onclick={() => (app.pane = null)}><I.X size={14} strokeWidth={2} /></button>
     </header>
     <div class="body scroll">
       {#if t.desc}<p class="desc">{t.desc}</p>{/if}
       {#if !doc && !t.noDoc}
-        <p class="note">Öffne zuerst ein Dokument.</p>
+        <p class="note">{L("Öffne zuerst ein Dokument.")}</p>
       {:else if t.panel}
         {#key app.pane?.nonce}<t.panel />{/key}
       {:else if t.fields?.length}
@@ -61,8 +62,8 @@
       <footer>
         {#if done}<span class="done"><I.Check size={13} strokeWidth={2.4} />{done}</span>{/if}
         <span class="grow"></span>
-        <button class="btn" onclick={() => (app.pane = null)}>Schließen</button>
-        <button class="btn primary" disabled={running} onclick={go}>{running ? 'Läuft …' : t.action || 'Anwenden'}</button>
+        <button class="btn" onclick={() => (app.pane = null)}>{L("Schließen")}</button>
+        <button class="btn primary" disabled={running} onclick={go}>{running ? L("Läuft …") : t.action || L("Anwenden")}</button>
       </footer>
     {/if}
   </aside>
