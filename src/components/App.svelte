@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { hideSplash } from '../lib/splash';
   import { L } from '../lib/i18n';
   import { onMount } from 'svelte';
   import { app, active, loadPersisted, toast } from '../lib/app.svelte';
@@ -23,6 +24,7 @@
   import Toasts from './Toasts.svelte';
   import Busy from './Busy.svelte';
   import Palette from './Palette.svelte';
+  import Welcome from './Welcome.svelte';
 
   const doc = $derived(active());
   let dropTarget = $state<DropTarget | null>(null);
@@ -30,6 +32,7 @@
   onMount(async () => {
     await loadPersisted();
     app.ready = true;
+    hideSplash();
     // PDF-Engine gleich still vorbereiten – bis eine Datei gewählt ist, ist sie meist fertig
     if (app.prefs.preloadEngines) import('../lib/engines').then(m => m.preloadWhenIdle());
     await onOpenFiles(paths => openPaths(paths));
@@ -53,7 +56,7 @@
   function onKey(e: KeyboardEvent) {
     const t = e.target as HTMLElement;
     const typing = t.closest('input, textarea, select, [contenteditable="true"], .freeTextEditor, .annotationEditorLayer [contenteditable]');
-    if (document.querySelector('.dialog-veil')) return;
+    if (document.querySelector('.dialog-veil, .welcome')) return;
     if (e.key === 'Escape') {
       if (viewer.presenting) { viewer.endPresent(); return; }
       if (app.palette) { app.palette = false; return; }
@@ -155,6 +158,7 @@
   <div class="drop-veil"><div class="drop-card">{L("Zum Öffnen loslassen")}<span>{L("PDF, Office, Bilder, E-Books, Mails")}</span></div></div>
 {/if}
 <Palette />
+{#if app.ready && !app.prefs.introSeen}<Welcome />{/if}
 <DialogHost />
 <Busy />
 <Toasts />

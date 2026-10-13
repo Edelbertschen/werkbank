@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { readFileSync } from 'node:fs';
 
+// Schriftzug für den Splash als Pfade einsetzen (erscheint ohne Webschrift sofort)
+const wordmark = { name: 'wb-wordmark', transformIndexHtml: (html: string) => html.replace('<!--wordmark-->', readFileSync(new URL('./src/wordmark.svg', import.meta.url), 'utf8').trim()) };
+
 const version = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version;
 
 // SharedArrayBuffer (LibreOffice, Tesseract) braucht Cross-Origin-Isolation – auch im Entwicklungsserver.
@@ -12,7 +15,7 @@ const isolation = {
 };
 
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [svelte(), wordmark],
   define: { __APP_VERSION__: JSON.stringify(version) },
   clearScreen: false,
   server: { port: 5173, strictPort: true, headers: isolation },

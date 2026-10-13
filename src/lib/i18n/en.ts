@@ -1465,6 +1465,8 @@ const en: Record<string, string> = {
  "Im ganzen Dokument suchen": "Search the whole document",
  "Treffer erscheinen hier mit Textauszug. Enter springt zum nächsten, Umschalt+Enter zurück.": "Matches appear here with a text excerpt. Enter jumps to the next, Shift+Enter back.",
  "Nichts gefunden": "Nothing found",
- "Prüfe die Schreibweise. Gescannte Seiten werden erst nach einer Texterkennung durchsuchbar.": "Check the spelling. Scanned pages become searchable only after text recognition."
+ "Prüfe die Schreibweise. Gescannte Seiten werden erst nach einer Texterkennung durchsuchbar.": "Check the spelling. Scanned pages become searchable only after text recognition.",
+ "Zwei Dinge vorab – beides lässt sich später in den Einstellungen ändern.": "Two things first – you can change both later in Settings.",
+ "Loslegen": "Get started"
 };
 export default en;

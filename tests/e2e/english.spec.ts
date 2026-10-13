@@ -1,8 +1,10 @@
 // Englische Oberfläche im echten Browser: keine deutschen Reste, Werkzeuge laufen.
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { skipIntro } from './app';
 
 test.use({ locale: 'en-US' });
+test.beforeEach(async ({ page }) => { await page.addInitScript(skipIntro); });
 
 const GERMAN_WORDS = /\b(und|oder|der|die|das|mit|für|nicht|Seite|Seiten|Datei|Dateien|Dokument|Öffnen|Speichern|Schließen|Einstellungen|Bearbeiten|Werkzeug)\b|[äöüÄÖÜß„]/;
 

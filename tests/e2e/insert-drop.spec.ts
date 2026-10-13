@@ -27,6 +27,7 @@ test('Seitenleiste: PDF zwischen Seite 1 und 2 ablegen', async ({ app }) => {
   await expect(app.page.locator('.insert-line')).toBeVisible();
   await expect(app.page.locator('.drop-veil')).toHaveCount(0);
   await dropFile(app.page, 'mixed-sizes.pdf', b.x + b.width / 2, b.y + 4);
+  await expect.poll(async () => (await app.docInfo())!.pages, { timeout: 30_000 }).toBe(9);
   await app.idle();
   await expect(app.page.locator('.insert-line')).toHaveCount(0);
   const info = (await app.docInfo())!;
@@ -42,6 +43,7 @@ test('Organisieren: PDF vor der ersten Seite ablegen', async ({ app }) => {
   await expect(cells).toHaveCount(5);
   const b = (await cells.nth(0).boundingBox())!;
   await dropFile(app.page, 'form.pdf', b.x + 6, b.y + b.height / 2);
+  await expect(cells).toHaveCount(6, { timeout: 30_000 });
   await app.idle();
   const info = (await app.docInfo())!;
   expect(info.docs).toBe(1);

@@ -7,6 +7,7 @@
 //! (WebView2, WKWebView, WebKitGTK) als sicherer Ursprung.
 
 mod sysfont;
+mod theme;
 
 use std::{
     fs,
@@ -581,17 +582,29 @@ pub fn run() {
                 eprintln!("[werkbank] resource_dir={:?} root={:?}", app.path().resource_dir(), root);
             }
             let port = start_server(root);
-            let url = format!("http://127.0.0.1:{port}/");
+            // Gespeichertes Farbschema: Splash und Fenster starten gleich in der richtigen Farbe
+            let prefs = state_dir(app.handle()).ok().and_then(|d| fs::read_to_string(d.join("prefs.json")).ok());
+            let scheme = theme::from_prefs(prefs.as_deref());
+            let url = if scheme == "system" { format!("http://127.0.0.1:{port}/") } else { format!("http://127.0.0.1:{port}/?theme={scheme}") };
 
+            let (r, g, b) = theme::background(scheme == "dark");
             let builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::External(url.parse().unwrap()))
                 .title("Werkbank")
                 .inner_size(1380.0, 880.0)
                 .min_inner_size(880.0, 600.0)
                 .center()
+                .background_color(tauri::window::Color(r, g, b, 255))
                 .visible(true);
             #[cfg(target_os = "macos")]
             let builder = builder.title_bar_style(tauri::TitleBarStyle::Overlay).hidden_title(true);
-            builder.build()?;
+            let win = builder.build()?;
+            if scheme == "system" {
+                // Systemschema erst am fertigen Fenster bekannt
+                if let Ok(tauri::Theme::Dark) = win.theme() {
+                    let (r, g, b) = theme::background(true);
+                    let _ = win.set_background_color(Some(tauri::window::Color(r, g, b, 255)));
+                }
+            }
             Ok(())
         })
         .build(tauri::generate_context!())

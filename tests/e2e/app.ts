@@ -5,8 +5,11 @@ import { readFileSync } from 'node:fs';
 export const FX = (n: string) => `tests/fixtures/${n}`;
 
 /** Seite mit Fehlerprotokoll: jeder unbehandelte Fehler lässt den Test scheitern */
-export const test = base.extend<{ app: App }>({
-  app: async ({ page }, use) => {
+export const test = base.extend<{ app: App; intro: boolean }>({
+  /** Willkommensfenster beim ersten Start zeigen (sonst gilt es als gesehen) */
+  intro: [false, { option: true }],
+  app: async ({ page, intro }, use) => {
+    if (!intro) await page.addInitScript(skipIntro);
     const errors: string[] = [];
     page.on('pageerror', e => errors.push(String(e) + (process.env.WB_STACK ? '\n' + (e.stack || '') : '')));
     page.on('console', m => { if (m.type() === 'error' && !/warn:|LOK|Failed to load resource|\[LOK/.test(m.text())) errors.push(m.text()); });
@@ -18,6 +21,11 @@ export const test = base.extend<{ app: App }>({
   },
 });
 export { expect };
+
+/** Für Tests ohne Einführung: Einstellungen mit „Einführung gesehen“ vorbelegen */
+export function skipIntro() {
+  try { if (!localStorage.getItem('werkbank.prefs')) localStorage.setItem('werkbank.prefs', JSON.stringify({ introSeen: true })); } catch { /* egal */ }
+}
 
 export class App {
   constructor(public page: Page, public errors: string[]) {}

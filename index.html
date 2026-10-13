@@ -6,8 +6,41 @@
     <meta name="color-scheme" content="light dark" />
     <title>Werkbank</title>
     <link rel="icon" href="/icon.png" />
+    <script>
+      // Farbschema vor dem ersten Bild festlegen: Desktop-App übergibt es in der Adresse, im Browser steht es im Speicher
+      (function () {
+        var t = new URLSearchParams(location.search).get('theme');
+        if (!t) { try { t = (JSON.parse(localStorage.getItem('werkbank.prefs') || '{}') || {}).theme; } catch (e) {} }
+        if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+      })();
+    </script>
+    <style>
+      /* Splash: steht, bis die Oberfläche bereit ist; Farben wie das Fensterchrom */
+      #splash { --sp-bg: #E9ECEB; --sp-fg: #111819; --sp-track: rgba(17, 33, 36, 0.08); --sp-accent: #0B6E7B; --sp-glow: rgba(4, 40, 46, 0.28);
+        position: fixed; inset: 0; z-index: 2147483000; display: grid; place-items: center; background: var(--sp-bg); color: var(--sp-fg);
+        transition: opacity 0.42s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.42s cubic-bezier(0.2, 0.7, 0.2, 1); }
+      @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) #splash { --sp-bg: #111415; --sp-fg: #E9EEED; --sp-track: rgba(220, 240, 238, 0.08); --sp-accent: #3FB3C2; --sp-glow: rgba(63, 179, 194, 0.22); } }
+      :root[data-theme='dark'] #splash { --sp-bg: #111415; --sp-fg: #E9EEED; --sp-track: rgba(220, 240, 238, 0.08); --sp-accent: #3FB3C2; --sp-glow: rgba(63, 179, 194, 0.22); }
+      #splash .sp-in { display: flex; flex-direction: column; align-items: center; gap: 22px; transform: translateY(-14px); }
+      #splash img { width: 84px; height: 84px; filter: drop-shadow(0 10px 26px var(--sp-glow)); animation: sp-mark 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+      #splash .sp-word { height: 30px; width: auto; animation: sp-rise 0.7s 0.08s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+      #splash .sp-bar { position: relative; width: 132px; height: 2px; border-radius: 2px; overflow: hidden; background: var(--sp-track); animation: sp-rise 0.6s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+      #splash .sp-bar i { position: absolute; top: 0; bottom: 0; width: 40%; border-radius: 2px; background: var(--sp-accent); animation: sp-run 1.25s cubic-bezier(0.45, 0, 0.25, 1) infinite; }
+      #splash.out { opacity: 0; transform: scale(1.015); pointer-events: none; }
+      @keyframes sp-mark { from { opacity: 0; transform: scale(0.92); } }
+      @keyframes sp-rise { from { opacity: 0; transform: translateY(6px); } }
+      @keyframes sp-run { from { left: -40%; } to { left: 100%; } }
+      @media (prefers-reduced-motion: reduce) { #splash *, #splash { animation: none !important; transition-duration: 0.01s !important; } }
+    </style>
   </head>
   <body>
+    <div id="splash" aria-hidden="true">
+      <div class="sp-in">
+        <img src="/icon.png" alt="" />
+        <!--wordmark-->
+        <div class="sp-bar"><i></i></div>
+      </div>
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

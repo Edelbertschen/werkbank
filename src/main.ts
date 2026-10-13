@@ -23,5 +23,11 @@ await initPlatform();
   const locale = resolveLocale(forced || prefs.lang || 'system', navigator.language);
   setLocale(locale, locale === 'en' ? (await import('./lib/i18n/en')).default : {});
 }
-const { default: App } = await import('./components/App.svelte');
-mount(App, { target: document.getElementById('app')! });
+try {
+  const { default: App } = await import('./components/App.svelte');
+  mount(App, { target: document.getElementById('app')! });
+} catch (e) {
+  // Ohne Oberfläche nicht hinter dem Splash hängen bleiben
+  (await import('./lib/splash')).hideSplash();
+  throw e;
+}

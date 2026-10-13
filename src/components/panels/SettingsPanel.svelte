@@ -26,7 +26,7 @@
     set('quickAccess', p.quickAccess.includes(id) ? p.quickAccess.filter(x => x !== id) : [...p.quickAccess, id]);
   }
   function clearRecent() { app.recent = []; saveRecent(); toast(L("Liste der zuletzt geöffneten Dateien geleert")); }
-  function showIntro() { set('introSeen', false); app.pane = null; app.backstage = true; }
+  function showIntro() { set('introSeen', false); app.pane = null; }
   const mac = navigator.platform.includes('Mac');
   function clearSignatures() { set('signatures', []); toast(L("Gespeicherte Unterschriften entfernt")); }
 

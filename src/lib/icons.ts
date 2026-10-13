@@ -160,3 +160,4 @@ export { default as AlignRight } from '@lucide/svelte/icons/text-align-end';
 export { default as AlignJustify } from '@lucide/svelte/icons/text-align-justify';
 export { default as SearchX } from '@lucide/svelte/icons/search-x';
 export { default as HardDrive } from '@lucide/svelte/icons/hard-drive';
+export { default as ArrowRight } from '@lucide/svelte/icons/arrow-right';

@@ -1,26 +1,66 @@
-// Erster Start und leere Zustände: kurz erklären, was geht, und danach nicht mehr stören.
+// Erster Start: Splash, Willkommensfenster mit Sprache und Erscheinungsbild, leere Zustände.
 import { test, expect } from './app';
 
-test('Einführung beim ersten Start; einmal geschlossen, bleibt sie weg', async ({ app }) => {
-  const intro = app.page.locator('.intro');
-  await expect(intro).toBeVisible();
-  await expect(intro.getByRole('heading', { name: 'Willkommen in der Werkbank' })).toBeVisible();
-  // drei kurze Punkte, keine Tour
-  await expect(intro.locator('li')).toHaveCount(3);
-  await intro.getByRole('button', { name: 'Verstanden' }).click();
-  await expect(intro).toHaveCount(0);
-  await app.page.waitForTimeout(400);
-  await app.page.reload();
-  await app.page.waitForFunction(() => (window as any).__wb);
-  await expect(app.page.getByText('Datei hierher ziehen')).toBeVisible();
-  await expect(app.page.locator('.intro')).toHaveCount(0);
+test.describe('Willkommen', () => {
+  test.use({ intro: true });
+
+  test('Willkommensfenster beim ersten Start; einmal geschlossen, bleibt es weg', async ({ app }) => {
+    const intro = app.page.getByRole('dialog', { name: 'Willkommen in der Werkbank' });
+    await expect(intro).toBeVisible();
+    await expect(intro.locator('.points li')).toHaveCount(3);
+    await intro.getByRole('button', { name: 'Loslegen' }).click();
+    await expect(intro).toHaveCount(0);
+    await app.page.waitForTimeout(400);
+    await app.page.reload();
+    await app.page.waitForFunction(() => (window as any).__wb);
+    await expect(app.page.getByText('Datei hierher ziehen')).toBeVisible();
+    await expect(app.page.locator('.welcome')).toHaveCount(0);
+  });
+
+  test('Erscheinungsbild wählen wirkt sofort und gilt auch für den Splash beim nächsten Start', async ({ app }) => {
+    const intro = app.page.getByRole('dialog', { name: 'Willkommen in der Werkbank' });
+    await intro.getByRole('button', { name: 'Dunkel' }).click();
+    expect(await app.page.evaluate(() => document.documentElement.dataset.theme)).toBe('dark');
+    await intro.getByRole('button', { name: 'Loslegen' }).click();
+    await app.page.waitForTimeout(400);
+    await app.page.addInitScript(() => document.addEventListener('DOMContentLoaded', () => {
+      const s = document.getElementById('splash');
+      (window as any).__splash = s ? { theme: document.documentElement.dataset.theme, bg: getComputedStyle(s).backgroundColor } : null;
+    }));
+    await app.page.reload();
+    await app.page.waitForFunction(() => (window as any).__wb);
+    const sp = await app.page.evaluate(() => (window as any).__splash);
+    expect(sp.theme).toBe('dark');
+    expect(sp.bg).toBe('rgb(17, 20, 21)');
+    // Splash verschwindet, sobald die App bereit ist
+    await expect(app.page.locator('#splash')).toHaveCount(0);
+  });
+
+  test('Sprache wählen: Werkbank startet auf Englisch neu, das Fenster bleibt bis „Get started“', async ({ app }) => {
+    const intro = app.page.getByRole('dialog', { name: 'Willkommen in der Werkbank' });
+    await intro.getByRole('button', { name: 'English' }).click();
+    await app.page.waitForFunction(() => (window as any).__wb && document.querySelector('.welcome'));
+    const en = app.page.getByRole('dialog', { name: 'Welcome to Werkbank' });
+    await expect(en).toBeVisible({ timeout: 20_000 });
+    await expect(en.getByRole('button', { name: 'English' })).toHaveAttribute('aria-pressed', 'true');
+    await en.getByRole('button', { name: 'Get started' }).click();
+    await expect(app.page.getByText('Drag a file here')).toBeVisible();
+  });
+
+  test('Einführung lässt sich in den Einstellungen wieder zeigen', async ({ app }) => {
+    await app.page.getByRole('button', { name: 'Loslegen' }).click();
+    await app.page.getByRole('button', { name: 'Einstellungen' }).click();
+    await app.page.getByRole('button', { name: 'Einführung erneut zeigen' }).click();
+    await expect(app.page.getByRole('dialog', { name: 'Willkommen in der Werkbank' })).toBeVisible();
+  });
 });
 
-test('Einführung lässt sich in den Einstellungen wieder zeigen', async ({ app }) => {
-  await app.page.locator('.intro').getByRole('button', { name: 'Verstanden' }).click();
-  await app.page.getByRole('button', { name: 'Einstellungen' }).click();
-  await app.page.getByRole('button', { name: 'Einführung erneut zeigen' }).click();
-  await expect(app.page.locator('.intro')).toBeVisible();
+test('Splash erscheint vor der App und ist danach verschwunden', async ({ app }) => {
+  await app.page.addInitScript(() => document.addEventListener('DOMContentLoaded', () => { (window as any).__hadSplash = !!document.getElementById('splash'); }));
+  await app.page.reload();
+  await app.page.waitForFunction(() => (window as any).__wb);
+  expect(await app.page.evaluate(() => (window as any).__hadSplash)).toBe(true);
+  await expect(app.page.locator('#splash')).toHaveCount(0);
 });
 
 test('leere Seitenleisten erklären sich und bieten den nächsten Schritt an', async ({ app }) => {
