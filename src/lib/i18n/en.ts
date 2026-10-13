@@ -1389,6 +1389,8 @@ const en: Record<string, string> = {
  "Klicken und den Kommentar schreiben.": "Click and type your comment.",
  "Bereiche aufziehen; beim Speichern werden Text und Bilddaten darunter wirklich entfernt.": "Drag over areas; when saving, the text and image data underneath are truly removed.",
  "{0} Formularfelder erkannt": "{0} form fields detected",
- "{0} Feld(er) erkannt und eingefügt – Namen und Lage lassen sich anpassen, Rückgängig nimmt alle zurück.": "{0} field(s) detected and added – names and positions can be adjusted, Undo removes them all."
+ "{0} Feld(er) erkannt und eingefügt – Namen und Lage lassen sich anpassen, Rückgängig nimmt alle zurück.": "{0} field(s) detected and added – names and positions can be adjusted, Undo removes them all.",
+ "Anmerkung": "Annotation",
+ "Diese Anmerkung lässt sich nicht bearbeiten.": "This annotation can't be edited."
 };
 export default en;

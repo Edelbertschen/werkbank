@@ -3,7 +3,8 @@
   import { onMount, tick } from 'svelte';
   import { app, active } from '../lib/app.svelte';
   import { overlay, itemsOf, addItem, removeItem, commitItem, type OItem } from '../lib/overlay.svelte';
-  import { pageObjects, type PageObject } from '../lib/pageobjects';
+  import { pageObjects, liftAnnotation, type PageObject } from '../lib/pageobjects';
+  import { toast } from '../lib/app.svelte';
   import { dialog } from '../lib/dialogs.svelte';
   import * as I from '../lib/icons';
   import { groupLines, paragraphAt, classifyFont, FONT_STACK, type Box, type FontStyle } from '../lib/textedit';
@@ -27,7 +28,7 @@
   });
   const same = (a: number, b: number) => Math.abs(a - b) < 1e-6;
   // Bereits angefasste Inhalte werden als Element dargestellt, nicht mehr als Rahmen
-  const freeObjs = $derived(objs.filter(o => !items.some(i => i.kind === 'move' && same(i.ox, o.x) && same(i.oy, o.y) && same(i.ow, o.w))));
+  const freeObjs = $derived(objs.filter(o => !items.some(i => i.kind === 'move' && same(i.ox, o.x) && same(i.oy, o.y) && same(i.ow, o.w))).sort((a, b) => +(a.sub === 'annot') - +(b.sub === 'annot')));
 
   /** Ausschnitt der gerenderten Seite als Vorschau des angefassten Inhalts */
   function snapshot(o: PageObject): string {
@@ -38,9 +39,37 @@
     c.getContext('2d')!.drawImage(cv, sx, sy, sw, sh, 0, 0, c.width, c.height);
     try { return c.toDataURL('image/png'); } catch { return ''; }
   }
+  /** Anmerkung aus dem PDF anfassen: wird zum Element; gezogen wird, sobald sie bereitsteht */
+  let lifting = false;
+  async function liftAnnot(e: PointerEvent, o: PageObject) {
+    if (!doc || lifting) return;
+    lifting = true;
+    const d = doc;
+    // Bewegung während der Umwandlung festhalten
+    let down = true, last = { clientX: e.clientX, clientY: e.clientY };
+    const rect = host.getBoundingClientRect(); // Lage der Seite bleibt beim Neuzeichnen gleich
+    const track = (ev: PointerEvent) => { last = { clientX: ev.clientX, clientY: ev.clientY }; };
+    const release = (ev: PointerEvent) => { track(ev); down = false; };
+    addEventListener('pointermove', track); addEventListener('pointerup', release);
+    try {
+      const { item, bytes } = await liftAnnotation(d.bytes, index, o.xref!);
+      await d.replaceBase(bytes);
+      const it = addItem(d, { ...item, origin: item } as any, { pending: true });
+      const live = itemsOf(d).find(i => i.id === it.id)!;
+      const moved = Math.hypot(last.clientX - e.clientX, last.clientY - e.clientY) > 3;
+      removeEventListener('pointermove', track); removeEventListener('pointerup', release);
+      if (down || moved) startDrag(e, live, 'move', host, { moved: moved ? last : undefined, released: !down, rect });
+    } catch (err: any) {
+      toast(L(String(err?.message || err)), { kind: 'error' });
+    } finally {
+      lifting = false;
+      removeEventListener('pointermove', track); removeEventListener('pointerup', release);
+    }
+  }
   async function lift(e: PointerEvent, o: PageObject) {
     if (!doc || e.button !== 0) return;
     e.stopPropagation(); e.preventDefault();
+    if (o.sub === 'annot') return liftAnnot(e, o);
     const it = addItem(doc, { page: index, kind: 'move', sub: o.sub, x: o.x, y: o.y, w: o.w, h: o.h, ox: o.x, oy: o.y, ow: o.w, oh: o.h, xref: o.xref, fonts: o.fonts, snap: snapshot(o) } as any, { pending: true });
     const live = itemsOf(doc).find(i => i.id === it.id)!;
     startDrag(e, live, 'move', host);
@@ -228,16 +257,20 @@
   }
 
   // ---------------- Verschieben & Größe ----------------
-  function startDrag(e: PointerEvent, it: OItem, mode: 'move' | 'resize' | 'p1' | 'p2', capture?: HTMLElement) {
+  function startDrag(e: PointerEvent, it: OItem, mode: 'move' | 'resize' | 'p1' | 'p2', capture?: HTMLElement, opts: { moved?: { clientX: number; clientY: number }; released?: boolean; rect?: DOMRect } = {}) {
     if (e.button !== 0) return;
     if (overlay.editing === it.id) return; // im Text wird markiert, nicht gezogen
     e.stopPropagation(); e.preventDefault();
     overlay.selected = it.id;
-    const r = host.getBoundingClientRect(); const sx = e.clientX, sy = e.clientY;
+    // Nach dem Neuzeichnen der Seite (angefasste Anmerkung) gilt die neue Overlay-Ebene dieser Seite
+    const h = host.isConnected ? host : (document.querySelector(`.page[data-page-number="${index + 1}"] .ov`) as HTMLElement | null) || host;
+    const r = opts.rect || h.getBoundingClientRect(); const sx = e.clientX, sy = e.clientY;
     const o = JSON.parse(JSON.stringify(it));
-    const target = capture || (e.currentTarget as HTMLElement); target.setPointerCapture(e.pointerId);
+    const t0 = capture || (e.currentTarget as HTMLElement);
+    const target: HTMLElement | Window = t0?.isConnected ? t0 : window;
+    try { if (target !== window) (target as HTMLElement).setPointerCapture(e.pointerId); } catch { /* Zeiger schon losgelassen */ }
     const ratio = it.kind === 'image' || (it.kind === 'move' && it.sub === 'image') ? ((it as any).h * page!.h) / ((it as any).w * page!.w) : 0;
-    const mv = (ev: PointerEvent) => {
+    const mv = (ev: any) => {
       const dx = (ev.clientX - sx) / r.width, dy = (ev.clientY - sy) / r.height;
       const a: any = it;
       if (it.kind === 'line' || it.kind === 'arrow') {
@@ -253,7 +286,11 @@
         if ('h' in o) a.h = ratio ? (a.w * page!.w * ratio) / page!.h : Math.max(0.006, o.h + dy);
       }
     };
-    const up = () => { target.removeEventListener('pointermove', mv); target.removeEventListener('pointerup', up); if (doc) commitItem(doc, it); };
+    const d0 = doc;
+    const up = () => { target.removeEventListener('pointermove', mv); target.removeEventListener('pointerup', up); if (d0) commitItem(d0, it); };
+    // Schon geschehene Bewegung (während eine Anmerkung angefasst wurde) nachholen
+    if (opts.moved) mv(opts.moved);
+    if (opts.released) { if (d0) commitItem(d0, it); return; }
     target.addEventListener('pointermove', mv); target.addEventListener('pointerup', up);
   }
 
@@ -284,6 +321,14 @@
     return { name: r.values.name || v.name, group: r.values.group || '', options: r.values.options || '', multiline: !!r.values.multiline };
   }
 
+  // Elemente ohne eigenen Rahmen (Linien, Freihand, Markierungen, Notizen) bekommen eine schwebende Leiste
+  const FLOATING = new Set(['line', 'arrow', 'ink', 'highlight', 'underline', 'strike', 'note']);
+  const floating = $derived(items.find(i => i.id === overlay.selected && FLOATING.has(i.kind)) || null);
+  function bboxOf(it: any): { x: number; y: number } {
+    const pts: number[][] = it.kind === 'ink' ? it.paths.flat() : 'x1' in it ? [[it.x1, it.y1], [it.x2, it.y2]] : it.rects ? it.rects.map((q: number[]) => [q[0], q[1]]) : [[it.x, it.y]];
+    const x = Math.min(...pts.map(p => p[0])), y = Math.min(...pts.map(p => p[1]));
+    return { x, y: Math.max(0, y - 30 / (page!.h * k)) };
+  }
   /** Freihand als geglätteter Pfad (Mittelpunkte als Stützstellen) */
   function inkPath(paths: number[][][]) {
     return paths.map(ps => {
@@ -308,7 +353,7 @@
   {#if moving}
     {#each freeObjs as o (o.sub + o.x + ':' + o.y)}
       <div class="obj {o.sub}" style:left={o.x * 100 + '%'} style:top={o.y * 100 + '%'} style:width={o.w * 100 + '%'} style:height={o.h * 100 + '%'}
-        title={o.sub === 'image' ? L("Bild") : o.text} onpointerdown={e => lift(e, o)} role="presentation"></div>
+        title={o.sub === 'image' ? L("Bild") : o.sub === 'annot' ? (o.text || L("Anmerkung")) : o.text} onpointerdown={e => lift(e, o)} role="presentation"></div>
     {/each}
   {/if}
   {#each items.filter(i => i.kind === 'move') as it (it.id + ':cover')}
@@ -372,7 +417,7 @@
           {#if it.kind === 'textedit'}<div class="cover"></div>{/if}
           <div class="tx" contenteditable={!moving || overlay.editing === it.id ? 'true' : 'false'} spellcheck="false" role="textbox" tabindex="0"
             style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:font-style={(it as any).italic ? 'italic' : null} style:font-family={it.kind === 'textedit' ? ((it as any).css ? `"${(it as any).css}", ` : '') + FONT_STACK[((it as any).family || 'sans') as 'sans'] : null} style:line-height={it.kind === 'textedit' ? ((it as any).multi ? (it as any).lineHeight * k : box.h * page!.h * k) + 'px' : 1.2}
-            class:multi={(it as any).multi}
+            class:multi={(it as any).multi} class:plain={it.kind === 'comment' && (it as any).fill === 'transparent'}
             onpointerdown={e => { if (moving && overlay.editing !== it.id) return; e.stopPropagation(); overlay.selected = it.id; }}
             onfocus={() => { overlay.selected = it.id; if (!moving) overlay.editing = it.id; }}
             oninput={e => { it.text = (e.target as HTMLElement).innerText.replace(/\n$/, ''); }}
@@ -387,6 +432,10 @@
               <button title={L("Fett")} aria-label={L("Fett")} class:on={it.bold} onclick={() => { it.bold = !it.bold; commitItem(doc!, it); }}><b>B</b></button>
               <input type="color" title={L("Farbe")} aria-label={L("Textfarbe")} value={it.color} oninput={e => (it.color = (e.target as HTMLInputElement).value)} onchange={() => commitItem(doc!, it)} />
             {/if}
+            {#if it.kind === 'rect' || it.kind === 'ellipse'}
+              <input type="color" title={L("Farbe")} aria-label={L("Farbe")} value={it.stroke}
+                oninput={e => (it.stroke = (e.target as HTMLInputElement).value)} onchange={() => commitItem(doc!, it)} />
+            {/if}
             {#if it.kind === 'link' || it.kind === 'field'}<button title={L("Bearbeiten")} aria-label={L("Bearbeiten")} onclick={() => edit(it)}><I.Settings size={12} /></button>{/if}
             <button class="del" title={L("Entfernen (Entf)")} aria-label={L("Entfernen")} onclick={() => { if (it.kind === 'move') { it.remove = true; commitItem(doc!, it); } else removeItem(doc!, it.id); }}><I.Trash2 size={12} /></button>
           </div>
@@ -395,6 +444,15 @@
       </div>
     {/if}
   {/each}
+  {#if floating}
+    {@const fb = bboxOf(floating)}
+    {@const f = floating as any}
+    <div class="tools floating" style:left={fb.x * 100 + '%'} style:top={fb.y * 100 + '%'} onpointerdown={e => e.stopPropagation()} role="toolbar" aria-label={L("Element")}>
+      <input type="color" title={L("Farbe")} aria-label={L("Farbe")} value={'stroke' in f ? f.stroke : f.color}
+        oninput={e => { const v = (e.target as HTMLInputElement).value; if ('stroke' in f) f.stroke = v; else f.color = v; }} onchange={() => commitItem(doc!, floating!)} />
+      <button class="del" title={L("Entfernen (Entf)")} aria-label={L("Entfernen")} onclick={() => removeItem(doc!, floating!.id)}><I.Trash2 size={12} /></button>
+    </div>
+  {/if}
   {#if ink}
     <svg class="shape" style="left:0;top:0;width:100%;height:100%"><path d={inkPath([ink])} fill="none" stroke={app.style.ink} stroke-width={Math.max(1, app.style.inkWidth * k)} stroke-linecap="round" stroke-linejoin="round" /></svg>
   {/if}
@@ -446,8 +504,10 @@
   .mk.underline { border-bottom: 2px solid var(--c); }
   .mk.strike::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px solid var(--c); }
   .mk.sel { outline: 1px dashed var(--accent); }
+  .tools.floating { bottom: auto; pointer-events: auto; }
   .mk.highlight { background: var(--c); opacity: 0.42; mix-blend-mode: multiply; }
   .item.comment .tx { background: #fffad1; border: 1px solid #d9bf59; border-radius: 2px; padding: 2px 4px; color: #222; }
+  .item.comment .tx.plain { background: none; border-color: transparent; }
   .note { position: absolute; transform: translate(-30%, -30%); color: #B8860B; cursor: move; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)); }
   .note :global(svg) { fill: #FFE16B; }
   .note.sel :global(svg) { stroke: var(--accent); }

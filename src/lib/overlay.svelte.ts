@@ -20,7 +20,7 @@ export type OItem = Base & (
   | { kind: 'field'; ftype: 'text' | 'check' | 'radio' | 'choice' | 'signature'; x: number; y: number; w: number; h: number; name: string; options: string; multiline: boolean; group: string }
   | { kind: 'underline' | 'strike' | 'highlight'; rects: [number, number, number, number][]; color: string }
   | { kind: 'ink'; paths: [number, number][][]; stroke: string; width: number; opacity: number }
-  | { kind: 'comment'; x: number; y: number; w: number; h?: number; text: string; size: number; color: string; bold: boolean }
+  | { kind: 'comment'; x: number; y: number; w: number; h?: number; text: string; size: number; color: string; bold: boolean; fill?: string; borderWidth?: number }
   // Inhalt des PDFs (Textblock oder Bild), der verschoben, skaliert oder gelöscht wird; o* = ursprüngliche Lage
   | { kind: 'move'; sub: 'text' | 'image'; x: number; y: number; w: number; h: number; ox: number; oy: number; ow: number; oh: number; xref?: number; fonts?: string[]; snap: string; remove?: boolean }
 );
@@ -65,11 +65,12 @@ function labelOf(it: OItem) {
 const GEOMETRY = new Set(['x', 'y', 'x1', 'y1', 'x2', 'y2', 'rects', 'paths']);
 /** Bezeichnung für den Verlauf: neu, verschoben, Größe geändert oder geändert */
 function changeLabel(doc: Doc, it: OItem) {
-  const prev = doc.history[doc.pos].objects.find(o => o.id === it.id) as any;
+  // Aus dem PDF angefasste Anmerkung: verglichen wird mit ihrem Zustand beim Anfassen
+  const prev = (doc.history[doc.pos].objects.find(o => o.id === it.id) ?? (it as any).origin) as any;
   if (!prev) return labelOf(it);
   const cur = $state.snapshot(it) as any;
   if (it.kind === 'move' && cur.remove && !prev.remove) return L("Element gelöscht");
-  const keys = Object.keys(cur).filter(k => JSON.stringify(cur[k]) !== JSON.stringify(prev[k]));
+  const keys = Object.keys(cur).filter(k => k !== 'origin' && k !== 'id' && JSON.stringify(cur[k]) !== JSON.stringify(prev[k]));
   if (keys.length && keys.every(k => GEOMETRY.has(k))) return L("Element verschoben");
   if (keys.length && keys.every(k => GEOMETRY.has(k) || k === 'w' || k === 'h')) return L("Größe geändert");
   return L("{0} geändert", KIND[it.kind] || L("Element"));
@@ -387,7 +388,11 @@ def move_element(page, it):
     else:
         move_text(page, src, dst, it.get('remove'), it.get('sysfonts') or {})
 def finish(annot, it):
-    annot.set_info(title=author)
+    # Aus dem PDF übernommene Anmerkungen behalten Autor und Kommentartext
+    if it.get('contents') and it['kind'] not in ('note', 'comment'):
+        annot.set_info(title=it.get('author') or author, content=it['contents'])
+    else:
+        annot.set_info(title=it.get('author') or author)
     annot.update()
 for it in items:
     page = doc[it['page']]
@@ -408,12 +413,16 @@ for it in items:
         a.set_opacity(it.get('opacity', 1))
         finish(a, it)
     elif k == 'note':
-        a = page.add_text_annot(P(page, it['x'], it['y']), it['text'] or ' ', icon='Comment')
+        a = page.add_text_annot(P(page, it['x'], it['y']), it['text'] or ' ', icon=it.get('icon') or 'Comment')
         a.set_colors(stroke=it['colorRgb'])
         finish(a, it)
+        if it.get('w') and it.get('h'):
+            a.set_rect(R(page, it['x'], it['y'], it['w'], it['h']))  # Größe wie im Original
     elif k == 'highlight':
         a = page.add_highlight_annot([R(page, *q).quad for q in it['rects']])
         a.set_colors(stroke=it['colorRgb'])
+        if it.get('opacity') is not None and it['opacity'] < 1:
+            a.set_opacity(it['opacity'])
         finish(a, it)
     elif k == 'ink':
         a = page.add_ink_annot([[tuple(P(page, x, y)) for x, y in path] for path in it['paths']])
@@ -423,7 +432,7 @@ for it in items:
         finish(a, it)
     elif k == 'comment':
         hh = max(it.get('h') or 0, it['size'] * 1.7 / page.rect.height)
-        a = page.add_freetext_annot(R(page, it['x'], it['y'], it['w'], hh), it['text'], fontsize=it['size'], fontname='helv', text_color=it['colorRgb'], fill_color=(1, 0.98, 0.82), border_width=0.6)
+        a = page.add_freetext_annot(R(page, it['x'], it['y'], it['w'], hh), it['text'], fontsize=it['size'], fontname='helv', text_color=it['colorRgb'], fill_color=it.get('fillRgb') if 'fill' in it else (1, 0.98, 0.82), border_width=it.get('borderWidth', 0.6))
         finish(a, it)
     elif k in ('underline', 'strike'):
         quads = [R(page, *q).quad for q in it['rects']]

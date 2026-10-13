@@ -83,7 +83,7 @@ export class Doc {
 
   get dirty() { return this.pos !== this.savedPos || this.pendingEdits; }
   get title() { return baseName(this.name); }
-  get canUndo() { return this.pos > 0; }
+  get canUndo() { return this.pos > 0 || this.touched; }
   get canRedo() { return this.pos < this.history.length - 1; }
   get undoLabel() { return this.canUndo ? this.history[this.pos].label : ''; }
   get redoLabel() { return this.canRedo ? this.history[this.pos + 1].label : ''; }
@@ -138,21 +138,32 @@ export class Doc {
   /** Neuen Stand nach einer Änderung an den Elementen (gleiche Bytes). Unveränderter Zustand ergibt keinen Stand. */
   commitObjects(label: string, snap: OItem[] = $state.snapshot(this.objects) as OItem[]) {
     const last = this.history[this.pos];
-    if (JSON.stringify(snap) === JSON.stringify(last.objects)) return false;
+    if (!this.touched && JSON.stringify(snap) === JSON.stringify(last.objects)) return false;
     this.push({ bytes: this.bytes, label, at: Date.now(), objects: clone(snap) });
     this.refreshThumbs();
     return true;
   }
 
-  private async restore() {
-    const v = this.history[this.pos];
-    this.objects = clone(v.objects);
+  /** Grundlage vorübergehend ersetzen, ohne Stand: eine angefasste Anmerkung liegt als Element darauf.
+   *  Ein Stand entsteht erst mit der ersten Änderung; Rückgängig verwirft das Anfassen. */
+  async replaceBase(bytes: Uint8Array) { await this.load(bytes); }
+  /** Liegt eine vorübergehende Grundlage (angefasste Anmerkung) vor? */
+  get touched() { return this.bytes !== this.history[this.pos].bytes; }
+
+  /** Stand p herstellen: erst laden, dann Zeiger und Elemente setzen (nie ein halber Zustand) */
+  private async restore(p = this.pos) {
+    const v = this.history[p];
     if (v.bytes !== this.bytes) await this.load(v.bytes);
+    this.pos = p;
+    this.objects = clone(v.objects);
     this.refreshThumbs();
   }
-  async undo() { if (!this.canUndo) return null; const l = this.history[this.pos].label; this.pos--; await this.restore(); return l; }
-  async redo() { if (!this.canRedo) return null; this.pos++; await this.restore(); return this.history[this.pos].label; }
-  async goto(pos: number) { if (pos < 0 || pos >= this.history.length) return; this.pos = pos; await this.restore(); }
+  async undo() {
+    if (this.touched) { await this.restore(); return null; } // nur angefasst, nichts geändert
+    if (this.pos <= 0) return null; const l = this.history[this.pos].label; await this.restore(this.pos - 1); return l;
+  }
+  async redo() { if (!this.canRedo) return null; await this.restore(this.pos + 1); return this.history[this.pos].label; }
+  async goto(pos: number) { if (pos < 0 || pos >= this.history.length) return; await this.restore(pos); }
   versions() { return this.history.map((v, i) => ({ label: v.label, at: v.at, size: v.bytes.length, i })); }
 
   /** Formulareingaben (pdf.js) in einen neuen Stand schreiben; Elemente bleiben Elemente */
@@ -170,10 +181,11 @@ export class Doc {
     const objs = $state.snapshot(this.objects) as OItem[];
     if (!objs.length) return bytes;
     const key = JSON.stringify(objs);
-    if (!this.pendingEdits) { const hit = this.bakedCache.get(v); if (hit?.key === key) return hit.bytes; }
+    const cacheable = !this.pendingEdits && !this.touched;
+    if (cacheable) { const hit = this.bakedCache.get(v); if (hit?.key === key) return hit.bytes; }
     const { bakeObjects } = await import('./overlay.svelte');
     bytes = await bakeObjects(bytes, objs);
-    if (!this.pendingEdits) this.bakedCache.set(v, { key, bytes });
+    if (cacheable) this.bakedCache.set(v, { key, bytes });
     return bytes;
   }
 

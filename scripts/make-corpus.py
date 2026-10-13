@@ -114,6 +114,20 @@ p.insert_text((72, 140), 'Dieser Absatz bleibt an seinem Platz.', fontsize=11, f
 p.insert_text((72, 700), 'Fußnote: verschiebbarer Text', fontsize=10, fontname='helv')
 p.insert_image(pymupdf.Rect(360, 200, 520, 320), filename=P('foto.jpg'))
 d.save(P('bild.pdf'), garbage=3, deflate=True)
+# Anmerkungen aus einem anderen Programm (Autor, Kommentar, Farben) zum Weiterbearbeiten
+d = pymupdf.open(); p = d.new_page(width=595, height=842)
+p.insert_text((72, 100), 'Vertragsentwurf zur Durchforstung 2026', fontsize=16, fontname='hebo')
+p.insert_text((72, 140), 'Die Maßnahme beginnt im Herbst und endet vor der Brutzeit.', fontsize=11, fontname='helv')
+def meta(a, who, txt=''):
+    a.set_info(title=who, content=txt); a.update()
+a = p.add_rect_annot(pymupdf.Rect(80, 200, 220, 280)); a.set_colors(stroke=(0.1, 0.3, 0.9)); a.set_border(width=2); meta(a, 'Anna Förster', 'Fläche prüfen')
+a = p.add_circle_annot(pymupdf.Rect(300, 200, 400, 280)); a.set_colors(stroke=(0.9, 0.1, 0.1)); meta(a, 'Ben')
+a = p.add_line_annot((80, 340), (260, 380)); a.set_line_ends(pymupdf.PDF_ANNOT_LE_NONE, pymupdf.PDF_ANNOT_LE_OPEN_ARROW); a.set_colors(stroke=(0, 0.6, 0.2)); meta(a, 'Ben')
+a = p.add_freetext_annot(pymupdf.Rect(300, 330, 500, 370), 'Termin mit Revierleitung', fontsize=12, text_color=(0.8, 0, 0)); meta(a, 'Anna Förster', 'Termin mit Revierleitung')
+q = p.search_for('Herbst')[0]; a = p.add_highlight_annot(q); a.set_colors(stroke=(1, 0.9, 0.2)); meta(a, 'Ben')
+a = p.add_ink_annot([[(100, 450), (150, 500), (200, 450)]]); a.set_colors(stroke=(0.5, 0, 0.5)); a.set_border(width=3); meta(a, 'Ben')
+a = p.add_text_annot((520, 90), 'Bitte gegenlesen', icon='Note'); meta(a, 'Anna Förster', 'Bitte gegenlesen')
+d.save(P('kommentare.pdf'), garbage=3, deflate=True)
 # Formular wie aus einer Textverarbeitung: eingebettete Teilschriften (Sans fett/normal, Serif, Mono) – braucht LibreOffice
 import shutil, subprocess, tempfile
 if shutil.which('soffice'):
