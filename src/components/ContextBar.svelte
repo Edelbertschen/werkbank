@@ -33,7 +33,7 @@
   <div class="cbar" role="status">
     <span class="dot"></span>
     <span class="t">
-      {#if count}{count} {count === 1 ? 'Änderung' : 'Änderungen'} offen{#if redactions} · davon {redactions} Schwärzung{redactions === 1 ? '' : 'en'}{/if}{/if}
+      {#if count}{count} {count === 1 ? 'Änderung' : 'Änderungen'} offen{#if redactions}{redactions === 1 ? ' · davon 1 Schwärzung' : ` · davon ${redactions} Schwärzungen`}{/if}{/if}
       {#if count && doc.pendingEdits} · {/if}
       {#if doc.pendingEdits}Anmerkungen oder Eingaben noch nicht übernommen{/if}
     </span>

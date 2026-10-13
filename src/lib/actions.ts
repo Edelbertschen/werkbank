@@ -340,7 +340,7 @@ export async function offerRecovery() {
   if (!idx.list.length) return;
   const r = await dialog({
     title: 'Ungesicherte Dokumente wiederherstellen?', icon: 'info',
-    message: `Beim letzten Mal wurde die Werkbank beendet, während ${idx.list.length === 1 ? 'ein Dokument' : idx.list.length + ' Dokumente'} ungespeicherte Änderungen hatte${idx.list.length === 1 ? '' : 'n'}.`,
+    message: idx.list.length === 1 ? 'Beim letzten Mal wurde die Werkbank beendet, während ein Dokument ungespeicherte Änderungen hatte.' : `Beim letzten Mal wurde die Werkbank beendet, während ${idx.list.length} Dokumente ungespeicherte Änderungen hatten.`,
     detail: idx.list.map((x: any) => `${x.name} (${fmtSize(x.size)})`).join('\n'),
     buttons: [{ label: 'Verwerfen', value: 'discard', danger: true }, { label: 'Wiederherstellen', value: 'restore', primary: true }],
   });

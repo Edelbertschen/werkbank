@@ -206,8 +206,8 @@
 
   function arrowPath(it: any) {
     const x1 = pt(it.x1, 'x') * k, y1 = pt(it.y1, 'y') * k, x2 = pt(it.x2, 'x') * k, y2 = pt(it.y2, 'y') * k;
-    const a = Math.atan2(y2 - y1, x2 - x1), L = Math.max(8, it.width * 4) * k;
-    return `M${x2 - L * Math.cos(a - 0.45)},${y2 - L * Math.sin(a - 0.45)} L${x2},${y2} L${x2 - L * Math.cos(a + 0.45)},${y2 - L * Math.sin(a + 0.45)}`;
+    const a = Math.atan2(y2 - y1, x2 - x1), len = Math.max(8, it.width * 4) * k;
+    return `M${x2 - len * Math.cos(a - 0.45)},${y2 - len * Math.sin(a - 0.45)} L${x2},${y2} L${x2 - len * Math.cos(a + 0.45)},${y2 - len * Math.sin(a + 0.45)}`;
   }
   /** Inhalt eines editierbaren Feldes nur einmal setzen, damit der Cursor beim Tippen bleibt */
   function initText(node: HTMLElement, text: string) { node.textContent = text; }

@@ -36,7 +36,7 @@ export function paperName(wPt: number, hPt: number) {
 /** "1-3, 5, 8-" -> 0-basierte, sortierte Indizes */
 export function parseRange(str: string, n: number): number[] {
   const out = new Set<number>();
-  const missing = (k: number) => new Error(`Seite ${k} gibt es nicht – das Dokument hat ${n} Seite${n === 1 ? '' : 'n'}`);
+  const missing = (k: number) => new Error(n === 1 ? `Seite ${k} gibt es nicht – das Dokument hat nur eine Seite` : `Seite ${k} gibt es nicht – das Dokument hat ${n} Seiten`);
   // „letzte“ als Seitenzahl; Leerzeichen um Bindestriche gehören zum Bereich („1 - 3“)
   const norm = String(str).replace(/\bletzte\b/gi, String(n)).replace(/\s*([-–])\s*/g, '$1');
   for (const part of norm.split(/[,;\s]+/).filter(Boolean)) {

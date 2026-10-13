@@ -34,6 +34,7 @@ export interface Prefs {
   quickAccess: string[];
   showFieldHighlight: boolean;
   preloadEngines: boolean;
+  lang: 'system' | 'de' | 'en';
   hiddenTabs: RibbonTab[];
 }
 
@@ -52,6 +53,7 @@ const defaultPrefs: Prefs = {
   quickAccess: ['open', 'save', 'undo', 'redo', 'print'],
   showFieldHighlight: true,
   preloadEngines: true,
+  lang: 'system',
   hiddenTabs: [],
 };
 

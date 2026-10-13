@@ -1,0 +1,8884 @@
+[
+ {
+  "key": " – abgelaufen",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": " · davon {0} Schwärzungen",
+  "files": [
+   "src/components/ContextBar.svelte"
+  ]
+ },
+ {
+  "key": " · davon 1 Schwärzung",
+  "files": [
+   "src/components/ContextBar.svelte"
+  ]
+ },
+ {
+  "key": " (gescannt oder leer – Texterkennung hilft)",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": " eingefügt",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": " Seiten",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "– {n} –",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "––– Seite {0} –––\n",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": ", {0} übersprungen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": ", davon {0} geschwärzt",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "… und {0} weitere",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "„{0}“ ausblenden",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "„{0}“ entfernt",
+  "files": [
+   "src/components/side/AttachmentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "„{0}“ geöffnet – noch nicht gespeichert",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "„{0}“ gespeichert",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "„{0}“ gilt als ältere Fassung. Unterschiede werden als Bild (rot = entfernt, blau = neu) und als Textvergleich gezeigt.",
+  "files": [
+   "src/components/panels/ComparePanel.svelte"
+  ]
+ },
+ {
+  "key": "„{0}“ hinzufügen",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "„{0}“ ist durch ein Passwort geschützt.",
+  "files": [
+   "src/lib/dialogs.svelte.ts"
+  ]
+ },
+ {
+  "key": "„{0}“ ist kein lesbares Bild",
+  "files": [
+   "src/lib/convert.ts"
+  ]
+ },
+ {
+  "key": "„{0}“ ist keine gültige Seitenangabe",
+  "files": [
+   "src/lib/util.ts"
+  ]
+ },
+ {
+  "key": "„{0}“ ist nicht mehr geöffnet",
+  "files": [
+   "src/lib/tools/common.ts"
+  ]
+ },
+ {
+  "key": "„{0}“ ließ sich nicht öffnen: {1}",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "„{0}“ wird geöffnet",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "\"{0}\", \"Segoe Script\", \"Brush Script MT\", \"Snell Roundhand\", cursive",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "(ohne Titel)",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} – {1}.pdf",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} – S. {1}.{2}",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "{0} – S. {1}.svg",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "{0} – Werkbank",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "{0} · {1} × {2} mm",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} ({1} × {2} mm)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} (1. Ebene)",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} (geöffnet)",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "{0} {1} × {2} mm",
+  "files": [
+   "src/components/StatusBar.svelte"
+  ]
+ },
+ {
+  "key": "{0} {1} geschwärzt",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "{0} {1}px -apple-system, \"Segoe UI\", \"Inter Variable\", Arial, sans-serif",
+  "files": [
+   "src/lib/sign.ts"
+  ]
+ },
+ {
+  "key": "{0} % der Fläche verändert",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "{0} Änderungen übernommen{1}",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "{0} Bereich(e) werden geschwärzt. Text und Bilddaten darunter werden aus dem Dokument entfernt.",
+  "files": [
+   "src/components/ContextBar.svelte"
+  ]
+ },
+ {
+  "key": "{0} Bild(er) werden gesetzt …",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "{0} Datei(en) angehängt",
+  "files": [
+   "src/components/side/AttachmentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} Dateien",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} Dateien gespeichert",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "{0} Dateien speichern",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "{0} Dokumente haben ungespeicherte Änderungen",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "{0} Feld(er) befüllt",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "{0} Feld(er) vorgeschlagen. Prüfe sie und klicke „Übernehmen“.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "{0} fertig, {1} mit Fehler",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} Formularfeld(er) abgeflacht",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "{0} Formularfeld(er) entfernt",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "{0} Fundstelle(n) geschwärzt",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "{0} gelöscht",
+  "files": [
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} isolated={1} tauri={2}",
+  "files": [
+   "src/main.ts"
+  ]
+ },
+ {
+  "key": "{0} Kommentar(e) entfernt",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "{0} lädt …",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} leere Seite(n) ausgewählt (S. {1}). Prüfen und mit Entf löschen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} Lesezeichen aus Überschriften vorgeschlagen – prüfen und übernehmen",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} neue Dokumente geöffnet",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "{0} pro Blatt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} schließen",
+  "files": [
+   "src/components/TitleBar.svelte"
+  ]
+ },
+ {
+  "key": "{0} Schrift(en) nicht eingebettet. Auf anderen Rechnern kann der Text anders aussehen; für PDF/A und Druckereien „In PDF/A umwandeln“ verwenden.",
+  "files": [
+   "src/components/panels/FontsPanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} Seite(n) begradigt",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "{0} Seite(n) dupliziert",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} Seite(n) eingefügt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} Seite(n) ersetzt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} Seite(n) extrahiert und entfernt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} Seite(n) zugeschnitten",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} Seiten",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "{0} Seiten ausgewählt",
+  "files": [
+   "src/components/StatusBar.svelte"
+  ]
+ },
+ {
+  "key": "{0} Seiten je Blatt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} Seiten löschen",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/components/side/ThumbsPanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} Seiten nach links drehen",
+  "files": [
+   "src/components/side/ThumbsPanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} Seiten nach rechts drehen",
+  "files": [
+   "src/components/side/ThumbsPanel.svelte"
+  ]
+ },
+ {
+  "key": "{0} Tabelle(n) exportiert",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "{0} Tabelle(n) gefunden",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "{0} Teile sind zu viele für Tabs – bitte als Dateien speichern",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "{0} von {1} ausgewählt",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "{0} wird geladen …",
+  "files": [
+   "src/components/StatusBar.svelte"
+  ]
+ },
+ {
+  "key": "{0} wird vorbereitet …",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "# Überschrift\n\nText mit **fett** und *kursiv*.\n\n- Punkt eins\n- Punkt zwei\n",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "%!\n[/_objdef {icc_PDFA} /type /stream /OBJ pdfmark\n[{icc_PDFA} << /N 3 >> /PUT pdfmark\n[{icc_PDFA} <{0}> /PUT pdfmark\n[/_objdef {OutputIntent_PDFA} /type /dict /OBJ pdfmark\n[{OutputIntent_PDFA} << /Type /OutputIntent /S {1} /DestOutputProfile {icc_PDFA} /OutputConditionIdentifier (sRGB) /Info (sRGB IEC61966-2.1) /RegistryName (http://www.color.org) >> /PUT pdfmark\n[{Catalog} << /OutputIntents [ {OutputIntent_PDFA} ] >> /PUT pdfmark\n",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"de\"><head><title>{0}</title><link rel=\"stylesheet\" href=\"s.css\"/></head><body>{1}</body></html>",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\"><head><title>Inhalt</title></head><body><nav epub:type=\"toc\"><h1>Inhalt</h1><ol>{0}</ol></nav></body></html>",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "<?xml version=\"1.0\" encoding=\"utf-8\"?><package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"id\"><metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:identifier id=\"id\">urn:uuid:{0}</dc:identifier><dc:title>{1}</dc:title><dc:creator>{2}</dc:creator><dc:language>de</dc:language><meta property=\"dcterms:modified\">{3}Z</meta></metadata><manifest><item id=\"nav\" href=\"nav.xhtml\" media-type=\"application/xhtml+xml\" properties=\"nav\"/><item id=\"css\" href=\"s.css\" media-type=\"text/css\"/>{4}</manifest><spine>{5}</spine></package>",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "<?xml version=\"1.0\"?><container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\"><rootfiles><rootfile full-path=\"OEBPS/content.opf\" media-type=\"application/oebps-package+xml\"/></rootfiles></container>",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "<br><b>Anhänge:</b> {0}",
+  "files": [
+   "src/lib/convert.ts"
+  ]
+ },
+ {
+  "key": "<div class=\"meta\"><b>Von:</b> {0}<br><b>An:</b> {1}<br><b>Betreff:</b> {2}</div>",
+  "files": [
+   "src/lib/convert.ts"
+  ]
+ },
+ {
+  "key": "<div class=\"meta\"><b>Von:</b> {0}<br><b>An:</b> {1}<br><b>Datum:</b> {2}<br><b>Betreff:</b> {3}{4}</div>",
+  "files": [
+   "src/lib/convert.ts"
+  ]
+ },
+ {
+  "key": "<em>Kein Text auf dieser Seite.</em>",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "<h1>{0}</h1>{1}<pre style=\"white-space:pre-wrap;font-family:sans-serif;font-size:10.5pt\">{2}</pre>",
+  "files": [
+   "src/lib/convert.ts"
+  ]
+ },
+ {
+  "key": "<item id=\"{0}\" href=\"{1}\" media-type=\"application/xhtml+xml\"/>",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "<itemref idref=\"{0}\"/>",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "<li><a href=\"{0}\">{1}</a></li>",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "<pre style=\"white-space:pre-wrap;font-family:monospace;font-size:9.5pt\">{0}</pre>",
+  "files": [
+   "src/lib/convert.ts"
+  ]
+ },
+ {
+  "key": "1 · Dateien",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "100 dpi",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "150 dpi",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "2 · Arbeitsschritte",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "2, 4, 6, 9 oder 16 Seiten verkleinert auf ein Blatt setzen – für Handouts und Sparsamkeit.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "200 dpi",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "3 · Ausgabe",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "300 dpi",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "300 dpi (Druck)",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "40px \"{0}\"",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "600 {0}px -apple-system, \"Segoe UI\", Arial, sans-serif",
+  "files": [
+   "src/components/dialogs/StampPicker.svelte"
+  ]
+ },
+ {
+  "key": "600 dpi",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "72 dpi (Bildschirm)",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "800 {0}px -apple-system, \"Segoe UI\", \"Inter Variable\", Arial, sans-serif",
+  "files": [
+   "src/components/dialogs/StampPicker.svelte"
+  ]
+ },
+ {
+  "key": "90° links",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "90° rechts",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "A3 → Heft in A4",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "A4 → Heft in A5",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "a4 skalieren größe letter vereinheitlichen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Abbrechen",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/dialogs/SignaturePad.svelte",
+   "src/components/dialogs/StampPicker.svelte",
+   "src/lib/actions.ts",
+   "src/lib/dialogs.svelte.ts",
+   "src/lib/print.ts"
+  ]
+ },
+ {
+  "key": "Abdecken",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Abdeckung",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Abflachen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "abflachen flatten fixieren",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Abgebrochen",
+  "files": [
+   "src/lib/engines/rpc.ts"
+  ]
+ },
+ {
+  "key": "Abgebrochen – {0} Datei(en) fertig",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Abschließen",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Abschneiden (mm)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Abschnitt {0}",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Abschnitte",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Abschnitte (JSON)",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Abstand (mm)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Abstand vom Rand (mm)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Abstand zum Inhalt (mm)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Adresse",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "AES-256-Verschlüsselung und Berechtigungen. Wird beim Speichern angewendet – solange das Dokument hier offen ist, kannst du weiterarbeiten.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "akte kennung beweis nummer",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Aktuelle ({0})",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Aktuelle Seite",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Alle",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "Alle ({0})",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "alle (1–{0}) oder z. B. 1-3, 5",
+  "files": [
+   "src/lib/print.ts"
+  ]
+ },
+ {
+  "key": "Alle {0} Dateien verarbeitet",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Alle {0} Seite(n) enthalten bereits Text – nichts zu tun.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Alle Bearbeitungsschritte dieses Dokuments – zu jedem Stand zurückspringen.",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Alle Eingaben in Formularfeldern löschen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Alle eingebetteten Bilder in Originalqualität speichern.",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Alle entfernen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Alle Formularfelder samt Inhalt aus dem Dokument löschen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Alle Kommentare des Dokuments",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Alle Kommentare mit Seite, Art, Autor und Text als Tabelle (CSV) speichern.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Alle n Seiten",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Alle Registerkarten zeigen",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "Alle Seiten als Raster: ziehen, auswählen, drehen, löschen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Alle Seiten untereinander auf eine durchgehende Seite setzen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Alle speichern",
+  "files": [
+   "src/components/side/AttachmentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Alle Textzeilen",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Alle Treffer schwärzen …",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Alle unterstützten Dateien",
+  "files": [
+   "src/lib/platform.ts"
+  ]
+ },
+ {
+  "key": "Alle verwendeten Schriften mit Typ und Einbettung – wichtig für Druck und PDF/A.",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Alle verwerfen",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Alle zeigen",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Alles (weitere Signaturen, Kommentare)",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Alles leeren",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "Allgemein",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Als Bilder exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Als Broschüre ausgeschossen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Als Comic-Archiv (CBZ) exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Als Dateien speichern",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Als E-Book (EPUB) exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Als Excel-Tabelle exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Als HTML exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Als Markdown exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Als neues Dokument extrahieren",
+  "files": [
+   "src/components/side/ThumbsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Als neues Dokument öffnen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Als PowerPoint exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Als SVG exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Als Text exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Als Word-Dokument exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Als ZIP",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Als ZIP-Archiv",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Alt",
+  "files": [
+   "src/lib/shortcuts.ts"
+  ]
+ },
+ {
+  "key": "Älter · {0}",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Älterer Stand (danach geändert)",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Alternativtext",
+  "files": [
+   "src/lib/viewer.svelte.ts"
+  ]
+ },
+ {
+  "key": "Am Anfang",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Am Ende",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "An den Anfang",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "Analysieren",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Anderes Zertifikat",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Ändern",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "ändern korrigieren tippfehler",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Änderung",
+  "files": [
+   "src/components/ContextBar.svelte"
+  ]
+ },
+ {
+  "key": "Änderungen",
+  "files": [
+   "src/components/ContextBar.svelte"
+  ]
+ },
+ {
+  "key": "Änderungen an „{0}“ speichern?",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Änderungen in die Datei schreiben",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Änderungen konnten nicht geschrieben werden",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Änderungen werden übernommen",
+  "files": [
+   "src/components/ContextBar.svelte"
+  ]
+ },
+ {
+  "key": "Anfang",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Angaben",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Anhang wird entfernt",
+  "files": [
+   "src/components/side/AttachmentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Anhänge",
+  "files": [
+   "src/components/Rail.svelte",
+   "src/components/Sidebar.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Anhänge.zip",
+  "files": [
+   "src/components/side/AttachmentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "anhängen hinzufügen kombinieren",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Anmerkungen oder Eingaben noch nicht übernommen",
+  "files": [
+   "src/components/ContextBar.svelte"
+  ]
+ },
+ {
+  "key": "Anmerkungen und Eingaben",
+  "files": [
+   "src/lib/doc.svelte.ts"
+  ]
+ },
+ {
+  "key": "annotationen anmerkungen löschen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "anonym metadaten",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "anonymisieren dsgvo schwärzen suchen muster regex",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Anordnung",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Ans Ende",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "Ansicht",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Ansicht drehen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Anwenden",
+  "files": [
+   "src/components/TaskPane.svelte",
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Anzahl",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Anzahl Kopien",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Anzahl muss nicht übereinstimmen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Anzeige",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Apache-2.0",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "archiv langzeit pdfa iso 19005 behörde",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Archivtaugliches PDF/A mit eingebetteten Schriften und Farbprofil – z. B. für Behörden und die Langzeitablage.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Art",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Assistent",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Auch Metadaten entfernen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Auf {0} gebracht",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Auf aktuelle Seite setzen",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Auf die Seite klicken und schreiben.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Auf die Seite klicken, um das Bild zu platzieren.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Auf die Seite klicken, um den Stempel zu setzen.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Auf die Seite klicken, um die Unterschrift zu platzieren.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Auf eine Textzeile klicken und sie ändern. Der alte Text wird entfernt, der neue in vergleichbarer Größe gesetzt.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Auf eine Textzeile klicken, um sie zu ändern.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Aufbereiten",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Aufgeteilt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Aufklappen",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Aufklappliste aufziehen und Einträge festlegen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Auflösung",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Aufteilen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Aus {0} Dokumenten zusammengeführt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Aus {0} erstellt",
+  "files": [
+   "src/lib/doc.svelte.ts"
+  ]
+ },
+ {
+  "key": "Aus {0} Office-Dateien",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Aus {0} umgewandelt. Speichern legt eine neue PDF-Datei an.",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Aus Bildern",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Aus Bildern erstellt",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Aus Datei",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Aus den Lesezeichen eine Inhaltsseite mit klickbaren Einträgen erzeugen und vorne einfügen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Aus der Liste entfernen",
+  "files": [
+   "src/components/StartScreen.svelte"
+  ]
+ },
+ {
+  "key": "Aus Office",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Aus Office umgewandelt",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Aus Text",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Aus Text gesetzt",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Aus Überschriften erzeugen",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Ausfüllbare Felder farbig hinterlegen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Ausfüllen",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Ausgabe",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Ausgeblendete Werkzeuge bleiben über die Befehlssuche (Strg+K) erreichbar. Rechtsklick auf eine Registerkarte blendet sie direkt aus.",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Ausgefüllte Felder fest in die Seite schreiben – danach nicht mehr änderbar.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Ausgestellt von {0}{1}",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Ausgewählte oder aktuelle Seite löschen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Ausgewählte oder aktuelle Seite um 90° gegen den Uhrzeigersinn drehen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Ausgewählte oder aktuelle Seite um 90° im Uhrzeigersinn drehen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Ausgewogen – Bilder auf 150 dpi",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Ausrichtung",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Ausrücken",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Ausschießen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Aussteller",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "austauschen tauschen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Auswahl",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Auswahl ({0})",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Auswahl ▾",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Auswählen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Auswahlliste",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/Ribbon.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Auswahlliste aufziehen.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Automatisch",
+  "files": [
+   "src/components/side/OutlinePanel.svelte",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "automatisch erkennen formular erstellen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Automatisieren",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Autor",
+  "files": [
+   "src/components/panels/MetaPanel.svelte",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Autor, Programm, Datumsangaben und XMP-Daten löschen.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Bandleiste",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Bandleiste anheften",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "Bandleiste anpassen …",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "Bandleiste ausblenden",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "Bandleiste ein- oder ausblenden",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "Bates",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bates-Nummerierung",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bates-Nummern gesetzt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bearbeitbares .docx mit Absätzen, Tabellen und Bildern (pdf2docx).",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Bearbeiten",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Bearbeitet",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Bearbeitungssperre aufgehoben. Beim Speichern entsteht eine Fassung ohne Einschränkungen – mit „Schützen › Passwort“ lässt sie sich neu setzen.",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Beenden (Esc)",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "Befehl oder Werkzeug suchen",
+  "files": [
+   "src/components/TitleBar.svelte"
+  ]
+ },
+ {
+  "key": "Befehl suchen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Beginnen mit",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Begradigen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Begriffe (je Zeile einer)",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Begriffe oder Muster wie IBAN, E-Mail oder Telefonnummern im ganzen Dokument finden und dauerhaft schwärzen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Bei dicken Heften rücken innere Seiten nach außen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Beides",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Beidseitig drucken und an der kurzen Kante wenden.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Beim letzten Mal wurde die Werkbank beendet, während {0} Dokumente ungespeicherte Änderungen hatten.",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Beim letzten Mal wurde die Werkbank beendet, während ein Dokument ungespeicherte Änderungen hatte.",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Beim nächsten Speichern wird das Dokument ohne Schutz geschrieben.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Benötigt eine Internetverbindung.",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Berechtigung",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Bereich",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Bereich aufziehen und auf eine Webadresse oder Seite verlinken.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Bereich aufziehen, der weiß abgedeckt wird.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Bereich für den Link aufziehen.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Bereich mit weißer Fläche überdecken. Für vertrauliche Inhalte stattdessen „Schwärzen“ verwenden.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Bereiche aufziehen, die geschwärzt werden sollen.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Bereiche aufziehen; beim Übernehmen werden Text und Bilddaten darunter wirklich entfernt.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Bereiche, mit Semikolon getrennt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bereinigen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Beschädigte Querverweise, Streams und Seitenbäume neu aufbauen.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "beschriften schreiben",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Beschriftung",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bild",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bild einfügen",
+  "files": [
+   "src/lib/tools/edit.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Bild konnte nicht erzeugt werden",
+  "files": [
+   "src/lib/pdf.ts"
+  ]
+ },
+ {
+  "key": "Bild platzieren",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "Bild und Web",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Bild wählen …",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Bild wählen und auf die Seite setzen, dann verschieben oder skalieren.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Bild wird umgewandelt …",
+  "files": [
+   "src/lib/convert.ts"
+  ]
+ },
+ {
+  "key": "Bildauflösung höchstens (dpi)",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Bildbreite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bilder",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte",
+   "src/lib/platform.ts",
+   "src/lib/tools/analyze.ts",
+   "src/lib/tools/convert.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Bilder ({0}).pdf",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Bilder (Reihenfolge = Seitenfolge)",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Bilder einbetten",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Bilder extrahieren",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Bilder in Graustufen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Bilder in PDF",
+  "files": [
+   "src/components/StartScreen.svelte",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Bildformat",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Bildschirm",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Bis zum Inhalt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bitte Begriffe eingeben oder Muster wählen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Bitte Bilder wählen",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Bitte das Briefpapier wählen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bitte Dateien wählen",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Bitte die Quelle wählen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bitte ein Bild wählen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bitte ein Passwort angeben",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Bitte eine JSON-Datei wählen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Bitte einen Namen angeben",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Bitte mindestens ein Dokument wählen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Bitte mindestens ein Passwort angeben",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Bitte zuerst die Ansichtsdrehung zurücksetzen (Ansicht › Ansicht drehen).",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Blatt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "blau = neu",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Blöcke, Zeilen, Schriften und Positionen für die Weiterverarbeitung.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Briefpapier (PDF)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Briefpapier aus",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Briefpapier hinterlegt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Broschüre",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Browser",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Bundzuwachs-Ausgleich (mm)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Caveat",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "cbz comic",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "checkbox ankreuzen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Comic-Archiv",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Contents",
+  "files": [
+   "src/lib/ops.ts"
+  ]
+ },
+ {
+  "key": "Danach aus diesem Dokument löschen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Dancing Script",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Darstellung",
+  "files": [
+   "src/components/panels/SignPanel.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Das Dokument hat keine Lesezeichen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Das Dokument hat zu wenige Seiten zum Mischen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Das eingegebene Passwort war nicht richtig.",
+  "files": [
+   "src/lib/dialogs.svelte.ts"
+  ]
+ },
+ {
+  "key": "Das Ergebnis wäre größer als die PDF-Höchstgröße (5 m). Bitte weniger Seiten verwenden.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Das Passwort sollte mindestens 6 Zeichen haben",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Das Zertifikat ließ sich nicht lesen.",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Das Zertifikatspasswort ist falsch",
+  "files": [
+   "src/lib/sign.ts"
+  ]
+ },
+ {
+  "key": "Datei",
+  "files": [
+   "src/components/panels/BatchPanel.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Datei anhängen",
+  "files": [
+   "src/components/side/AttachmentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Datei öffnen",
+  "files": [
+   "src/components/StartScreen.svelte",
+   "src/components/TitleBar.svelte"
+  ]
+ },
+ {
+  "key": "Datei verkleinern: Bilder neu berechnen, Schriften verkleinern, Ballast entfernen. Text bleibt durchsuchbar.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Datei von der Festplatte …",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Datei, PDF-Version, Seitenformate, Schutz, Formulare, Anhänge und Statistik.",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Dateianhang",
+  "files": [
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Dateien",
+  "files": [
+   "src/components/panels/BatchPanel.svelte",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Dateien …",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Dateien anhängen",
+  "files": [
+   "src/components/side/AttachmentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Dateien für die Stapelverarbeitung",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Dateien hinzufügen",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Dateien vom Typ „.{0}“ kann die Werkbank nicht öffnen.",
+  "files": [
+   "src/lib/convert.ts"
+  ]
+ },
+ {
+  "key": "Dateien wählen …",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Dateien werden angehängt",
+  "files": [
+   "src/components/side/AttachmentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Dateien zusammenführen",
+  "files": [
+   "src/components/StartScreen.svelte",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Daten",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Daten exportieren",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Daten importieren",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Datenschutz",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Datum ({0})",
+  "files": [
+   "src/components/dialogs/StampPicker.svelte"
+  ]
+ },
+ {
+  "key": "Datum: {0}",
+  "files": [
+   "src/lib/sign.ts"
+  ]
+ },
+ {
+  "key": "Datumsangaben",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Deckkraft",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Dein Name",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Der Text ist auf allen Seiten gleich. Unterschiede in Bildern zeigt „Unterschiede“.",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "details version info statistik wörter",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Deutsch",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Die Office-Engine antwortet nicht. Bitte erneut versuchen.",
+  "files": [
+   "src/lib/engines/index.ts"
+  ]
+ },
+ {
+  "key": "Die Originale bleiben unverändert.",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Die Signatur sichert den aktuellen Stand. Danach bitte speichern; weitere Änderungen machen sie ungültig.",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Die Zertifikatsdatei ist nicht lesbar",
+  "files": [
+   "src/lib/sign.ts"
+  ]
+ },
+ {
+  "key": "Diese Befehle stehen oben in der Titelleiste.",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Diese Seite gibt es nur in einer Fassung.",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Diese Umgebung erlaubt kein SharedArrayBuffer – LibreOffice kann nicht starten.",
+  "files": [
+   "src/lib/engines/index.ts"
+  ]
+ },
+ {
+  "key": "Diese Unterschrift verwenden",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Dieses Dokument enthält keine digitale Signatur.",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Dieses Dokument hat keine Ebenen. Ebenen kommen vor allem in CAD-Plänen, Karten und Druckvorlagen vor.",
+  "files": [
+   "src/components/side/LayersPanel.svelte"
+  ]
+ },
+ {
+  "key": "Digital signieren",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Digital signiert von",
+  "files": [
+   "src/lib/sign.ts"
+  ]
+ },
+ {
+  "key": "Digital signiert von {0}",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "docx word bearbeitbar umwandeln",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Dokument",
+  "files": [
+   "src/lib/tools/common.ts",
+   "src/lib/util.ts"
+  ]
+ },
+ {
+  "key": "Dokument aufteilen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Dokument bereinigen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Dokument bereinigt",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Dokument drucken",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Dokument neu aufgebaut",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Dokument schließen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Dokument wählen …",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Dokument wird signiert",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Dokument.pdf",
+  "files": [
+   "src/lib/doc.svelte.ts"
+  ]
+ },
+ {
+  "key": "Dokumentansicht",
+  "files": [
+   "src/components/ViewerHost.svelte"
+  ]
+ },
+ {
+  "key": "Dokumente in Reihenfolge",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Dokumente vergleichen",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Dokumenteigenschaften",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Doppelseite",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Doppelseite mit Deckblatt",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Doppelseiten-Scans in linke und rechte (oder obere und untere) Hälften zerlegen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Drehen",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Drehen …",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "drehen gegen uhrzeigersinn",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "drehen uhrzeigersinn",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Drehung",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "dropdown liste",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Druck wird vorbereitet",
+  "files": [
+   "src/lib/print.ts"
+  ]
+ },
+ {
+  "key": "Druckbogen (quer)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Drucken",
+  "files": [
+   "src/lib/print.ts",
+   "src/lib/tools/app.ts",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Drucken …",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Drucken erlauben",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Dunkel",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Dünner Rahmen um jede Seite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Duplex mischen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "duplex reißverschluss abwechselnd",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Duplizieren",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/components/side/ThumbsPanel.svelte",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Durch Komma getrennt",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "Durchstreichen",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "durchstreichen streichen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Durchstreichung",
+  "files": [
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "E-Books (EPUB, MOBI, FB2), Comics (CBZ), XPS, E-Mails (EML, MSG), Markdown, HTML, Text, JSON und XML.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Ebenen",
+  "files": [
+   "src/components/Rail.svelte",
+   "src/components/Sidebar.svelte",
+   "src/lib/tools/app.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Eckig",
+  "files": [
+   "src/components/dialogs/StampPicker.svelte"
+  ]
+ },
+ {
+  "key": "Eigene Einstellungen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Eigene Farbe",
+  "files": [
+   "src/components/StyleControls.svelte"
+  ]
+ },
+ {
+  "key": "Eigener regulärer Ausdruck",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Eigener Stempeltext",
+  "files": [
+   "src/components/dialogs/StampPicker.svelte"
+  ]
+ },
+ {
+  "key": "Eigenes",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "Eigenes Zertifikat erstellen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Eigenschaften",
+  "files": [
+   "src/lib/tools/analyze.ts",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Eigenschaften geändert",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "Eigenschaften werden gespeichert",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "Ein anderes PDF (oder Word, Bilder …) an eine Stelle dieses Dokuments einfügen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Ein Werkzeug auf viele Dateien auf einmal anwenden – z. B. 200 Scans mit Texterkennung versehen und komprimieren.",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Ein- und Ausblenden ändert nur die Anzeige.",
+  "files": [
+   "src/components/side/LayersPanel.svelte"
+  ]
+ },
+ {
+  "key": "Einbrennen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "eine Seite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Eine Seite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Eine verschlüsselte Kopie speichern, ohne das offene Dokument zu verändern.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Einfügemarke",
+  "files": [
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Einfügen",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/lib/ribbon.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Eingebaute Engine – der erste Start dauert etwas.",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Eingebaute Engine (Browser)",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Eingebettete Dateien ansehen, speichern, hinzufügen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Eingebettete Dateien und Dateianhänge",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Eingetragene Werte verschwinden mit den Feldern. Zum Behalten vorher „Abflachen“.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Einpassen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Einrücken",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Einstellungen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Einträge (je Zeile einer)",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Einzeln prüfen …",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Einzelseite",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Einzufügende Dokumente",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Element",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Ellipse",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Ellipse aufziehen – mit Umschalt ein Kreis.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Ellipse oder Kreis aufziehen (mit Umschalt: Kreis).",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Empfindlichkeit",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Endgültig schwärzen?",
+  "files": [
+   "src/components/ContextBar.svelte"
+  ]
+ },
+ {
+  "key": "endlos lang scroll",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Engines",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Engines neu gestartet",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Engines sind geladen – Umwandlungen starten jetzt sofort",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Englisch",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Enter",
+  "files": [
+   "src/lib/shortcuts.ts"
+  ]
+ },
+ {
+  "key": "Entfernen",
+  "files": [
+   "src/components/Fields.svelte",
+   "src/components/OverlayPage.svelte",
+   "src/components/panels/BatchPanel.svelte",
+   "src/components/side/AttachmentsPanel.svelte",
+   "src/lib/tools/edit.ts",
+   "src/lib/viewer.svelte.ts"
+  ]
+ },
+ {
+  "key": "Entfernen (Entf)",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "entfernen löschen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "entsperren passwort entfernen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "entwurf vertraulich diagonal logo",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "epub ebook kindle tolino",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "epub mobi xps eml msg markdown html txt json",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Ergebnis",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Erkannte Tabellen",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Erkannte Tabellen als Arbeitsblätter – Zahlen werden als Zahlen übernommen.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Erkannte Tabellen als Excel-Datei (eine Tabelle je Blatt) oder CSV.",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Erkennen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Erkennt die Schräglage gescannter Seiten und richtet sie gerade aus.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Erkennt Linien und Kästchen in Papierformularen und legt dort ausfüllbare Felder an.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Erlaubt",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Erledigt",
+  "files": [
+   "src/components/TaskPane.svelte",
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Ersatz aus",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Ersatztext (optional)",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Erscheinungsbild",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Erscheinungsbild wird erzeugt …",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Ersetzen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Erst die Eingaben übernehmen oder mit Esc verwerfen",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Erst zur Prüfung auswählen, nicht sofort löschen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Erste Seite",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Erste Seiten auslassen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Erstellen",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Erstellt",
+  "files": [
+   "src/components/panels/MetaPanel.svelte",
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Erstellt mit",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "etwa {0} Min.",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "Excel",
+  "files": [
+   "src/lib/actions.ts",
+   "src/lib/tools/analyze.ts",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Exportieren",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Extrahieren",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/lib/ribbon.ts",
+   "src/lib/tools/analyze.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Extrahiert",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Falsches Passwort",
+  "files": [
+   "src/lib/pdf.ts"
+  ]
+ },
+ {
+  "key": "Farbe",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/StyleControls.svelte",
+   "src/components/dialogs/StampPicker.svelte",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Farbe {0}",
+  "files": [
+   "src/components/StyleControls.svelte",
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "farbe papier hinterlegen briefpapier briefbogen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Farben",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Farben angepasst",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Farben anpassen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Farben entfernen, Text und Vektoren bleiben scharf und durchsuchbar.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Farben umgekehrt",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Farben umkehren",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Farbfläche oder Briefpapier (ein PDF) hinter den Seiteninhalt legen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Fassung wird geladen",
+  "files": [
+   "src/components/panels/ComparePanel.svelte"
+  ]
+ },
+ {
+  "key": "Fassungen werden geladen …",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Fehler",
+  "files": [
+   "src/lib/engines/rpc.ts"
+  ]
+ },
+ {
+  "key": "Fehler ",
+  "files": [
+   "src/lib/engines/tools.worker.ts"
+  ]
+ },
+ {
+  "key": "Feld",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Feld ",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Feld für eine Unterschrift aufziehen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "﻿Feld;Wert\n",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Felder anlegen",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Felder automatisch erkennen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Felder erkennen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Felder hervorheben",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "felder löschen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Felder löschen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Felder zeigen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Feldname",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Feldnamen und Werte als JSON und CSV speichern.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Fenster",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Fertig",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "Feste Ränder",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Fett",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Filtern",
+  "files": [
+   "src/components/StartScreen.svelte"
+  ]
+ },
+ {
+  "key": "Findet (fast) leere Seiten – etwa aus Duplex-Scans – und entfernt sie.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "flatten fixieren",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Fließtext-E-Book für Reader wie Kindle oder Tolino.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "fonts eingebettet",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "form kasten rahmen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "form kreis",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Format",
+  "files": [
+   "src/lib/ribbon.ts",
+   "src/lib/tools/analyze.ts",
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Formular abflachen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "formular eingabefeld",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Formular zurückgesetzt",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Formular zurücksetzen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Formulardaten",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Formulardaten exportieren",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Formulardaten importieren",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Formulare",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Formulare ausfüllen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Formulareingaben zurücksetzen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Formularfeld",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Formularfelder behalten",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Formularfelder entfernen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Formularfelder hervorheben",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Formularfelder und Kommentare mitdrucken",
+  "files": [
+   "src/lib/print.ts"
+  ]
+ },
+ {
+  "key": "Fortlaufend",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Fortlaufende Kennung für Akten und Beweisstücke, z. B. AKTE-000123.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Foto oder Scan einer Unterschrift auf weißem Papier. Der Hintergrund wird automatisch entfernt.",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "fotos grafiken herausholen",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Fotos und Scans (JPG, PNG, HEIC, TIFF, WebP, SVG …) zu einem PDF zusammenstellen.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Freigabe",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Freihand",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "freitext kommentar",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Füllen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Füllung",
+  "files": [
+   "src/components/StyleControls.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Füllung {0}",
+  "files": [
+   "src/components/StyleControls.svelte"
+  ]
+ },
+ {
+  "key": "Für das Web optimieren",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Für das Web optimiert",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Für ein Dokument mit Passwortschutz zuerst „Schutz entfernen“ wählen – die Verschlüsselung beim Speichern würde die Signatur ungültig machen.",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "für KI",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Für KI",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Für KI aufbereiten",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "für Kommentare, Stempel, Signaturen",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Für Rückendrahtheftung ausschießen: beidseitig drucken, falten, heften.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Für später speichern (nur auf diesem Rechner)",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Fußzeile",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Ganze Seite",
+  "files": [
+   "src/components/ZoomField.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Ganzes Dokument",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Ganzes Wort",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Geändert",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "Geänderte Lesezeichen",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Geänderte Seiten",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "geht es deutlich schneller; Werkbank erkennt es automatisch.",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Gekachelt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "gelb=#FFF066,grün=#5BFF7C,blau=#86E2FF,rosa=#FF98C8,rot=#FF4F5F",
+  "files": [
+   "src/lib/viewer.svelte.ts"
+  ]
+ },
+ {
+  "key": "Geldbeträge",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Genauigkeit",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "genehmigt erledigt eingang",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "geöffnet",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Geöffnet",
+  "files": [
+   "src/lib/doc.svelte.ts"
+  ]
+ },
+ {
+  "key": "GEPRÜFT",
+  "files": [
+   "src/components/dialogs/StampPicker.svelte"
+  ]
+ },
+ {
+  "key": "Gerade",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "gerade eben",
+  "files": [
+   "src/lib/util.ts"
+  ]
+ },
+ {
+  "key": "gescannt scan effekt",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Gescannte Seiten durchsuchbar und kopierbar machen. Das Seitenbild bleibt unverändert, darüber liegt eine unsichtbare Textebene.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "geschützt",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Geschützt beim Speichern",
+  "files": [
+   "src/components/StatusBar.svelte"
+  ]
+ },
+ {
+  "key": "Geschützte Kopie",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Geschützte Kopie speichern",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Gespeichert",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/components/dialogs/SignaturePad.svelte",
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Gespeichert als „{0}“",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Gespeicherte Unterschrift",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Gespeicherte Unterschriften entfernt",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Gespiegelt (gerade Seiten links, ungerade rechts)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Gestaltung",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Getrennt gescannte Vorder- und Rückseiten abwechselnd verzahnen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Ghostscript",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte",
+   "src/lib/engines/state.svelte.ts"
+  ]
+ },
+ {
+  "key": "Ghostscript: ",
+  "files": [
+   "src/lib/engines/tools.worker.ts"
+  ]
+ },
+ {
+  "key": "Graustufen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "grayscale(1) contrast(1.18) brightness(1.03) blur(0.35px)",
+  "files": [
+   "src/lib/ops.ts"
+  ]
+ },
+ {
+  "key": "Great Vibes",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Groß-/Kleinschreibung beachten",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Groß/klein",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Größe",
+  "files": [
+   "src/components/StyleControls.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Größer",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Group",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Grund",
+  "files": [
+   "src/components/panels/SignPanel.svelte",
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Grund, z. B. Freigabe",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Grund: {0}",
+  "files": [
+   "src/lib/sign.ts"
+  ]
+ },
+ {
+  "key": "Gründlich",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Gruppe (gleicher Name = eine Auswahl)",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Gruppe 1",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Gültig (Jahre)",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Gültig bis {0}{1}",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Gültig und vertrauenswürdig",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Gültig, aber das Zertifikat ist abgelaufen",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Gültig, Aussteller nicht geprüft",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Gültig, danach wurde das Dokument geändert",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Gültig, Zertifikat selbstsigniert",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "haftnotiz kommentar sticky",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Halbieren",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "halbieren doppelseite buch scan teilen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Hand",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Handschriftliche Unterschrift einfügen",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Handschriftliche Unterschrift zeichnen, tippen oder als Bild laden und platzieren.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Häufige Aufgaben",
+  "files": [
+   "src/components/StartScreen.svelte"
+  ]
+ },
+ {
+  "key": "heft falten ausschießen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Hell",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Helligkeit",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "helligkeit kontrast sättigung scan blass",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Helligkeit, Kontrast und Sättigung ändern – etwa für blasse Scans. Seiten werden dabei zu Bildern.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "herauslösen auszug kopieren",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Herunterladen",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "hervorheben markieren gelb",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Hier erscheinen deine zuletzt geöffneten Dokumente.",
+  "files": [
+   "src/components/StartScreen.svelte"
+  ]
+ },
+ {
+  "key": "Hier unterschreiben – mit Maus, Trackpad oder Stift",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Hinter den Inhalt legen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Hintergrund",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Hintergrund gesetzt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Hinzufügen",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Hoch",
+  "files": [
+   "src/lib/print.ts",
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Höchstens (MB) je Teil",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Höchstens korrigieren (Grad)",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Höher erkennt auch Seiten mit Flecken, Rauschen oder Lochrand.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Homemade Apple",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Horizontal",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Horizontal blättern",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "html web",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "i, ii, iii",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Im Dokument suchen",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Im Ordner zeigen",
+  "files": [
+   "src/components/StartScreen.svelte",
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Importieren",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "In Bilder umgewandelt",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "In Bilder umwandeln",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "In einen Ordner",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "In einzelne Seiten",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "In einzelne Seiten, feste Portionen, nach Lesezeichen, nach Dateigröße oder eigene Bereiche zerlegen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "In Graustufen umgewandelt",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "In Graustufen umwandeln",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "In Ordner",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "In PDF/A umwandeln",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "In PDF/A-{0}b umgewandelt",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "In Tabs öffnen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "In zwei Hälften",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Inhalt",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/edit.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Inhalt (Markdown)",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Inhalt ändern",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Inhaltsverzeichnis",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Inhaltsverzeichnis eingefügt",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Inhaltsverzeichnis erzeugen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Installiertes LibreOffice – schnell",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "invertieren negativ",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "ja (laut XMP)",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "JavaScript und automatische Aktionen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Jede Seite als Bild – Inhalte lassen sich danach nicht mehr herauskopieren oder bearbeiten.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Jede Seite als eigene Datei",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Jede Seite wird eine Folie in voller Auflösung; der Seitentext landet in den Notizen.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Jetzt vorladen",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "JPEG-Qualität",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "jpg png heic tiff foto handy scan",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "json befüllen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "json csv daten",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "json daten struktur",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Kalam",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "kaputt fehler defekt beschädigt",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Kästchen ",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Kein Text erkannt.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Kein Text gefunden.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Kein Text gefunden. Für gescannte Seiten zuerst „Texterkennung“ ausführen.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Kein Zertifikat gewählt",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Kein Zertifikat in der Datei",
+  "files": [
+   "src/lib/sign.ts"
+  ]
+ },
+ {
+  "key": "Keine",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "Keine Änderungen",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Keine Bilder gefunden.",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Keine eingebetteten Dateien. Anhänge eignen sich z. B. für Quelldaten, Excel-Tabellen oder E-Rechnungen (ZUGFeRD).",
+  "files": [
+   "src/components/side/AttachmentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Keine Formularfelder vorhanden.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Keine Füllung",
+  "files": [
+   "src/components/StyleControls.svelte"
+  ]
+ },
+ {
+  "key": "Keine Kommentare gefunden.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Keine leeren Seiten gefunden.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Keine Lesezeichen. Lege eines für die aktuelle Seite an oder lass sie aus den Überschriften erzeugen.",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Keine Linien oder Kästchen für Felder gefunden.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Keine nennenswerte Verkleinerung möglich ({0} → {1}). Das Dokument bleibt unverändert.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Keine Quellseiten",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Keine schiefen Seiten gefunden.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Keine Schriften – das Dokument enthält vermutlich nur Bilder.",
+  "files": [
+   "src/components/panels/FontsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Keine Seiten ausgewählt",
+  "files": [
+   "src/lib/print.ts"
+  ]
+ },
+ {
+  "key": "Keine Seiten im angegebenen Bereich",
+  "files": [
+   "src/lib/tools/common.ts"
+  ]
+ },
+ {
+  "key": "Keine Seiten markiert – es wird die aktuelle Seite verwendet.",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Keine sichtbaren Unterschiede",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Keine Tabellen erkannt – exportiere Textzeilen",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Keine Tabellen erkannt.",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Keine Teile",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Keine Treffer",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Keine Treffer.",
+  "files": [
+   "src/components/StartScreen.svelte",
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Keine Überschriften erkannt",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Kennzeichnen",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "ki llm rag chunks claude chatgpt markdown",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Kleiner",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Kleinere Bilder (Linien, Symbole) überspringen.",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Kleinste Kantenlänge (Pixel)",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Klick auf einen Eintrag springt zu diesem Stand. Spätere Schritte bleiben erhalten, bis du etwas Neues änderst.",
+  "files": [
+   "src/components/panels/HistoryPanel.svelte"
+  ]
+ },
+ {
+  "key": "Klicken und Text auf die Seite schreiben.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Klicken, um eine Notiz anzuheften.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "kombinieren verbinden vereinen merge",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Kommentar löschen",
+  "files": [
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Kommentar wird gelöscht",
+  "files": [
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Kommentare",
+  "files": [
+   "src/components/Rail.svelte",
+   "src/components/Sidebar.svelte",
+   "src/lib/tools/edit.ts",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Kommentare einbrennen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Kommentare eingebrannt",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Kommentare entfernen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Kommentare exportieren",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Kommentare filtern",
+  "files": [
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Kommentare und Markierungen fest in die Seiten schreiben, sodass sie nicht mehr verändert werden können.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Kommentarliste",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Kommentieren",
+  "files": [
+   "src/lib/ribbon.ts",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Komprimieren",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Komprimiert: ",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Kontakt",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Kontakt (optional)",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Kontrast",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Kontrollkästchen",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/Ribbon.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Kontrollkästchen aufziehen.",
+  "files": [
+   "src/lib/tools/edit.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Kopf- und Fußzeile",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Kopf- und Fußzeile gesetzt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Kopf/Fuß",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Kopfzeile",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "kopfzeile fußzeile footer header",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "kopie passwort versenden",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "kopie verdoppeln",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Kopieren erlauben",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Kürzel oder Name",
+  "files": [
+   "src/components/dialogs/StampPicker.svelte"
+  ]
+ },
+ {
+  "key": "Lädt …",
+  "files": [
+   "src/components/side/CommentsPanel.svelte",
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Lang",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "Langzeitprüfung (LTV) aktivieren",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Lässt ein digitales PDF wie gescannt aussehen: leicht schief, grau, mit Körnung.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Läuft …",
+  "files": [
+   "src/components/TaskPane.svelte"
+  ]
+ },
+ {
+  "key": "Läuft … {0}/{1}",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Layout wird analysiert …",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Leer lassen, wenn jeder öffnen, aber nicht alles darf.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Leer lassen, wenn Vorder- und Rückseiten in diesem Dokument nacheinander liegen (erst alle Vorder-, dann alle Rückseiten).",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Leere Seite",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Leere Seite danach einfügen",
+  "files": [
+   "src/components/side/ThumbsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Leere Seite einfügen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Leere Seite(n) eingefügt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Leere Seiten",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Leere Seiten an beliebiger Stelle einfügen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Leere Seiten entfernen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Leeren",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte",
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Leeres A4-Dokument anlegen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "leerseiten weiß scan",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Legal",
+  "files": [
+   "src/lib/util.ts"
+  ]
+ },
+ {
+  "key": "Lesezeichen",
+  "files": [
+   "src/components/Rail.svelte",
+   "src/components/Sidebar.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Lesezeichen ansehen, anlegen, umbenennen und ordnen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Lesezeichen für die aktuelle Seite",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Lesezeichen geändert",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Lesezeichen je Datei anlegen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Lesezeichen werden gespeichert",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Lesezeit",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "Letter",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/pages.ts",
+   "src/lib/util.ts"
+  ]
+ },
+ {
+  "key": "Letter → Heft in Half Letter",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Letzte Seite",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Letzte Seite nach vorn – hilft bei falsch herum gescannten Stapeln.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "LibreOffice wandelt um …",
+  "files": [
+   "src/lib/engines/index.ts"
+  ]
+ },
+ {
+  "key": "linearisieren schnell web fast",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Linearisieren: Browser zeigen die erste Seite, bevor die Datei ganz geladen ist.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Linie",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/components/StyleControls.svelte",
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Linie ziehen.",
+  "files": [
+   "src/lib/tools/edit.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Linienstärke",
+  "files": [
+   "src/components/StyleControls.svelte"
+  ]
+ },
+ {
+  "key": "Linienzug",
+  "files": [
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Link",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/Ribbon.svelte",
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Link einfügen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Links",
+  "files": [
+   "src/lib/tools/pages.ts",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Links behalten",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Linux",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Liste",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Liste der zuletzt geöffneten Dateien geleert",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "liste übersicht review",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Logische Seitennamen wie i, ii, iii für das Vorwort und 1, 2, 3 ab dem Hauptteil (erscheinen in PDF-Programmen).",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "logo foto grafik",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Löschen",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/components/dialogs/SignaturePad.svelte",
+   "src/components/side/CommentsPanel.svelte",
+   "src/components/side/OutlinePanel.svelte",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Lucide",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Markdown",
+  "files": [
+   "src/lib/actions.ts",
+   "src/lib/tools/analyze.ts",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Markdown oder Text eingeben und als sauber gesetztes PDF erzeugen.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "markdown schreiben notiz",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Marker",
+  "files": [
+   "src/components/StyleControls.svelte"
+  ]
+ },
+ {
+  "key": "Markerfarbe {0}",
+  "files": [
+   "src/components/StyleControls.svelte"
+  ]
+ },
+ {
+  "key": "Markieren",
+  "files": [
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Markierung",
+  "files": [
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Max Mustermann\nMusterstraße 1",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Maximal – Bilder auf 72 dpi",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "md markdown wiki ki llm",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Mehrere Dokumente zu einem PDF verbinden. Word, Excel, Bilder und mehr werden dabei umgewandelt.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Mehrere Seiten oder Bereiche auf einmal entfernen, z. B. „2, 5-7, 12-“.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Mehrere Seiten pro Blatt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Mehrzeilig",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Metadaten (Autor, Software, Daten)",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Metadaten entfernen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Metadaten entfernt",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "metadaten titel autor info eigenschaften",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Metadaten weg",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Metadaten, Vorschaubilder und Anhänge entfernen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Mindestens eine Seite muss bleiben",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Mindestens zwei Dokumente wählen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Mischen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "MIT / Apache-2.0",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Mit Deckblatt",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mit den Pfeilen sortieren.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Mit Maus, Stift oder Finger zeichnen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Mit Passwort schützen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Mitte",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Mittig",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Mod+-",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+=",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+0",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+1",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+2",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+Alt+S",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+Ctrl+F",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+Enter",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+F",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+K",
+  "files": [
+   "src/components/TitleBar.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+N",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+O",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+P",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+S",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+Shift+L",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Mod+Shift+O",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+Shift+R",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Mod+Shift+S",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+Shift+Z",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+W",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Mod+Z",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Modus beenden",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "Muster",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Nach Dateigröße",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Nach dem Signieren erlaubt",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Nach der aktuellen Seite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Nach eigenen Bereichen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Nach jeder Seite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Nach Lesezeichen (1. Ebene)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Nach links drehen",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/components/side/ThumbsPanel.svelte",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Nach oben",
+  "files": [
+   "src/components/Fields.svelte",
+   "src/components/panels/BatchPanel.svelte",
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Nach rechts drehen",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/components/side/ThumbsPanel.svelte",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Nach unten",
+  "files": [
+   "src/components/Fields.svelte",
+   "src/components/panels/BatchPanel.svelte",
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Nächste Seite",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Nächster (↩)",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Nächster Treffer",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Nachtmodus",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Nachtmodus beim Lesen",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Name",
+  "files": [
+   "src/components/dialogs/StampPicker.svelte",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Name des neuen Dokuments",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Name für Kommentare, Erscheinungsbild, Texterkennung",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Namenszusatz",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Nebeneinander",
+  "files": [
+   "src/components/dialogs/CompareView.svelte",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Negativ-Darstellung, z. B. zum Lesen bei Nacht oder für Negativ-Scans. Seiten werden zu Bildern.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Neu",
+  "files": [
+   "src/components/side/OutlinePanel.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Neu starten",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Neue Anmerkungen erscheinen hier nach dem Speichern oder Übernehmen.",
+  "files": [
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Neuer · {0}",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Neues Dokument",
+  "files": [
+   "src/components/StartScreen.svelte",
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Neues leeres Dokument",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "nicht eingebettet",
+  "files": [
+   "src/components/panels/FontsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Nicht gespeichert",
+  "files": [
+   "src/components/StatusBar.svelte"
+  ]
+ },
+ {
+  "key": "Nicht skalieren",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Nicht speichern",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Nichts gefunden – das Dokument bleibt unverändert.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Nichts gefunden.",
+  "files": [
+   "src/components/Palette.svelte"
+  ]
+ },
+ {
+  "key": "Noch kein Zertifikat? Eigenes erstellen …",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Noch keine Dokumente gewählt.",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Noch keine Kommentare.",
+  "files": [
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "noch nicht gespeichert",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "noopener noreferrer",
+  "files": [
+   "src/lib/viewer.svelte.ts"
+  ]
+ },
+ {
+  "key": "Normal",
+  "files": [
+   "src/lib/print.ts",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Normales PDF",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Notieren",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Nötig, um die Einschränkungen später aufzuheben.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Notiz",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Notiz schreiben …",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Notizen, Markierungen und Zeichnungen löschen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Notizzettel anheften – erscheint als Symbol, der Text beim Öffnen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "nup handout drucken verkleinern",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Nur das Wichtigste",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Nur die Anzeige drehen, das Dokument bleibt unverändert",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Nur Formulare ausfüllen und weitere Signaturen",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Oben",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Oben links",
+  "files": [
+   "src/lib/tools/common.ts"
+  ]
+ },
+ {
+  "key": "Oben Mitte",
+  "files": [
+   "src/lib/tools/common.ts"
+  ]
+ },
+ {
+  "key": "Oben rechts",
+  "files": [
+   "src/components/panels/SignPanel.svelte",
+   "src/lib/tools/common.ts"
+  ]
+ },
+ {
+  "key": "ocr scan durchsuchbar texterkennung",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Offene Dokumente",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Offene Dokumente wählen oder Dateien hinzufügen. Nicht-PDFs werden umgewandelt.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Office",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Office in PDF",
+  "files": [
+   "src/components/StartScreen.svelte"
+  ]
+ },
+ {
+  "key": "Office-Dateien in PDF",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Office-Dokument wird umgewandelt …",
+  "files": [
+   "src/lib/convert.ts"
+  ]
+ },
+ {
+  "key": "Office-Dokumente",
+  "files": [
+   "src/lib/platform.ts"
+  ]
+ },
+ {
+  "key": "Office-Engine",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte",
+   "src/lib/actions.ts",
+   "src/lib/engines/state.svelte.ts"
+  ]
+ },
+ {
+  "key": "Office-Engine startet – beim ersten Mal kann das etwas dauern …",
+  "files": [
+   "src/lib/engines/index.ts"
+  ]
+ },
+ {
+  "key": "Office-Engine wird neu gestartet …",
+  "files": [
+   "src/lib/engines/index.ts"
+  ]
+ },
+ {
+  "key": "Office-Umwandlung",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Öffne zuerst ein Dokument",
+  "files": [
+   "src/lib/actions.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Öffne zuerst ein Dokument.",
+  "files": [
+   "src/components/TaskPane.svelte"
+  ]
+ },
+ {
+  "key": "Öffnen",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/components/StartScreen.svelte",
+   "src/components/TitleBar.svelte",
+   "src/lib/actions.ts",
+   "src/lib/dialogs.svelte.ts",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Öffnen …",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Ohne Namen",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Ohne Vertrauensliste kann die Werkbank prüfen, ob das Dokument unverändert ist, aber nicht, ob der Aussteller vertrauenswürdig ist. Lade dazu das Zertifikat deiner Zertifizierungsstelle.",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "OpenDocument (.odt)",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "OpenDocument Präsentation",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "OpenDocument Tabelle",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "OpenDocument Text",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Optimieren",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Option",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Option {0}",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Option 1\nOption 2",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Optionale Inhalte (z. B. aus CAD-Plänen) ein- und ausblenden",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Optionsfeld",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/Ribbon.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Optionsfeld aufziehen.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Optionsfelder einer Gruppe nacheinander aufziehen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Optionsgruppe",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Ordner öffnen",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Organisation",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Organisieren",
+  "files": [
+   "src/lib/ribbon.ts",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Originalgröße",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Ort",
+  "files": [
+   "src/components/panels/SignPanel.svelte",
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Ort: {0}",
+  "files": [
+   "src/lib/sign.ts"
+  ]
+ },
+ {
+  "key": "outline pfade druckerei schriftprobleme",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "paginierung nummerieren seitenzahlen einfügen paginieren",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Papier",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Passende Dateien",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Passwort",
+  "files": [
+   "src/lib/dialogs.svelte.ts",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Passwort des Zertifikats",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Passwort erforderlich",
+  "files": [
+   "src/lib/dialogs.svelte.ts"
+  ]
+ },
+ {
+  "key": "Passwort erkannt. Beim Speichern wird das Dokument wieder mit diesem Passwort geschützt.",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Passwort für die Zertifikatsdatei",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Passwort nötig",
+  "files": [
+   "src/lib/pdf.ts"
+  ]
+ },
+ {
+  "key": "Passwort und Einschränkungen beim nächsten Speichern weglassen.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Passwort zum Öffnen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "PDF erstellen",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "PDF-Engine im Hintergrund vorbereiten",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "PDF, Office-Dokumente, Bilder, E-Books und mehr öffnen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "PDF, Office, Bilder, E-Books, Mails",
+  "files": [
+   "src/components/App.svelte"
+  ]
+ },
+ {
+  "key": "PDF, Word, Excel, PowerPoint, Bilder, E-Books, Mails – oder einfach ins Fenster ziehen",
+  "files": [
+   "src/components/StartScreen.svelte"
+  ]
+ },
+ {
+  "key": "PDF/A konnte nicht erzeugt werden",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "PDF/A wird erzeugt …",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "PDF/A-1b (Archiv)",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "PDF/A-2b (Archiv)",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "PDF/A-2b ist für die meisten Zwecke richtig. PDF/A-1b verlangt älteres PDF ohne Transparenz.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "PDF/A-3b (Archiv)",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "PDFs lesen, bearbeiten, umwandeln und schützen – alles auf diesem Rechner.",
+  "files": [
+   "src/components/StartScreen.svelte"
+  ]
+ },
+ {
+  "key": "PDFs, Office-Dateien, Bilder – alles, was Werkbank öffnen kann. Nicht-PDFs werden zuerst umgewandelt.",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Pfeil",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Pfeil ziehen.",
+  "files": [
+   "src/lib/tools/edit.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Platzieren",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "png jpg jpeg webp tiff bmp bild export",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Polygon",
+  "files": [
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Position",
+  "files": [
+   "src/components/panels/SignPanel.svelte",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Postleitzahlen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "pptx präsentation folien",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Präfix",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Präsentieren",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Pro Blatt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Prüfen",
+  "files": [
+   "src/lib/ribbon.ts",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "PyMuPDF kennt ",
+  "files": [
+   "src/lib/engines/pymupdf.worker.ts"
+  ]
+ },
+ {
+  "key": "Pyodide",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Qualität",
+  "files": [
+   "src/lib/print.ts",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Quer",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "radio auswahl",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Rand (mm)",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Rand & Abstand (mm)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "rand beschneiden cropbox weißraum",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Ränder abschneiden – fest in Millimetern oder automatisch bis zum Inhalt.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Raster",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Rasterisieren",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "rasterisieren flach bild kopierschutz",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Rechte Hälfte zuerst (Rechts-nach-links-Bücher)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Rechte-Passwort",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Rechteck",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Rechteck aufziehen.",
+  "files": [
+   "src/lib/tools/edit.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Rechts",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Rechtsgültig mit einem Zertifikat (.p12/.pfx) signieren – sichtbar oder unsichtbar, auf Wunsch mit Zeitstempel.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Regeln (je Zeile: ab Seite, Stil, Präfix, Start)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Reihenfolge",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Reihenfolge umgekehrt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Reihenfolge umkehren",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Reiner Text mit erhaltenem Zeilenlayout.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Reparatur",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Reparieren",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Richtung",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "römisch label logisch nummer",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "rot = entfernt",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "rotieren quer hoch wenden",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Rückgängig",
+  "files": [
+   "src/lib/actions.ts",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Rückgängig: ",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Rückseiten aus",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Rückseiten in umgekehrter Reihenfolge (Stapel umgedreht gescannt)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "rückwärts",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Rund",
+  "files": [
+   "src/components/dialogs/StampPicker.svelte"
+  ]
+ },
+ {
+  "key": "Sättigung",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Sauberes Markdown und Textabschnitte mit Seitenangaben – zum Einfügen in ChatGPT, Claude oder eigene Suchsysteme.",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "säubern datenschutz javascript anonym metadaten",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Scan-Look",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Scanner-Look",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Scanner-Look angewendet",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Scans",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "schief gerade ausrichten scan drehen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Schiefe Scans begradigen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Schiefe Seiten vorher begradigen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Schließen",
+  "files": [
+   "src/components/TaskPane.svelte",
+   "src/components/Toasts.svelte",
+   "src/components/dialogs/CompareView.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Schließen (Esc)",
+  "files": [
+   "src/components/TaskPane.svelte"
+  ]
+ },
+ {
+  "key": "Schnell",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Schnellzugriff",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Schnitt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Schrift fehlt",
+  "files": [
+   "src/lib/ops.ts"
+  ]
+ },
+ {
+  "key": "Schriften",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Schriften → Pfade",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Schriften in Pfade umgewandelt",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Schriften in Pfade umwandeln",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Schriften werden gelesen …",
+  "files": [
+   "src/components/panels/FontsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Schriftgröße",
+  "files": [
+   "src/components/StyleControls.svelte"
+  ]
+ },
+ {
+  "key": "Schriftgröße (pt)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Schritt entfernen",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Schritt hinzufügen …",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Schutz entfernen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Schutz festgelegt. Er wird beim nächsten Speichern angewendet.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Schutz festlegen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Schützen",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Schwarz",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Schwärzen",
+  "files": [
+   "src/components/ContextBar.svelte",
+   "src/components/Ribbon.svelte",
+   "src/lib/ribbon.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Schwärzung",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "schwärzung anonymisieren dsgvo",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "schwarzweiß grau farblos druck",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Sehr gründlich",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Sehr hoch",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Sehr viele offene Elemente – „Übernehmen“ schreibt sie ins PDF.",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Seite",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/StatusBar.svelte",
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Seite ",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seite {0}",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/Thumb.svelte",
+   "src/components/dialogs/CompareView.svelte",
+   "src/components/side/OutlinePanel.svelte",
+   "src/components/side/SearchPanel.svelte",
+   "src/lib/print.ts",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Seite {0} gibt es nicht – das Dokument hat {1} Seiten",
+  "files": [
+   "src/lib/util.ts"
+  ]
+ },
+ {
+  "key": "Seite {0} gibt es nicht – das Dokument hat nur eine Seite",
+  "files": [
+   "src/lib/util.ts"
+  ]
+ },
+ {
+  "key": "Seite {0} von {1}",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Seite {0} von {1} wird gelesen …",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Seite {0} wäre danach zu klein",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seite 1",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seite 1 des Briefpapiers nur für die erste Seite, Seite 2 für alle weiteren",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seite 1 von 9",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seite fehlt in dieser Fassung",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Seite im Dokument",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Seite löschen",
+  "files": [
+   "src/components/side/ThumbsPanel.svelte"
+  ]
+ },
+ {
+  "key": "﻿Seite;Art;Autor;Datum;Text\n",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Seiten",
+  "files": [
+   "src/components/Fields.svelte",
+   "src/components/Organize.svelte",
+   "src/components/Rail.svelte",
+   "src/components/Sidebar.svelte",
+   "src/components/side/ThumbsPanel.svelte",
+   "src/lib/print.ts",
+   "src/lib/ribbon.ts",
+   "src/lib/tools/common.ts"
+  ]
+ },
+ {
+  "key": "Seiten {0}",
+  "files": [
+   "src/components/panels/FontsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Seiten als Bilder in einem Comic-Archiv.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Seiten als neues Dokument öffnen oder als Datei speichern.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten als PNG, JPEG, WebP, TIFF oder BMP in wählbarer Auflösung.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Seiten auf ein einheitliches Papierformat skalieren (z. B. alles auf A4).",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten aus Datei danach einfügen …",
+  "files": [
+   "src/components/side/ThumbsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Seiten aus Datei einfügen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten bildschirmfüllend zeigen; Pfeiltasten blättern, Esc beendet",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Seiten der Quelle",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten dieses Dokuments durch Seiten eines anderen ersetzen – z. B. eine korrigierte Seite.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten direkt dahinter kopieren.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten drehen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten dunkel darstellen (nur Anzeige)",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Seiten duplizieren",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten ersetzen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten extrahieren",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten geteilt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten je Blatt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten je Teil",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten löschen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten nummerieren – Position, Format, Startwert und Schrift frei wählbar.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten ohne Text",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "Seiten organisieren",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Seiten teilen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten überspringen, die schon Text enthalten",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Seiten um 90° oder 180° drehen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten umsortiert",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seiten werden begradigt …",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Seiten werden verschoben",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/components/side/ThumbsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Seitenansicht",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Seitenbereich",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "Seitenbereich löschen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seitenbeschriftung",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seitenbeschriftung gesetzt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seitenbreite",
+  "files": [
+   "src/components/ZoomField.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Seitenformat",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Seitenformat ändern",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seitenformate",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "Seitenleiste",
+  "files": [
+   "src/components/Rail.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Seitenleiste schließen",
+  "files": [
+   "src/components/Sidebar.svelte"
+  ]
+ },
+ {
+  "key": "Seitentext als Sprechernotizen",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Seitentrenner einfügen",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Seitenumbrüche markieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Seitenzahlen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Seitenzahlen gesetzt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Selbstsigniertes Zertifikat für interne Freigaben. Für qualifizierte Signaturen brauchst du ein Zertifikat einer Vertrauensstelle.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Senkrecht",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Sichtbaren Kommentar direkt auf die Seite schreiben.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Sichtbares Signaturfeld",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Signatur",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Signatur nicht prüfbar",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Signatur wird berechnet …",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "signatur zertifikat pades qualifiziert p12 pfx",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Signaturbibliothek nicht geladen",
+  "files": [
+   "src/lib/sign.ts"
+  ]
+ },
+ {
+  "key": "Signaturen prüfen",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Signieren",
+  "files": [
+   "src/components/panels/SignPanel.svelte",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Signieren fehlgeschlagen: ",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Signiert am",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Signiert. Jetzt speichern – spätere Änderungen machen die Signatur ungültig.",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Spaltenlayout beibehalten",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Spaltenweise",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Speichern",
+  "files": [
+   "src/components/side/AttachmentsPanel.svelte",
+   "src/lib/actions.ts",
+   "src/lib/tools/app.ts",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Speichern fehlgeschlagen: ",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Speichern unter",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Speichern unter …",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Sprache",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "Sprachen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Standard",
+  "files": [
+   "src/lib/ribbon.ts",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Standardsprachen für neue Texterkennungen. Die Sprachdaten sind in der App enthalten, es wird nichts heruntergeladen.",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Stapel",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Stapel · Datei {0} von {1}",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "stapel batch viele dateien automatisch ordner",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Stapel.zip",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Stapelverarbeitung",
+  "files": [
+   "src/components/StartScreen.svelte",
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Stark – Bilder auf 100 dpi",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Stärke",
+  "files": [
+   "src/components/StyleControls.svelte"
+  ]
+ },
+ {
+  "key": "Start",
+  "files": [
+   "src/components/TitleBar.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Startnummer",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Startseite",
+  "files": [
+   "src/components/TitleBar.svelte"
+  ]
+ },
+ {
+  "key": "Stelle",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Stellen",
+  "files": [
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Stempel",
+  "files": [
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/tools/edit.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Stempel setzen",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "Stempel wie „Genehmigt“, „Entwurf“ oder „Eingang“ mit Datum platzieren.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Steuer-/USt-IdNr.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Stichwörter",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "Stil",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Stile: D = 1 2 3, r = i ii iii, R = I II III, a = a b c, A = A B C. Beispiel: „5, D, Anhang-, 1“.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Strg",
+  "files": [
+   "src/components/Organize.svelte",
+   "src/lib/shortcuts.ts"
+  ]
+ },
+ {
+  "key": "Strg+",
+  "files": [
+   "src/lib/platform.ts"
+  ]
+ },
+ {
+  "key": "Struktur",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Struktur als JSON exportieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Strukturierter Text mit Überschriften, Listen und Tabellen – ideal für Wikis und KI.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Stufe",
+  "files": [
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Subtype",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Suchbegriff",
+  "files": [
+   "src/components/Palette.svelte"
+  ]
+ },
+ {
+  "key": "Suche …",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Suchen",
+  "files": [
+   "src/components/Rail.svelte",
+   "src/components/Sidebar.svelte",
+   "src/lib/tools/app.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Suchen & schwärzen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Suchen und schwärzen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Suffix",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Svelte",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "svg vektor",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "System",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Tabelle {0} (S{1})",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "tabelle excel csv daten",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Tabellen",
+  "files": [
+   "src/lib/tools/analyze.ts",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Tabellen extrahieren",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Tabloid",
+  "files": [
+   "src/lib/util.ts"
+  ]
+ },
+ {
+  "key": "Tauri",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Teil 1",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Teil 2",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Teile",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Teilen und Verbinden",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Teilmenge eingebettet",
+  "files": [
+   "src/components/panels/FontsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Telefonnummern",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Tesseract",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Text",
+  "files": [
+   "src/components/dialogs/CompareView.svelte",
+   "src/components/panels/InfoPanel.svelte",
+   "src/lib/actions.ts",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/ribbon.ts",
+   "src/lib/tools/convert.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Text auswählen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Text auswählen, um ihn durchzustreichen.",
+  "files": [
+   "src/lib/tools/edit.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Text auswählen, um ihn zu unterstreichen.",
+  "files": [
+   "src/lib/tools/edit.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Text bearbeiten",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Text eingeben …",
+  "files": [
+   "src/lib/viewer.svelte.ts"
+  ]
+ },
+ {
+  "key": "Text erkennen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Text geändert",
+  "files": [
+   "src/lib/overlay.svelte.ts"
+  ]
+ },
+ {
+  "key": "Text hinzufügen",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Text markieren – über die Auswahl ziehen oder frei malen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Text oben und unten auf jeder Seite. Platzhalter: {n} Seite, {N} Seitenzahl, {datum}, {datei}, {titel}.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Text oder Bild halbtransparent über oder hinter den Inhalt legen.",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Text schreiben und als PDF setzen",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Text und Bilder kopieren",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Text und E-Books",
+  "files": [
+   "src/lib/platform.ts"
+  ]
+ },
+ {
+  "key": "Text wird zu Grafik – sieht überall gleich aus, ist aber nicht mehr durchsuchbar. Für Druckereien.",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Texterkennung",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte",
+   "src/lib/actions.ts",
+   "src/lib/engines/state.svelte.ts",
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Texterkennung (OCR)",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Texterkennung wird geladen …",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Texterkennung: {0} Seite(n), {1} Wörter{2}",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Textfarbe",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Textfarbe {0}",
+  "files": [
+   "src/components/StyleControls.svelte"
+  ]
+ },
+ {
+  "key": "Textfeld",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/Ribbon.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Textfeld aufziehen.",
+  "files": [
+   "src/lib/tools/edit.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Textkommentar",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Textmarker",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Thema",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "tipp-ex abdecken korrektur",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Tipp: Mit installiertem",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Tipp: Öffne die zweite Fassung zuerst in einem eigenen Tab oder wähle sie hier von der Festplatte.",
+  "files": [
+   "src/components/panels/ComparePanel.svelte"
+  ]
+ },
+ {
+  "key": "Tippen",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Titel",
+  "files": [
+   "src/components/panels/MetaPanel.svelte",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Titel (Dateiname)",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Titel, Autor, Thema und Stichwörter ansehen und ändern.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "toc verzeichnis gliederung",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Transparency",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "trennen splitten zerlegen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Trennlinie unter Kopf / über Fuß",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "txt text kopieren extrahieren",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Über Werkbank",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Übernehmen",
+  "files": [
+   "src/components/ContextBar.svelte",
+   "src/components/panels/MetaPanel.svelte",
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Übernehmen fehlgeschlagen: ",
+  "files": [
+   "src/components/ContextBar.svelte"
+  ]
+ },
+ {
+  "key": "Überschrift",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Überschriften werden gesucht",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Umbenennen",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Umfang",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Umgewandelt",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Umkehren",
+  "files": [
+   "src/lib/tools/optimize.ts",
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Umschalt",
+  "files": [
+   "src/lib/shortcuts.ts"
+  ]
+ },
+ {
+  "key": "Umwandeln",
+  "files": [
+   "src/lib/ribbon.ts",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Umwandlungen in Word, Bilder usw. beenden die Kette – setze sie ans Ende.",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Umwandlungen laufen vollständig auf diesem Rechner. Mit dieser Option starten Komprimieren, Word-Export und Co. ohne Wartezeit (kostet etwas Arbeitsspeicher).",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Unbekannt",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Unbekannte Operation ",
+  "files": [
+   "src/lib/engines/rpc.ts"
+  ]
+ },
+ {
+  "key": "Unbekanntes Werkzeug ",
+  "files": [
+   "src/lib/tools/index.ts"
+  ]
+ },
+ {
+  "key": "Unbenannt.pdf",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Ungerade",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "Ungesicherte Dokumente wiederherstellen?",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Ungespeicherte Änderungen",
+  "files": [
+   "src/components/TitleBar.svelte"
+  ]
+ },
+ {
+  "key": "Ungültig – Dokument oder Signatur verändert",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Unsichtbare Textebene wird eingefügt …",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Unten",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Unten links",
+  "files": [
+   "src/components/panels/SignPanel.svelte",
+   "src/lib/tools/common.ts"
+  ]
+ },
+ {
+  "key": "Unten Mitte",
+  "files": [
+   "src/lib/tools/common.ts"
+  ]
+ },
+ {
+  "key": "Unten rechts",
+  "files": [
+   "src/components/panels/SignPanel.svelte",
+   "src/lib/tools/common.ts"
+  ]
+ },
+ {
+  "key": "Unter neuem Namen oder an anderem Ort speichern",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Untereinander",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "unterschied diff version vergleich änderungen",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Unterschiede",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Unterschreiben",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Unterschrift",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/dialogs/SignaturePad.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Unterschrift anklicken, um sie zu platzieren.",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Unterschrift platzieren",
+  "files": [
+   "src/components/Ribbon.svelte"
+  ]
+ },
+ {
+  "key": "unterschrift signatur handschrift",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Unterschrift wählen",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Unterschriften löschen ({0})",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Unterschriftsfeld",
+  "files": [
+   "src/components/OverlayPage.svelte",
+   "src/components/Ribbon.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Unterschriftsfeld aufziehen.",
+  "files": [
+   "src/lib/ui.svelte.ts"
+  ]
+ },
+ {
+  "key": "Unterstreichen",
+  "files": [
+   "src/components/Ribbon.svelte",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Unterstreichung",
+  "files": [
+   "src/components/side/CommentsPanel.svelte",
+   "src/lib/overlay.svelte.ts",
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Unterzeichner",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "vakat neu seite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "validieren gültig echtheit",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Vektorgrafik je Seite – verlustfrei skalierbar, z. B. für Grafikprogramme.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Verborgenen Text (z. B. weiß auf weiß)",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Verfahren",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Vergleich",
+  "files": [
+   "src/components/dialogs/CompareView.svelte",
+   "src/components/panels/ComparePanel.svelte"
+  ]
+ },
+ {
+  "key": "Vergleich öffnen",
+  "files": [
+   "src/components/panels/ComparePanel.svelte"
+  ]
+ },
+ {
+  "key": "Vergleichen",
+  "files": [
+   "src/components/StartScreen.svelte",
+   "src/lib/tools/analyze.ts"
+  ]
+ },
+ {
+  "key": "Vergleichen mit (neuere Fassung)",
+  "files": [
+   "src/components/panels/ComparePanel.svelte"
+  ]
+ },
+ {
+  "key": "Vergrößern",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/components/ZoomField.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Verkleinern",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/components/ZoomField.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "verkleinern größe mail kleiner optimieren",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "verknüpfung hyperlink",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Verlauf",
+  "files": [
+   "src/components/Rail.svelte",
+   "src/components/Sidebar.svelte",
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Verlustfrei – nur Struktur aufräumen",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "verschlüsseln passwort sperren aes",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Verschlüsselung",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Versteckte Inhalte vor dem Weitergeben entfernen: Metadaten, Skripte, Anhänge, verborgener Text und mehr.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Vertrauen",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Vertrauenswürdigen Zeitstempel einholen",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Vertrauenswürdiges Zertifikat laden …",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Verwalten",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Verwenden",
+  "files": [
+   "src/components/dialogs/StampPicker.svelte"
+  ]
+ },
+ {
+  "key": "Verwerfen",
+  "files": [
+   "src/components/ContextBar.svelte",
+   "src/components/side/OutlinePanel.svelte",
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Vollbild",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "vor {0} Min.",
+  "files": [
+   "src/lib/util.ts"
+  ]
+ },
+ {
+  "key": "vor {0} Std.",
+  "files": [
+   "src/lib/util.ts"
+  ]
+ },
+ {
+  "key": "Vor den Inhalt legen (Overlay)",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Vor der aktuellen Seite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Vor- und Nachname",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Vorder- und Rückseiten gemischt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Vorder- und Rückseiten mischen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Vorherige Seite",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "Vorheriger (⇧↩)",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Vorheriger Treffer",
+  "files": [
+   "src/components/side/SearchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Vorladen fehlgeschlagen: ",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Vorschau",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte"
+  ]
+ },
+ {
+  "key": "Vorschaubilder",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Vorschaugröße",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "Waagerecht",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Wählen …",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "war geschützt, Arbeitsfassung offen",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "Was möchtest du tun? z. B. „schwärzen“, „word“, „seiten drehen“",
+  "files": [
+   "src/components/Palette.svelte"
+  ]
+ },
+ {
+  "key": "Wasserzeichen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Wasserzeichen gesetzt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Web-Adressen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Web-optimiert",
+  "files": [
+   "src/lib/tools/optimize.ts"
+  ]
+ },
+ {
+  "key": "Webadresse",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Webseite mit Text und Bildern an ihren Positionen.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Weiß",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Weiß abdecken",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Weiter zum Druckdialog",
+  "files": [
+   "src/lib/print.ts"
+  ]
+ },
+ {
+  "key": "Weitere",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Weitere Formate in PDF",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Wellenlinie",
+  "files": [
+   "src/components/side/CommentsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Wenn du nicht speicherst, gehen die Änderungen verloren.",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Werkbank",
+  "files": [
+   "src/components/StartScreen.svelte",
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Werkbank · {0} · freie Software unter AGPL-3.0, aufgebaut auf BentoPDF und diesen Komponenten:",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Werkbank-Export.zip",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Werkzeug",
+  "files": [
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Werkzeug suchen",
+  "files": [
+   "src/components/Palette.svelte",
+   "src/components/TitleBar.svelte"
+  ]
+ },
+ {
+  "key": "Werkzeuge",
+  "files": [
+   "src/lib/engines/index.ts"
+  ]
+ },
+ {
+  "key": "Wert dieser Option",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Werte aus einer JSON-Datei (Feldname → Wert) in das Formular übernehmen.",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Wie das Bild",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Wie die Nachbarseite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Wie Seite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Wie sollen die Dateien gespeichert werden?",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Wie System",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Wiederhergestellt",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Wiederherstellen",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Wiederholen",
+  "files": [
+   "src/lib/tools/app.ts"
+  ]
+ },
+ {
+  "key": "Wiederholt: ",
+  "files": [
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Windows",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Winkel",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Wird analysiert …",
+  "files": [
+   "src/components/dialogs/CompareView.svelte"
+  ]
+ },
+ {
+  "key": "wird beim Speichern verschlüsselt",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "wird geprüft …",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Wird geschwärzt",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Wird gesetzt …",
+  "files": [
+   "src/lib/convert.ts"
+  ]
+ },
+ {
+  "key": "Wird in der Fensterleiste von PDF-Programmen gezeigt",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "Wird umgewandelt …",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Word",
+  "files": [
+   "src/lib/actions.ts",
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Word (.docx)",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "word excel powerpoint docx xlsx pptx odt erstellen",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Word, Excel, PowerPoint, OpenDocument, RTF und mehr in PDF umwandeln – auch mehrere auf einmal.",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Worker-Fehler",
+  "files": [
+   "src/lib/engines/rpc.ts"
+  ]
+ },
+ {
+  "key": "Wörter",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "xlsx excel tabelle csv ods",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "z. B. [geschwärzt]",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "z. B. 1 für ein Deckblatt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "z. B. 1 oder 3-4",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "z. B. 1-3, 5, 8-letzte oder ungerade",
+  "files": [
+   "src/components/Fields.svelte"
+  ]
+ },
+ {
+  "key": "z. B. de-DE – hilft Vorleseprogrammen",
+  "files": [
+   "src/components/panels/MetaPanel.svelte"
+  ]
+ },
+ {
+  "key": "z. B. ocr – leer lassen für gleichen Namen",
+  "files": [
+   "src/components/panels/BatchPanel.svelte"
+  ]
+ },
+ {
+  "key": "Zeichen",
+  "files": [
+   "src/components/panels/InfoPanel.svelte"
+  ]
+ },
+ {
+  "key": "Zeichnen",
+  "files": [
+   "src/components/dialogs/SignaturePad.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "zeichnen stift",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Zeigt Unterzeichner, Zertifikat und ob das Dokument seit der Signatur verändert wurde.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Zeilenweise",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Zeitstempel",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Zeitstempel wird angefordert …",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Zeitstempeldienst",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Zertifikat",
+  "files": [
+   "src/components/panels/SignPanel.svelte",
+   "src/components/panels/VerifyPanel.svelte",
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "zertifikat erstellen selbstsigniert p12",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Zertifikat erstellt. Bewahre Datei und Passwort sicher auf.",
+  "files": [
+   "src/lib/tools/protect.ts"
+  ]
+ },
+ {
+  "key": "Zertifikat gültig",
+  "files": [
+   "src/components/panels/VerifyPanel.svelte"
+  ]
+ },
+ {
+  "key": "Zertifikat wählen",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Zertifikatspasswort",
+  "files": [
+   "src/components/panels/SignPanel.svelte"
+  ]
+ },
+ {
+  "key": "Ziehen zum Umsortieren · {0}-Klick oder Umschalt-Klick wählt mehrere · Doppelklick öffnet · Entf löscht",
+  "files": [
+   "src/components/Organize.svelte"
+  ]
+ },
+ {
+  "key": "Ziel",
+  "files": [
+   "src/components/OverlayPage.svelte"
+  ]
+ },
+ {
+  "key": "Zielformat",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Zielordner wählen",
+  "files": [
+   "src/components/panels/BatchPanel.svelte",
+   "src/lib/actions.ts"
+  ]
+ },
+ {
+  "key": "Zoom",
+  "files": [
+   "src/components/StatusBar.svelte",
+   "src/lib/ribbon.ts"
+  ]
+ },
+ {
+  "key": "Zoomstufe eingeben",
+  "files": [
+   "src/components/ZoomField.svelte"
+  ]
+ },
+ {
+  "key": "Zoomstufe in Prozent",
+  "files": [
+   "src/components/ZoomField.svelte"
+  ]
+ },
+ {
+  "key": "Zoomstufen",
+  "files": [
+   "src/components/ZoomField.svelte"
+  ]
+ },
+ {
+  "key": "Zu einem PDF zusammenführen",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Zu einer langen Seite",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Zu einer Seite zusammengesetzt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Zu ersetzende Seiten",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Zu Seite springen",
+  "files": [
+   "src/components/StatusBar.svelte"
+  ]
+ },
+ {
+  "key": "Zuklappen",
+  "files": [
+   "src/components/side/OutlinePanel.svelte"
+  ]
+ },
+ {
+  "key": "Zuletzt geöffnet",
+  "files": [
+   "src/components/StartScreen.svelte"
+  ]
+ },
+ {
+  "key": "Zuletzt geöffnet leeren",
+  "files": [
+   "src/components/panels/SettingsPanel.svelte"
+  ]
+ },
+ {
+  "key": "Zum Öffnen loslassen",
+  "files": [
+   "src/components/App.svelte"
+  ]
+ },
+ {
+  "key": "Zurück zum Dokument",
+  "files": [
+   "src/components/StartScreen.svelte"
+  ]
+ },
+ {
+  "key": "Zurücksetzen",
+  "files": [
+   "src/lib/tools/edit.ts"
+  ]
+ },
+ {
+  "key": "Zusammenführen",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Zusammengeführt",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Zusammengeführt.pdf",
+  "files": [
+   "src/lib/tools/convert.ts"
+  ]
+ },
+ {
+  "key": "Zuschneiden",
+  "files": [
+   "src/lib/tools/pages.ts"
+  ]
+ },
+ {
+  "key": "Zwei Fassungen nebeneinander, als Differenzbild oder als Textvergleich mit markierten Änderungen.",
+  "files": [
+   "src/lib/tools/analyze.ts"
+  ]
+ }
+]
