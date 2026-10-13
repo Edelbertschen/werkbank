@@ -5,6 +5,10 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
+# Nötig, damit der Workflow das Release (Entwurf) mit den Installern anlegen darf
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
