@@ -5,7 +5,7 @@
   import { overlay, itemsOf, addItem, removeItem, type OItem } from '../lib/overlay.svelte';
   import { dialog } from '../lib/dialogs.svelte';
   import * as I from '../lib/icons';
-  import { groupLines, paragraphAt, type Box } from '../lib/textedit';
+  import { groupLines, paragraphAt, classifyFont, FONT_STACK, type Box, type FontStyle } from '../lib/textedit';
 
   let { index }: { index: number } = $props();
   let host: HTMLDivElement;
@@ -110,6 +110,25 @@
     addItem(doc, { page: index, kind: d.kind, x, y, w, h, stroke: s.stroke, fill: s.fill, width: s.width, opacity: s.opacity } as any);
   }
 
+  // Schrift des Originals laut pdf.js (Name und Schnitt), für eine passende Vorschau
+  async function fontAt(x0: number, y0: number, x1: number, y1: number): Promise<FontStyle> {
+    try {
+      const pg = await doc!.pdf!.getPage(index + 1);
+      const tc = await pg.getTextContent();
+      const vp = pg.getViewport({ scale: 1 });
+      let best: any = null, n = 0;
+      for (const t of tc.items as any[]) {
+        if (!t.str?.trim()) continue;
+        const [px, py] = vp.convertToViewportPoint(t.transform[4], t.transform[5]);
+        const u = px / vp.width, v = py / vp.height;
+        if (u >= x0 - 0.01 && u <= x1 && v >= y0 && v <= y1 + 0.01 && t.str.length > n) { best = t; n = t.str.length; }
+      }
+      if (!best) return classifyFont('');
+      const f: any = pg.commonObjs.has(best.fontName) ? pg.commonObjs.get(best.fontName) : null;
+      return classifyFont(f?.name || '', { bold: f?.bold || f?.black, italic: f?.italic, mono: f?.isMonospace });
+    } catch { return classifyFont(''); }
+  }
+
   // ---------------- Text einer Zeile bearbeiten ----------------
   async function editTextAt(e: PointerEvent) {
     const pageEl = (host.closest('.page') as HTMLElement) || host.parentElement!;
@@ -129,9 +148,16 @@
     const sizePt = glyphH / k * 0.92;
     // Textfarbe aus dem Seitenbild schätzen
     const color = await sampleColor(pageEl, left, top, right, bottom);
-    const it = addItem(doc, { page: index, kind: 'textedit', x: (left - hr.left) / hr.width, y: (top - hr.top) / hr.height, w: (right - left) / hr.width, h: (bottom - top) / hr.height, text, orig: text, size: Math.max(4, Math.round(sizePt * 10) / 10), color, bold: false, multi, lineHeight: lineH / k } as any);
+    const fx = (left - hr.left) / hr.width, fy = (top - hr.top) / hr.height, fw = (right - left) / hr.width, fh = (bottom - top) / hr.height;
+    const it = addItem(doc, { page: index, kind: 'textedit', x: fx, y: fy, w: fw, h: fh, text, orig: text, size: Math.max(4, Math.round(sizePt * 10) / 10), color, bold: false, multi, lineHeight: lineH / k } as any);
     overlay.editing = it.id;
     await tick(); focusText(it.id, true);
+    // Schrift des Originals nachziehen, ohne das Tippen aufzuhalten
+    const d = doc;
+    fontAt(fx, fy, fx + fw, fy + fh).then(f => {
+      const live = itemsOf(d).find(x => x.id === it.id) as any;
+      if (live) { live.bold = f.bold; live.italic = f.italic; live.family = f.family; }
+    });
   }
   async function sampleColor(pageEl: HTMLElement, l: number, t: number, r: number, b: number) {
     try {
@@ -265,7 +291,7 @@
         {:else if it.kind === 'text' || it.kind === 'textedit'}
           {#if it.kind === 'textedit'}<div class="cover"></div>{/if}
           <div class="tx" contenteditable="true" spellcheck="false" role="textbox" tabindex="0"
-            style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:line-height={it.kind === 'textedit' ? ((it as any).multi ? (it as any).lineHeight * k : box.h * page!.h * k) + 'px' : 1.2}
+            style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:font-style={(it as any).italic ? 'italic' : null} style:font-family={it.kind === 'textedit' ? FONT_STACK[((it as any).family || 'sans') as 'sans'] : null} style:line-height={it.kind === 'textedit' ? ((it as any).multi ? (it as any).lineHeight * k : box.h * page!.h * k) + 'px' : 1.2}
             class:multi={(it as any).multi}
             onpointerdown={e => { e.stopPropagation(); overlay.selected = it.id; }}
             onfocus={() => { overlay.selected = it.id; overlay.editing = it.id; }}

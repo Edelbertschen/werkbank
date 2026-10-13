@@ -37,6 +37,7 @@ test('Text ändern, schwärzen, Text und Rechteck einfügen, übernehmen', async
   await page.locator('.cbar button', { hasText: 'Übernehmen' }).click();
   await page.locator('.dialog .buttons .btn.primary').click();
   await app.idle();
+  await expect.poll(async () => (await app.docInfo())!.history.length, { timeout: 60_000 }).toBe(2);
 
   const info = (await app.docInfo())!;
   expect(info.history).toEqual(['Geöffnet', '4 Änderungen übernommen, davon 1 geschwärzt']);

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { groupLines, paragraphAt, joinLines, type Box } from '../../src/lib/textedit';
+import { groupLines, paragraphAt, joinLines, classifyFont, type Box } from '../../src/lib/textedit';
 
 // Textstücke einer Seite in Bildschirmpixeln (wie sie die Textebene von pdf.js liefert)
 const span = (text: string, left: number, top: number, width = text.length * 6, height = 14): Box => ({ text, left, top, right: left + width, bottom: top + height });
@@ -51,5 +51,25 @@ describe('Zeilen zu Fließtext verbinden', () => {
   });
   it('entfernt Silbentrennung bei kleingeschriebener Fortsetzung', () => {
     expect(joinLines(['Die Forst-', 'einrichtung beginnt'])).toBe('Die Forsteinrichtung beginnt');
+  });
+});
+
+describe('Schriftart erkennen (für Vorschau und Ersatzschrift)', () => {
+  it.each([
+    ['BAAAAA+LiberationSans-Bold', { family: 'sans', bold: true, italic: false }],
+    ['ArialMT', { family: 'sans', bold: false, italic: false }],
+    ['Arial-BoldItalicMT', { family: 'sans', bold: true, italic: true }],
+    ['TimesNewRomanPSMT', { family: 'serif', bold: false, italic: false }],
+    ['DAAAAA+LiberationSerif', { family: 'serif', bold: false, italic: false }],
+    ['Georgia-Italic', { family: 'serif', bold: false, italic: true }],
+    ['CourierNewPSMT', { family: 'mono', bold: false, italic: false }],
+    ['Consolas-Bold', { family: 'mono', bold: true, italic: false }],
+    ['Calibri-Light', { family: 'sans', bold: false, italic: false }],
+    ['SourceSansPro-Semibold', { family: 'sans', bold: true, italic: false }],
+    ['', { family: 'sans', bold: false, italic: false }],
+  ])('%s', (name, want) => expect(classifyFont(name)).toEqual(want));
+  it('Angaben des PDF-Renderers haben Vorrang vor dem Namen', () => {
+    expect(classifyFont('F1', { bold: true, serif: true })).toEqual({ family: 'serif', bold: true, italic: false });
+    expect(classifyFont('F2', { mono: true, italic: true })).toEqual({ family: 'mono', bold: false, italic: true });
   });
 });

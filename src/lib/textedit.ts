@@ -70,3 +70,27 @@ export function joinLines(lines: string[]): string {
   }
   return s;
 }
+
+// ---------------------------------------------------------------------------
+// Schriftart erkennen – dieselben Regeln wie beim Schreiben ins PDF (overlay.svelte.ts, font_style)
+// ---------------------------------------------------------------------------
+export type FontFamily = 'sans' | 'serif' | 'mono';
+export interface FontStyle { family: FontFamily; bold: boolean; italic: boolean }
+const SERIF = ['times', 'serif', 'roman', 'georgia', 'garamond', 'cambria', 'minion', 'palatino', 'antiqua', 'baskerville', 'bodoni', 'century', 'caslon', 'tiro', 'nimbusrom'];
+const MONO = ['courier', 'mono', 'consol', 'menlo', 'code', 'fixed', 'typewriter', 'nimbusmon'];
+const BOLD = ['bold', 'black', 'heavy', 'semibold', 'demi', 'extrab'];
+
+/** Familie und Schnitt aus dem Schriftnamen; Angaben des Renderers (pdf.js) haben Vorrang */
+export function classifyFont(name: string, hint: { bold?: boolean; italic?: boolean; serif?: boolean; mono?: boolean } = {}): FontStyle {
+  const low = (name.split('+').pop() || '').toLowerCase().replace(/[\s-]/g, '');
+  const family: FontFamily = hint.mono || MONO.some(w => low.includes(w)) ? 'mono'
+    : hint.serif ? 'serif' : low.includes('sans') ? 'sans' : SERIF.some(w => low.includes(w)) ? 'serif' : 'sans';
+  return { family, bold: !!hint.bold || BOLD.some(w => low.includes(w)), italic: !!hint.italic || low.includes('italic') || low.includes('oblique') };
+}
+
+/** CSS-Schriftstapel für die Vorschau beim Bearbeiten (metrisch passend zu den eingebetteten Ersatzschriften) */
+export const FONT_STACK: Record<FontFamily, string> = {
+  sans: "Helvetica, Arial, 'Liberation Sans', 'Nimbus Sans', sans-serif",
+  serif: "'Times New Roman', Times, 'Liberation Serif', 'Nimbus Roman', serif",
+  mono: "'Courier New', Courier, 'Liberation Mono', 'Nimbus Mono PS', monospace",
+};

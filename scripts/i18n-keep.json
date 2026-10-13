@@ -95,5 +95,8 @@
  "{0} {1}px -apple-system, \"Segoe UI\", \"Inter Variable\", Arial, sans-serif",
  "{0} · {1} × {2} mm",
  "{0} – Werkbank",
- "{0} – {1}.pdf"
+ "{0} – {1}.pdf",
+ "Helvetica, Arial, 'Liberation Sans', 'Nimbus Sans', sans-serif",
+ "'Times New Roman', Times, 'Liberation Serif', 'Nimbus Roman', serif",
+ "'Courier New', Courier, 'Liberation Mono', 'Nimbus Mono PS', monospace"
 ]

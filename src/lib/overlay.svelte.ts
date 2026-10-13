@@ -15,7 +15,7 @@ export type OItem = Base & (
   | { kind: 'image'; x: number; y: number; w: number; h: number; src: string; role: 'sign' | 'stamp' | 'image' }
   | { kind: 'redact' | 'whiteout'; x: number; y: number; w: number; h: number }
   | { kind: 'text'; x: number; y: number; w: number; text: string; size: number; color: string; bold: boolean }
-  | { kind: 'textedit'; x: number; y: number; w: number; h: number; text: string; orig: string; size: number; color: string; bold: boolean }
+  | { kind: 'textedit'; x: number; y: number; w: number; h: number; text: string; orig: string; size: number; color: string; bold: boolean; italic?: boolean; family?: 'sans' | 'serif' | 'mono' }
   | { kind: 'link'; x: number; y: number; w: number; h: number; url: string; toPage: number }
   | { kind: 'field'; ftype: 'text' | 'check' | 'radio' | 'choice' | 'signature'; x: number; y: number; w: number; h: number; name: string; options: string; multiline: boolean; group: string }
   | { kind: 'underline' | 'strike'; rects: [number, number, number, number][]; color: string }
@@ -170,6 +170,73 @@ def P(page, fx, fy):
 def R(page, x, y, w, h):
     a = P(page, x, y); b = P(page, x + w, y + h)
     return pymupdf.Rect(min(a.x, b.x), min(a.y, b.y), max(a.x, b.x), max(a.y, b.y))
+# --- Text bearbeiten -------------------------------------------------------
+# Ersatzschriften (in MuPDF enthalten, metrisch wie Helvetica/Arial, Times, Courier)
+BASE14 = {('sans', 0, 0): 'helv', ('sans', 1, 0): 'hebo', ('sans', 0, 1): 'heit', ('sans', 1, 1): 'hebi',
+          ('serif', 0, 0): 'tiro', ('serif', 1, 0): 'tibo', ('serif', 0, 1): 'tiit', ('serif', 1, 1): 'tibi',
+          ('mono', 0, 0): 'cour', ('mono', 1, 0): 'cobo', ('mono', 0, 1): 'coit', ('mono', 1, 1): 'cobi'}
+SERIF = ('times', 'serif', 'roman', 'georgia', 'garamond', 'cambria', 'minion', 'palatino', 'antiqua', 'baskerville', 'bodoni', 'century', 'caslon', 'tiro', 'nimbusrom')
+MONO = ('courier', 'mono', 'consol', 'menlo', 'code', 'fixed', 'typewriter', 'nimbusmon')
+BOLD = ('bold', 'black', 'heavy', 'semibold', 'demi', 'extrab')
+font_files = {}
+def font_style(name, flags=0):
+    low = name.split('+')[-1].lower().replace(' ', '').replace('-', '')
+    fam = 'mono' if (flags & 8) or any(w in low for w in MONO) else 'sans' if 'sans' in low else 'serif' if any(w in low for w in SERIF) else 'sans'
+    return fam, int(bool(flags & 16) or any(w in low for w in BOLD)), int(bool(flags & 2) or 'italic' in low or 'oblique' in low)
+def use_font(page, key, buf):
+    # Als Datei ablegen: insert_text/insert_textbox betten sie je Seite einmal ein
+    if key not in font_files:
+        path = '/w/%s.font' % key
+        with open(path, 'wb') as fh:
+            fh.write(buf)
+        font_files[key] = path
+    return key, font_files[key]
+def text_font(page, r, text, want_bold):
+    """Schrift des Originals, wenn eingebettet und alle Zeichen vorhanden; sonst passende Ersatzschrift"""
+    best, cnt = None, 0
+    for b in page.get_text('dict', clip=r)['blocks']:
+        for l in b.get('lines', []):
+            for sp in l['spans']:
+                n = len(sp['text'].strip())
+                if n > cnt:
+                    best, cnt = sp, n
+    name = best['font'] if best else ''
+    if name:
+        for x in page.get_fonts():
+            if x[3].split('+')[-1] == name:
+                try:
+                    buf = doc.extract_font(x[0])[3]
+                    if buf:
+                        f = pymupdf.Font(fontbuffer=buf)
+                        if all(f.has_glyph(ord(c)) for c in text if not c.isspace()):
+                            return use_font(page, 'WbO%d' % x[0], buf)
+                except Exception:
+                    pass
+                break
+    fam, bold, italic = font_style(name, best['flags'] if best else 0)
+    code = BASE14[(fam, max(bold, int(bool(want_bold))), italic)]
+    try:
+        buf = pymupdf.Font(code).buffer
+    except Exception:
+        with open('/w/sansb.ttf' if bold else '/w/sans.ttf', 'rb') as fh:
+            buf = fh.read()
+    return use_font(page, 'Wb' + code, buf)
+def erase_text(page, r):
+    """Genau die Zeichen des Absatzes entfernen (Mitte im Kasten) – Nachbarzeilen bleiben unberührt"""
+    hit = 0
+    for b in page.get_text('rawdict')['blocks']:
+        for l in b.get('lines', []):
+            for sp in l['spans']:
+                for ch in sp['chars']:
+                    q = pymupdf.Rect(ch['bbox'])
+                    if q.is_empty or not r.contains((q.tl + q.br) / 2):
+                        continue
+                    w, h = q.width, q.height
+                    page.add_redact_annot(pymupdf.Rect(q.x0 + w * 0.25, q.y0 + h * 0.3, q.x1 - w * 0.25, q.y1 - h * 0.3), fill=False)
+                    hit += 1
+    if not hit:
+        page.add_redact_annot(r, fill=False)
+    page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_REDACT_LINE_ART_NONE)
 def finish(annot, it):
     annot.set_info(title=author)
     annot.update()
@@ -211,10 +278,8 @@ for it in items:
         redact_pages.add(it['page'])
     elif k == 'textedit':
         r = R(page, it['x'], it['y'], it['w'], it['h'])
-        page.add_redact_annot(r, fill=False)
-        page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_REDACT_LINE_ART_NONE)
-        ff = '/w/sansb.ttf' if it.get('bold') else '/w/sans.ttf'
-        fname = 'WerkbankSansB' if it.get('bold') else 'WerkbankSans'
+        fname, ff = text_font(page, r, it['text'], it.get('bold'))
+        erase_text(page, r)
         if it.get('multi'):
             # Absatz: neu umbrechen. Passt der Text nicht, erst leicht verkleinern, dann den Kasten nach unten verlängern.
             size = it['size']
@@ -233,11 +298,6 @@ for it in items:
             page.insert_text(base, it['text'], fontsize=it['size'], fontname=fname, fontfile=ff, color=it['colorRgb'], rotate=page.rotation)
 for pno in redact_pages:
     doc[pno].apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_PIXELS)
-if any(it['kind'] == 'textedit' for it in items):
-    try:
-        doc.subset_fonts()
-    except Exception:
-        pass
 save_out(doc)
 len(items)
 `, { files: { 'in.pdf': bytes, ...fontBytes }, outputs: ['out.pdf'], vars: { items: JSON.stringify(data), author } });

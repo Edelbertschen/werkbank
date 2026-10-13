@@ -107,4 +107,10 @@ doc = Document(); doc.add_heading('Testbericht Werkbank', 1); doc.add_paragraph(
 import openpyxl
 wb = openpyxl.Workbook(); ws = wb.active; ws.append(['Baumart', 'Fläche ha', 'Vorrat m³']); ws.append(['Fichte', 12.5, 3400]); ws.append(['Buche', 8.0, 2100]); wb.save(P('bestand.xlsx'))
 pymupdf.open(P('text.pdf'))[0].get_pixmap(dpi=60).save(P('foto.jpg'))
+# Formular wie aus einer Textverarbeitung: eingebettete Teilschriften (Sans fett/normal, Serif, Mono) – braucht LibreOffice
+import shutil, subprocess, tempfile
+if shutil.which('soffice'):
+    with tempfile.TemporaryDirectory() as tmp:
+        subprocess.run(['soffice', '--headless', '--convert-to', 'pdf:writer_pdf_Export', '--outdir', tmp, P('src/formular.html')], check=True, capture_output=True)
+        shutil.copy(os.path.join(tmp, 'formular.pdf'), P('formular.pdf'))
 print('Korpus:', sorted(os.listdir(OUT)))
