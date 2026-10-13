@@ -6,9 +6,11 @@
   import { applyResult, withBusy } from '../../lib/actions';
   import { openTool } from '../../lib/ui.svelte';
   import * as I from '../../lib/icons';
+  import { itemsOf, removeItem } from '../../lib/overlay.svelte';
+  import { app } from '../../lib/app.svelte';
 
   let { doc }: { doc: Doc } = $props();
-  interface C { id: string; page: number; type: string; author: string; text: string; date: string; color?: string }
+  interface C { id: string; page: number; type: string; author: string; text: string; date: string; color?: string; obj?: string }
   let items = $state<C[]>([]);
   let filter = $state('');
   let loading = $state(true);
@@ -38,11 +40,18 @@
   }
   $effect(() => { doc.rev; load(); });
 
-  const shown = $derived(items.filter(c => !filter || (c.text + ' ' + c.author + ' ' + TYPES[c.type]).toLowerCase().includes(filter.toLowerCase())));
+  // Elemente auf den Seiten, die beim Speichern zu Anmerkungen werden – sofort in der Liste
+  const OBJ_TYPE: Record<string, string> = { note: 'Text', comment: 'FreeText', highlight: 'Highlight', underline: 'Underline', strike: 'StrikeOut', ink: 'Ink', rect: 'Square', ellipse: 'Circle', line: 'Line', arrow: 'Line' };
+  const live = $derived(itemsOf(doc).filter(o => OBJ_TYPE[o.kind]).map((o: any): C => ({
+    id: 'obj:' + o.id, obj: o.id, page: o.page + 1, type: OBJ_TYPE[o.kind], author: app.prefs.author || '', text: o.text || '', date: '', color: o.color || o.stroke,
+  })));
+  const all = $derived([...items, ...live].sort((a, b) => a.page - b.page));
+  const shown = $derived(all.filter(c => !filter || (c.text + ' ' + c.author + ' ' + TYPES[c.type]).toLowerCase().includes(filter.toLowerCase())));
 
   async function remove(c: C) {
+    if (c.obj) { removeItem(doc, c.obj); return; }
     const r = await withBusy(L("Kommentar wird gelöscht"), async () => {
-      const pl = await plLoad(doc.bytes);
+      const pl = await plLoad(await doc.baked());
       const page = pl.getPage(c.page - 1); const arr = page.node.Annots();
       const num = parseInt(c.id, 10);
       if (arr) for (let k = arr.size() - 1; k >= 0; k--) { const ref: any = arr.get(k); if (ref?.objectNumber === num) arr.remove(k); }
@@ -54,13 +63,12 @@
 
 <div class="box">
   <input class="input" type="search" placeholder={L("Kommentare filtern")} bind:value={filter} />
-  {#if doc.pendingEdits}<p class="hint">{L("Neue Anmerkungen erscheinen hier nach dem Speichern oder Übernehmen.")}</p>{/if}
 </div>
 <div class="list scroll">
   {#if loading}<p class="empty">{L("Lädt …")}</p>
   {:else if !shown.length}
-    <p class="empty">{items.length ? L("Keine Treffer.") : L("Noch keine Kommentare.")}</p>
-    {#if !items.length}<div class="start"><button class="btn sm" onclick={() => openTool('highlight')}><I.Highlighter size={13} />{L("Markieren")}</button><button class="btn sm" onclick={() => openTool('note')}><I.StickyNote size={13} />{L("Notiz")}</button></div>{/if}
+    <p class="empty">{all.length ? L("Keine Treffer.") : L("Noch keine Kommentare.")}</p>
+    {#if !all.length}<div class="start"><button class="btn sm" onclick={() => openTool('highlight')}><I.Highlighter size={13} />{L("Markieren")}</button><button class="btn sm" onclick={() => openTool('note')}><I.StickyNote size={13} />{L("Notiz")}</button></div>{/if}
   {:else}
     {#each shown as c (c.id + c.page)}
       <div class="c" role="button" tabindex="0" onclick={() => viewer.goto(c.page)} onkeydown={e => e.key === 'Enter' && viewer.goto(c.page)}>
@@ -79,7 +87,6 @@
 
 <style>
   .box { padding: 0 12px 8px; }
-  .hint { font-size: 11.5px; color: var(--text-3); margin: 6px 2px 0; }
   .list { flex: 1; padding: 0 10px 12px; display: flex; flex-direction: column; gap: 6px; }
   .empty { color: var(--text-3); font-size: 12px; padding: 4px; }
   .start { display: flex; gap: 6px; padding: 0 4px; }

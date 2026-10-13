@@ -98,5 +98,13 @@
  "{0} – {1}.pdf",
  "Helvetica, Arial, 'Liberation Sans', 'Nimbus Sans', sans-serif",
  "'Times New Roman', Times, 'Liberation Serif', 'Nimbus Roman', serif",
- "'Courier New', Courier, 'Liberation Mono', 'Nimbus Mono PS', monospace"
+ "'Courier New', Courier, 'Liberation Mono', 'Nimbus Mono PS', monospace",
+ "FreeText",
+ "Highlight",
+ "Underline",
+ "StrikeOut",
+ "Ink",
+ "Square",
+ "Circle",
+ "Line"
 ]

@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { loadDoc, run, texts, textBoxes, pageInfo } from './helpers';
-import { addItem, applyOverlay } from '../../src/lib/overlay.svelte';
+import { addItem } from '../../src/lib/overlay.svelte';
 
 const fx = (n: string) => new Uint8Array(readFileSync(`tests/fixtures/${n}`));
 const PDFS = ['text.pdf', 'rotated.pdf', 'mixed-sizes.pdf', 'form.pdf', 'annotated.pdf', 'scan.pdf', 'damaged.pdf', 'long.pdf', 'outline.pdf', 'offset-box.pdf', 'unicode.pdf'];
@@ -34,8 +34,7 @@ describe('Geometrie bei versetzter Seitenbox', () => {
   it('platziert eingefügten Text dort, wo er gezeichnet wurde', async () => {
     const doc = await loadDoc(fx('offset-box.pdf'));
     addItem(doc, { page: 0, kind: 'text', x: 0.5, y: 0.5, w: 0.4, text: 'Mitte', size: 12, color: '#000000', bold: false } as any);
-    await applyOverlay(doc);
-    const b = (await textBoxes(doc.bytes, 0)).find(t => t.str.includes('Mitte'));
+    const b = (await textBoxes(await doc.baked(), 0)).find(t => t.str.includes('Mitte'));
     expect(b, 'Text fehlt').toBeTruthy();
     expect(b!.x).toBeGreaterThan(0.45); expect(b!.x).toBeLessThan(0.6);
     expect(b!.y).toBeGreaterThan(0.48); expect(b!.y).toBeLessThan(0.58);

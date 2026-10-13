@@ -23,14 +23,14 @@
     const files = await pickFiles({ multiple: true, title: L("Dateien anhängen") });
     if (!files.length) return;
     const bytes = await withBusy(L("Dateien werden angehängt"), async () => {
-      const pl = await plLoad(doc.bytes);
+      const pl = await plLoad(await doc.baked());
       for (const f of files) await pl.attach(f.bytes, f.name, { creationDate: new Date(), modificationDate: new Date() });
       return plSave(pl);
     });
     await applyResult({ bytes, label: L("{0} Datei(en) angehängt", files.length) });
   }
   async function remove(name: string) {
-    const r = await withBusy(L("Anhang wird entfernt"), () => pyRun(`doc = open_in()\nfor n in doc.embfile_names():\n    if doc.embfile_info(n).get('filename') == ARGS['name'] or n == ARGS['name']:\n        doc.embfile_del(n)\nfor page in doc:\n    for a in list(page.annots()):\n        if a.type[1] == 'FileAttachment' and a.file_info.get('filename') == ARGS['name']:\n            page.delete_annot(a)\nsave_out(doc)`, { files: { 'in.pdf': doc.bytes }, outputs: ['out.pdf'], vars: { name } }));
+    const r = await withBusy(L("Anhang wird entfernt"), async () => pyRun(`doc = open_in()\nfor n in doc.embfile_names():\n    if doc.embfile_info(n).get('filename') == ARGS['name'] or n == ARGS['name']:\n        doc.embfile_del(n)\nfor page in doc:\n    for a in list(page.annots()):\n        if a.type[1] == 'FileAttachment' and a.file_info.get('filename') == ARGS['name']:\n            page.delete_annot(a)\nsave_out(doc)`, { files: { 'in.pdf': await doc.baked() }, outputs: ['out.pdf'], vars: { name } }));
     await applyResult({ bytes: r.files['out.pdf'], label: L("„{0}“ entfernt", name) });
   }
 </script>

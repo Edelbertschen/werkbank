@@ -41,8 +41,12 @@
     const known = new Set(items.map(i => i.file.path || i.file.name));
     for (const f of picked) if (!known.has(f.path || f.name)) items.push({ file: f, state: 'wait' });
   }
-  function addOpenDocs() {
-    for (const d of app.docs) if (!items.some(i => i.file.name === d.name && !i.file.path)) items.push({ file: { name: d.name, path: null, bytes: d.bytes, size: d.bytes.length }, state: 'wait' });
+  async function addOpenDocs() {
+    for (const d of app.docs) {
+      if (items.some(i => i.file.name === d.name && !i.file.path)) continue;
+      const bytes = await d.baked();
+      items.push({ file: { name: d.name, path: null, bytes, size: bytes.length }, state: 'wait' });
+    }
   }
   function addStep() {
     const t = available.find(x => x.id === adding);

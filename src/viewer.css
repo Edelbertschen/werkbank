@@ -33,11 +33,11 @@
 
 /* Overlay-Ebene über jeder Seite */
 .ov-host { position: absolute; inset: 0; z-index: 30; pointer-events: none; }
-.vc:is(.mode-shape-rect, .mode-shape-ellipse, .mode-shape-line, .mode-shape-arrow, .mode-note, .mode-text-add, .mode-text-edit, .mode-image, .mode-sign, .mode-stamp, .mode-redact, .mode-whiteout, .mode-link, .mode-field-text, .mode-field-check, .mode-field-radio, .mode-field-choice, .mode-field-signature) .ov-host { pointer-events: auto; }
+.vc:is(.mode-shape-rect, .mode-shape-ellipse, .mode-shape-line, .mode-shape-arrow, .mode-note, .mode-text-add, .mode-comment-text, .mode-ink, .mode-text-edit, .mode-image, .mode-sign, .mode-stamp, .mode-redact, .mode-whiteout, .mode-link, .mode-field-text, .mode-field-check, .mode-field-radio, .mode-field-choice, .mode-field-signature) .ov-host { pointer-events: auto; }
 .vc.mode-text-edit .ov-host { cursor: text; }
-.vc:is(.mode-shape-rect, .mode-shape-ellipse, .mode-shape-line, .mode-shape-arrow, .mode-redact, .mode-whiteout, .mode-link, .mode-field-text, .mode-field-check, .mode-field-radio, .mode-field-choice, .mode-field-signature) .ov-host { cursor: crosshair; }
-.vc:is(.mode-image, .mode-sign, .mode-stamp, .mode-note, .mode-text-add) .ov-host { cursor: copy; }
-.vc:is(.mode-markup-underline, .mode-markup-strike) .textLayer { cursor: text; }
+.vc:is(.mode-ink, .mode-shape-rect, .mode-shape-ellipse, .mode-shape-line, .mode-shape-arrow, .mode-redact, .mode-whiteout, .mode-link, .mode-field-text, .mode-field-check, .mode-field-radio, .mode-field-choice, .mode-field-signature) .ov-host { cursor: crosshair; }
+.vc:is(.mode-image, .mode-sign, .mode-stamp, .mode-note, .mode-text-add, .mode-comment-text) .ov-host { cursor: copy; }
+.vc:is(.mode-markup-underline, .mode-markup-strike, .mode-markup-highlight) .textLayer { cursor: text; }
 
 /* Druck: nur die vorbereiteten Seiten */
 #print-host { display: none; }

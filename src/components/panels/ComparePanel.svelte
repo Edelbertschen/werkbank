@@ -16,7 +16,7 @@
     if (!doc || !values.other) return;
     const other = values.other;
     const b = await withBusy(L("Fassung wird geladen"), () => refBytes(other));
-    await dialog({ title: L("Vergleich"), component: CompareView, props: { a: { name: doc.name, bytes: doc.bytes }, b: { name: other.name, bytes: b } }, width: Math.min(1400, innerWidth - 48) });
+    await dialog({ title: L("Vergleich"), component: CompareView, props: { a: { name: doc.name, bytes: await doc.baked() }, b: { name: other.name, bytes: b } }, width: Math.min(1400, innerWidth - 48) });
   }
 </script>
 

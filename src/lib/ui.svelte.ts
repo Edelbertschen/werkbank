@@ -40,7 +40,7 @@ export async function setMode(m: EditMode) {
   } else app.placing = null;
   app.mode = m;
   if (hintToast) { dismissToast(hintToast); hintToast = 0; }
-  if (m !== 'select' && m !== 'hand' && !m.startsWith('pdfjs:') && MODE_HINT[m]) hintToast = toast(MODE_HINT[m]!, { ms: 3500 });
+  if (m !== 'select' && m !== 'hand' && MODE_HINT[m]) hintToast = toast(MODE_HINT[m]!, { ms: 3500 });
 }
 
 export const MODE_HINT: Partial<Record<EditMode, string>> = {
@@ -55,6 +55,7 @@ export const MODE_HINT: Partial<Record<EditMode, string>> = {
   link: L("Bereich für den Link aufziehen."),
   note: L("Klicken, um eine Notiz anzuheften."),
   'shape:rect': L("Rechteck aufziehen."), 'shape:ellipse': L("Ellipse aufziehen – mit Umschalt ein Kreis."), 'shape:line': L("Linie ziehen."), 'shape:arrow': L("Pfeil ziehen."),
+  'markup:highlight': L("Über den Text ziehen, um ihn zu markieren."), ink: L("Mit Maus, Stift oder Finger zeichnen."), 'comment:text': L("Klicken und den Kommentar schreiben."),
   'markup:underline': L("Text auswählen, um ihn zu unterstreichen."), 'markup:strike': L("Text auswählen, um ihn durchzustreichen."),
   'field:text': L("Textfeld aufziehen."), 'field:check': L("Kontrollkästchen aufziehen."), 'field:radio': L("Optionsfeld aufziehen."), 'field:choice': L("Auswahlliste aufziehen."), 'field:signature': L("Unterschriftsfeld aufziehen."),
 };

@@ -28,10 +28,10 @@
   });
 
   $effect(() => {
-    const rev = doc.rev;
+    const rev = doc.rev, trev = doc.thumbRev;
     if (!visible || !doc.pdf || index >= doc.numPages) return;
     let alive = true;
-    queue(() => (alive ? doc.thumb(index, width) : Promise.resolve(''))).then(u => { if (alive && u && rev === doc.rev) url = u; }).catch(() => {});
+    queue(() => (alive ? doc.thumb(index, width) : Promise.resolve(''))).then(u => { if (alive && u && rev === doc.rev && trev === doc.thumbRev) url = u; }).catch(() => {});
     return () => { alive = false; };
   });
 </script>

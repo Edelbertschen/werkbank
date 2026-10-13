@@ -1,27 +1,25 @@
 <script lang="ts">
   import { L } from '../lib/i18n';
   import { app, active } from '../lib/app.svelte';
-  import { overlay, findItem } from '../lib/overlay.svelte';
-  import { viewer } from '../lib/viewer.svelte';
-  import { pdfjsLib } from '../lib/pdf';
+  import { overlay, findItem, commitItem } from '../lib/overlay.svelte';
 
   let { kind }: { kind: string } = $props();
   const COLORS = ['#1C1C1E', '#E5383B', '#F08C00', '#2FA84F', '#1F4FD1', '#8E44AD'];
   const HL = ['#FFF066', '#5BFF7C', '#86E2FF', '#FF98C8', '#FFB86B'];
-  const P = pdfjsLib.AnnotationEditorParamsType;
-
   function sel() { const d = active(); return d ? findItem(d, overlay.selected) : null; }
+  /** Geänderte Eigenschaft des ausgewählten Elements als Stand festhalten (Farbwähler: erst nach kurzer Pause) */
+  let t: ReturnType<typeof setTimeout> | undefined;
+  function done(it: any) { const d = active(); if (!d || !it) return; clearTimeout(t); t = setTimeout(() => commitItem(d, it), 350); }
 
   function setStroke(c: string) {
     app.style.stroke = c; app.style.ink = c;
-    viewer.editorParam(P.INK_COLOR, c);
-    const it: any = sel(); if (it && 'stroke' in it) it.stroke = c; if (it && 'color' in it && it.kind !== 'text') it.color = c;
+    const it: any = sel(); if (it && 'stroke' in it) it.stroke = c; if (it && 'color' in it && it.kind !== 'text' && it.kind !== 'comment') it.color = c; done(it);
   }
-  function setFill(c: string) { app.style.fill = c; const it: any = sel(); if (it && 'fill' in it) it.fill = c; }
-  function setWidth(w: number) { app.style.width = w; app.style.inkWidth = w; viewer.editorParam(P.INK_THICKNESS, w); const it: any = sel(); if (it && 'width' in it) it.width = w; }
-  function setHl(c: string) { app.style.highlight = c; viewer.editorParam(P.HIGHLIGHT_COLOR, c); const it: any = sel(); if (it && (it.kind === 'underline' || it.kind === 'strike')) it.color = c; }
-  function setText(c: string) { app.style.textColor = c; viewer.editorParam(P.FREETEXT_COLOR, c); const it: any = sel(); if (it && (it.kind === 'text' || it.kind === 'textedit' || it.kind === 'note')) it.color = c; }
-  function setSize(s: number) { app.style.fontSize = s; viewer.editorParam(P.FREETEXT_SIZE, s); const it: any = sel(); if (it && (it.kind === 'text' || it.kind === 'textedit')) it.size = s; }
+  function setFill(c: string) { app.style.fill = c; const it: any = sel(); if (it && 'fill' in it) it.fill = c; done(it); }
+  function setWidth(w: number) { app.style.width = w; app.style.inkWidth = w; const it: any = sel(); if (it && 'width' in it) it.width = w; done(it); }
+  function setHl(c: string) { app.style.highlight = c; const it: any = sel(); if (it && (it.kind === 'underline' || it.kind === 'strike' || it.kind === 'highlight')) it.color = c; done(it); }
+  function setText(c: string) { app.style.textColor = c; const it: any = sel(); if (it && (it.kind === 'text' || it.kind === 'comment' || it.kind === 'textedit' || it.kind === 'note')) it.color = c; done(it); }
+  function setSize(s: number) { app.style.fontSize = s; const it: any = sel(); if (it && (it.kind === 'text' || it.kind === 'comment' || it.kind === 'textedit')) it.size = s; done(it); }
 </script>
 
 {#if kind === 'style-shape'}

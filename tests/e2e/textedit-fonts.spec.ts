@@ -18,7 +18,7 @@ for b in doc[0].get_text('dict')['blocks']:
         if t:
             out.append([t, max(l['spans'], key=lambda s: len(s['text']))['font']])
 json.dumps(out)
-`, { files: { 'in.pdf': W.active().bytes } });
+`, { files: { 'in.pdf': await W.active().baked() } });
     return JSON.parse(r.result);
   });
 }
@@ -35,7 +35,7 @@ for clip in (pymupdf.Rect(0, 0, W, ${y0}), pymupdf.Rect(0, ${y1}, W, H)):
     pa = a.get_pixmap(dpi=72, clip=clip).samples; pb = b.get_pixmap(dpi=72, clip=clip).samples
     tot += len(pa); diff += sum(1 for i in range(0, len(pa), 3) if pa[i] != pb[i]) * 3
 diff / tot
-`, { files: { 'a.pdf': d.history[0].bytes, 'b.pdf': d.bytes } });
+`, { files: { 'a.pdf': d.history[0].bytes, 'b.pdf': await d.baked() } });
     return r.result;
   }, [y0, y1]);
 }
@@ -57,10 +57,7 @@ async function editAt(app: any, fy: number, newText: string, preview?: { family:
   await page.keyboard.press('Control+a');
   await page.keyboard.type(newText);
   await page.keyboard.press('Escape');
-  await page.locator('.cbar button', { hasText: 'Übernehmen' }).click();
-  const confirm = page.locator('.dialog .buttons .btn.primary');
-  if (await confirm.count()) await confirm.click();
-  await app.idle();
+  await expect.poll(() => page.evaluate(() => (window as any).__wb.active().pos), { timeout: 60_000 }).toBe(1);
 }
 
 test('Serifen-Absatz ändern: Schrift bleibt Serif, Rest der Seite unverändert', async ({ app }) => {
@@ -108,8 +105,7 @@ test('sofort nach dem Klick tippen geht auch bei langsamem Rechner nicht verlore
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
   await expect(app.page.locator('.item.textedit .tx').first()).toHaveText('Aktenzeichen: KL-8a/2027');
   await app.page.keyboard.press('Escape');
-  await app.page.locator('.cbar button', { hasText: 'Übernehmen' }).click();
-  await app.idle();
+  await expect.poll(() => app.page.evaluate(() => (window as any).__wb.active().pos), { timeout: 60_000 }).toBe(1);
   const after = await lines(app);
   const row = after.find(([t]) => t.startsWith('Aktenzeichen'))!;
   expect(row[0]).toBe('Aktenzeichen: KL-8a/2027');

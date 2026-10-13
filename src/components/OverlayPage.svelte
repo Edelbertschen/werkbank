@@ -2,7 +2,7 @@
   import { L, intlLocale } from '../lib/i18n';
   import { onMount, tick } from 'svelte';
   import { app, active } from '../lib/app.svelte';
-  import { overlay, itemsOf, addItem, removeItem, touch, type OItem } from '../lib/overlay.svelte';
+  import { overlay, itemsOf, addItem, removeItem, commitItem, type OItem } from '../lib/overlay.svelte';
   import { pageObjects, type PageObject } from '../lib/pageobjects';
   import { dialog } from '../lib/dialogs.svelte';
   import * as I from '../lib/icons';
@@ -41,7 +41,7 @@
   async function lift(e: PointerEvent, o: PageObject) {
     if (!doc || e.button !== 0) return;
     e.stopPropagation(); e.preventDefault();
-    const it = addItem(doc, { page: index, kind: 'move', sub: o.sub, x: o.x, y: o.y, w: o.w, h: o.h, ox: o.x, oy: o.y, ow: o.w, oh: o.h, xref: o.xref, fonts: o.fonts, snap: snapshot(o) } as any);
+    const it = addItem(doc, { page: index, kind: 'move', sub: o.sub, x: o.x, y: o.y, w: o.w, h: o.h, ox: o.x, oy: o.y, ow: o.w, oh: o.h, xref: o.xref, fonts: o.fonts, snap: snapshot(o) } as any, { pending: true });
     const live = itemsOf(doc).find(i => i.id === it.id)!;
     startDrag(e, live, 'move', host);
   }
@@ -66,6 +66,12 @@
     const m = app.mode;
     const p = frac(e);
     overlay.selected = null;
+    if (m === 'ink') {
+      e.preventDefault();
+      host.setPointerCapture(e.pointerId);
+      ink = [[p.x, p.y]];
+      return;
+    }
     if (RECT_MODES[m] || m === 'shape:line' || m === 'shape:arrow') {
       e.preventDefault();
       host.setPointerCapture(e.pointerId);
@@ -73,14 +79,14 @@
       return;
     }
     if (m === 'note') {
-      const it = addItem(doc, { page: index, kind: 'note', x: p.x, y: p.y, text: '', color: '#F2B705' } as any);
+      const it = addItem(doc, { page: index, kind: 'note', x: p.x, y: p.y, text: '', color: '#F2B705' } as any, { pending: true });
       overlay.editing = it.id;
       e.preventDefault();
       return;
     }
-    if (m === 'text:add') {
+    if (m === 'text:add' || m === 'comment:text') {
       e.preventDefault(); // sonst nimmt der Browser dem neuen Textfeld sofort den Fokus wieder
-      const it = addItem(doc, { page: index, kind: 'text', x: p.x, y: p.y - (app.style.fontSize * 0.55) / page!.h, w: Math.min(0.5, 0.98 - p.x), text: '', size: app.style.fontSize, color: app.style.textColor, bold: false } as any);
+      const it = addItem(doc, { page: index, kind: m === 'text:add' ? 'text' : 'comment', x: p.x, y: p.y - (app.style.fontSize * 0.55) / page!.h, w: Math.min(m === 'text:add' ? 0.5 : 0.32, 0.98 - p.x), text: '', size: app.style.fontSize, color: app.style.textColor, bold: false } as any, { pending: true });
       overlay.editing = it.id;
       await tick(); focusText(it.id);
       return;
@@ -94,7 +100,13 @@
       app.placing = null;
     }
   }
+  let ink = $state<number[][] | null>(null);
   function onMove(e: PointerEvent) {
+    if (ink) {
+      const p = frac(e), last = ink[ink.length - 1];
+      if (Math.hypot((p.x - last[0]) * page!.w, (p.y - last[1]) * page!.h) >= 1.2) ink.push([Math.max(0, Math.min(1, p.x)), Math.max(0, Math.min(1, p.y))]);
+      return;
+    }
     if (!draft) return;
     const p = frac(e);
     let x1 = Math.max(0, Math.min(1, p.x)), y1 = Math.max(0, Math.min(1, p.y));
@@ -109,6 +121,11 @@
     draft.x1 = x1; draft.y1 = y1;
   }
   async function onUp() {
+    if (ink && doc) {
+      const pts = ink; ink = null;
+      if (pts.length > 1) addItem(doc, { page: index, kind: 'ink', paths: [pts], stroke: app.style.ink, width: app.style.inkWidth, opacity: 1 } as any);
+      return;
+    }
     if (!draft || !doc) return;
     const d = draft; draft = null;
     const x = Math.min(d.x0, d.x1), y = Math.min(d.y0, d.y1), w = Math.abs(d.x1 - d.x0), h = Math.abs(d.y1 - d.y0);
@@ -180,7 +197,7 @@
     // Textfarbe aus dem Seitenbild schätzen
     const color = await sampleColor(pageEl, left, top, right, bottom);
     const fx = (left - hr.left) / hr.width, fy = (top - hr.top) / hr.height, fw = (right - left) / hr.width, fh = (bottom - top) / hr.height;
-    const it = addItem(doc, { page: index, kind: 'textedit', x: fx, y: fy, w: fw, h: fh, text, orig: text, size: Math.max(4, Math.round(sizePt * 10) / 10), color, bold: false, multi, lineHeight: lineH / k } as any);
+    const it = addItem(doc, { page: index, kind: 'textedit', x: fx, y: fy, w: fw, h: fh, text, orig: text, size: Math.max(4, Math.round(sizePt * 10) / 10), color, bold: false, multi, lineHeight: lineH / k, origSize: Math.max(4, Math.round(sizePt * 10) / 10), origBold: false, origColor: color } as any, { pending: true });
     overlay.editing = it.id;
     await tick(); focusText(it.id, true);
     // Schrift des Originals nachziehen, ohne das Tippen aufzuhalten
@@ -226,23 +243,25 @@
       if (it.kind === 'line' || it.kind === 'arrow') {
         if (mode === 'move' || mode === 'p1') { a.x1 = o.x1 + dx; a.y1 = o.y1 + dy; }
         if (mode === 'move' || mode === 'p2') { a.x2 = o.x2 + dx; a.y2 = o.y2 + dy; }
-      } else if (it.kind === 'underline' || it.kind === 'strike') {
+      } else if (it.kind === 'underline' || it.kind === 'strike' || it.kind === 'highlight') {
         a.rects = o.rects.map((q: number[]) => [q[0] + dx, q[1] + dy, q[2], q[3]]);
+      } else if (it.kind === 'ink') {
+        a.paths = o.paths.map((ps: number[][]) => ps.map(([x, y]) => [x + dx, y + dy]));
       } else if (mode === 'move') { a.x = o.x + dx; a.y = o.y + dy; }
       else {
         a.w = Math.max(0.01, o.w + dx);
         if ('h' in o) a.h = ratio ? (a.w * page!.w * ratio) / page!.h : Math.max(0.006, o.h + dy);
       }
     };
-    const up = () => { target.removeEventListener('pointermove', mv); target.removeEventListener('pointerup', up); if (doc) touch(doc); };
+    const up = () => { target.removeEventListener('pointermove', mv); target.removeEventListener('pointerup', up); if (doc) commitItem(doc, it); };
     target.addEventListener('pointermove', mv); target.addEventListener('pointerup', up);
   }
 
   async function edit(it: OItem) {
     if (!doc) return;
-    if (it.kind === 'link') { const r = await linkDialog(it); if (r) Object.assign(it, r); }
-    else if (it.kind === 'field') { const r = await fieldDialog(it.ftype, it); if (r) Object.assign(it, r); }
-    else if (it.kind === 'text' || it.kind === 'textedit' || it.kind === 'note') { overlay.editing = it.id; await tick(); focusText(it.id); }
+    if (it.kind === 'link') { const r = await linkDialog(it); if (r) { Object.assign(it, r); commitItem(doc, it); } }
+    else if (it.kind === 'field') { const r = await fieldDialog(it.ftype, it); if (r) { Object.assign(it, r); commitItem(doc, it); } }
+    else if (it.kind === 'text' || it.kind === 'comment' || it.kind === 'textedit' || it.kind === 'note') { overlay.editing = it.id; await tick(); focusText(it.id); }
   }
 
   async function linkDialog(v: { url: string; toPage: number }) {
@@ -265,6 +284,16 @@
     return { name: r.values.name || v.name, group: r.values.group || '', options: r.values.options || '', multiline: !!r.values.multiline };
   }
 
+  /** Freihand als geglätteter Pfad (Mittelpunkte als Stützstellen) */
+  function inkPath(paths: number[][][]) {
+    return paths.map(ps => {
+      const P = ps.map(([x, y]) => [pt(x, 'x') * k, pt(y, 'y') * k]);
+      if (P.length < 3) return `M${P.map(p => p.join(',')).join(' L')}`;
+      let d = `M${P[0][0]},${P[0][1]}`;
+      for (let i = 1; i < P.length - 1; i++) d += ` Q${P[i][0]},${P[i][1]} ${(P[i][0] + P[i + 1][0]) / 2},${(P[i][1] + P[i + 1][1]) / 2}`;
+      return d + ` L${P[P.length - 1][0]},${P[P.length - 1][1]}`;
+    }).join(' ');
+  }
   function arrowPath(it: any) {
     const x1 = pt(it.x1, 'x') * k, y1 = pt(it.y1, 'y') * k, x2 = pt(it.x2, 'x') * k, y2 = pt(it.y2, 'y') * k;
     const a = Math.atan2(y2 - y1, x2 - x1), len = Math.max(8, it.width * 4) * k;
@@ -298,7 +327,12 @@
           <circle class="hd" cx={pt(it.x2, 'x') * k} cy={pt(it.y2, 'y') * k} r="5" onpointerdown={e => startDrag(e, it, 'p2')} role="presentation" />
         {/if}
       </svg>
-    {:else if it.kind === 'underline' || it.kind === 'strike'}
+    {:else if it.kind === 'ink'}
+      <svg class="shape" class:sel style="left:0;top:0;width:100%;height:100%" role="presentation">
+        <path d={inkPath(it.paths)} fill="none" stroke={it.stroke} stroke-width={Math.max(1, it.width * k)} stroke-linecap="round" stroke-linejoin="round" opacity={it.opacity} />
+        <path class="hit" d={inkPath(it.paths)} fill="none" stroke="transparent" stroke-width="12" onpointerdown={e => startDrag(e, it, 'move')} role="presentation" />
+      </svg>
+    {:else if it.kind === 'underline' || it.kind === 'strike' || it.kind === 'highlight'}
       {#each it.rects as q, qi (qi)}
         <div class="mk {it.kind}" style:left={q[0] * 100 + '%'} style:top={q[1] * 100 + '%'} style:width={q[2] * 100 + '%'} style:height={q[3] * 100 + '%'} style:--c={it.color}
           class:sel onpointerdown={e => startDrag(e, it, 'move')} role="presentation"></div>
@@ -308,7 +342,7 @@
         <I.StickyNote size={Math.max(14, 18 * k)} strokeWidth={1.6} />
         {#if overlay.editing === it.id || sel}
           <div class="pop" onpointerdown={e => e.stopPropagation()} role="presentation">
-            <textarea class="textarea tx" placeholder={L("Notiz schreiben …")} bind:value={it.text} rows="4"></textarea>
+            <textarea class="textarea tx" placeholder={L("Notiz schreiben …")} bind:value={it.text} rows="4" onblur={() => { if (it.text.trim()) commitItem(doc!, it); }}></textarea>
             <div class="by">{app.prefs.author || L("Ohne Namen")} · {new Date().toLocaleDateString(intlLocale())}</div>
           </div>
         {/if}
@@ -334,7 +368,7 @@
           <div class="linkbox"><I.Link size={12} /><span>{it.url || L("Seite {0}", it.toPage)}</span></div>
         {:else if it.kind === 'field'}
           <div class="fieldbox" class:small={it.ftype === 'check' || it.ftype === 'radio'}><span>{it.ftype === 'check' || it.ftype === 'radio' ? FIELD_LABEL[it.ftype] : it.name}</span></div>
-        {:else if it.kind === 'text' || it.kind === 'textedit'}
+        {:else if it.kind === 'text' || it.kind === 'comment' || it.kind === 'textedit'}
           {#if it.kind === 'textedit'}<div class="cover"></div>{/if}
           <div class="tx" contenteditable={!moving || overlay.editing === it.id ? 'true' : 'false'} spellcheck="false" role="textbox" tabindex="0"
             style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:font-style={(it as any).italic ? 'italic' : null} style:font-family={it.kind === 'textedit' ? ((it as any).css ? `"${(it as any).css}", ` : '') + FONT_STACK[((it as any).family || 'sans') as 'sans'] : null} style:line-height={it.kind === 'textedit' ? ((it as any).multi ? (it as any).lineHeight * k : box.h * page!.h * k) + 'px' : 1.2}
@@ -342,25 +376,28 @@
             onpointerdown={e => { if (moving && overlay.editing !== it.id) return; e.stopPropagation(); overlay.selected = it.id; }}
             onfocus={() => { overlay.selected = it.id; if (!moving) overlay.editing = it.id; }}
             oninput={e => { it.text = (e.target as HTMLElement).innerText.replace(/\n$/, ''); }}
-            onblur={() => { overlay.editing = null; if (!it.text.trim() && it.kind === 'text') removeItem(doc!, it.id); }}
+            onblur={e => { overlay.editing = null; if (it.kind === 'comment') (it as any).h = (e.currentTarget as HTMLElement).offsetHeight / host.clientHeight; if (!it.text.trim() && it.kind !== 'textedit') removeItem(doc!, it.id); else commitItem(doc!, it); }}
             use:initText={it.text}></div>
         {/if}
         {#if sel}
           <div class="tools" onpointerdown={e => e.stopPropagation()} role="toolbar" aria-label={L("Element")}>
-            {#if it.kind === 'text' || it.kind === 'textedit'}
-              <button title={L("Kleiner")} aria-label={L("Kleiner")} onclick={() => (it.size = Math.max(4, +(it.size - 1).toFixed(1)))}>A−</button>
-              <button title={L("Größer")} aria-label={L("Größer")} onclick={() => (it.size = +(it.size + 1).toFixed(1))}>A+</button>
-              <button title={L("Fett")} aria-label={L("Fett")} class:on={it.bold} onclick={() => (it.bold = !it.bold)}><b>B</b></button>
-              <input type="color" title={L("Farbe")} aria-label={L("Textfarbe")} value={it.color} oninput={e => (it.color = (e.target as HTMLInputElement).value)} />
+            {#if it.kind === 'text' || it.kind === 'comment' || it.kind === 'textedit'}
+              <button title={L("Kleiner")} aria-label={L("Kleiner")} onclick={() => { it.size = Math.max(4, +(it.size - 1).toFixed(1)); commitItem(doc!, it); }}>A−</button>
+              <button title={L("Größer")} aria-label={L("Größer")} onclick={() => { it.size = +(it.size + 1).toFixed(1); commitItem(doc!, it); }}>A+</button>
+              <button title={L("Fett")} aria-label={L("Fett")} class:on={it.bold} onclick={() => { it.bold = !it.bold; commitItem(doc!, it); }}><b>B</b></button>
+              <input type="color" title={L("Farbe")} aria-label={L("Textfarbe")} value={it.color} oninput={e => (it.color = (e.target as HTMLInputElement).value)} onchange={() => commitItem(doc!, it)} />
             {/if}
             {#if it.kind === 'link' || it.kind === 'field'}<button title={L("Bearbeiten")} aria-label={L("Bearbeiten")} onclick={() => edit(it)}><I.Settings size={12} /></button>{/if}
-            <button class="del" title={L("Entfernen (Entf)")} aria-label={L("Entfernen")} onclick={() => removeItem(doc!, it.id)}><I.Trash2 size={12} /></button>
+            <button class="del" title={L("Entfernen (Entf)")} aria-label={L("Entfernen")} onclick={() => { if (it.kind === 'move') { it.remove = true; commitItem(doc!, it); } else removeItem(doc!, it.id); }}><I.Trash2 size={12} /></button>
           </div>
-          {#if it.kind !== 'text' && it.kind !== 'textedit' && !(it.kind === 'move' && (it.sub === 'text' || it.remove))}<div class="rs" onpointerdown={e => startDrag(e, it, 'resize')} role="presentation"></div>{/if}
+          {#if it.kind !== 'text' && it.kind !== 'comment' && it.kind !== 'textedit' && !(it.kind === 'move' && (it.sub === 'text' || it.remove))}<div class="rs" onpointerdown={e => startDrag(e, it, 'resize')} role="presentation"></div>{/if}
         {/if}
       </div>
     {/if}
   {/each}
+  {#if ink}
+    <svg class="shape" style="left:0;top:0;width:100%;height:100%"><path d={inkPath([ink])} fill="none" stroke={app.style.ink} stroke-width={Math.max(1, app.style.inkWidth * k)} stroke-linecap="round" stroke-linejoin="round" /></svg>
+  {/if}
   {#if draft}
     {#if draft.kind === 'line' || draft.kind === 'arrow'}
       <svg class="shape" style="left:0;top:0;width:100%;height:100%"><line x1={pt(draft.x0, 'x') * k} y1={pt(draft.y0, 'y') * k} x2={pt(draft.x1, 'x') * k} y2={pt(draft.y1, 'y') * k} stroke={app.style.stroke} stroke-width={Math.max(1, app.style.width * k)} stroke-linecap="round" /></svg>
@@ -409,6 +446,8 @@
   .mk.underline { border-bottom: 2px solid var(--c); }
   .mk.strike::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px solid var(--c); }
   .mk.sel { outline: 1px dashed var(--accent); }
+  .mk.highlight { background: var(--c); opacity: 0.42; mix-blend-mode: multiply; }
+  .item.comment .tx { background: #fffad1; border: 1px solid #d9bf59; border-radius: 2px; padding: 2px 4px; color: #222; }
   .note { position: absolute; transform: translate(-30%, -30%); color: #B8860B; cursor: move; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)); }
   .note :global(svg) { fill: #FFE16B; }
   .note.sel :global(svg) { stroke: var(--accent); }

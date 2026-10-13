@@ -65,9 +65,12 @@ export class App {
     return this.page.evaluate(async () => {
       const W = (window as any).__wb; const d = W.active();
       if (!d) return null;
+      // Inhalt wie gespeichert: Elemente eingeschrieben
+      const bytes = await d.baked();
+      const pdf = bytes === d.bytes ? d.pdf : await W.openPdf(bytes);
       const texts: string[] = [];
-      for (let i = 1; i <= d.pdf.numPages; i++) texts.push((await (await d.pdf.getPage(i)).getTextContent()).items.map((x: any) => x.str).join(' '));
-      return { name: d.name, pages: d.numPages, history: d.history.map((h: any) => h.label), texts, dirty: d.dirty, protected: !!d.protection, docs: W.app.docs.length };
+      for (let i = 1; i <= pdf.numPages; i++) texts.push((await (await pdf.getPage(i)).getTextContent()).items.map((x: any) => x.str).join(' '));
+      return { name: d.name, pages: d.numPages, history: d.history.slice(0, d.pos + 1).map((h: any) => h.label), texts, dirty: d.dirty, protected: !!d.protection, docs: W.app.docs.length };
     });
   }
   tab(name: string) { return this.page.getByRole('tab', { name, exact: true }).click(); }

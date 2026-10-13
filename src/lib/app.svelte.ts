@@ -5,15 +5,14 @@ import { stateLoad, stateSave } from './platform';
 export type RibbonTab = 'start' | 'pages' | 'edit' | 'comment' | 'forms' | 'convert' | 'optimize' | 'protect' | 'analyze' | 'view';
 export type SidebarPanel = 'pages' | 'outline' | 'search' | 'comments' | 'attachments' | 'layers' | 'history';
 
-/** Bearbeitungsmodi im Viewer. "pdfjs:*" nutzt die Editoren von pdf.js (echte Anmerkungen). */
+/** Bearbeitungsmodi im Viewer. Alle Bearbeitungen sind Elemente im Dokument (Overlay), jede ist sofort ein Stand. */
 export type EditMode =
   | 'select' | 'hand'
-  | 'pdfjs:freetext' | 'pdfjs:ink' | 'pdfjs:highlight' | 'pdfjs:stamp'
   | 'shape:rect' | 'shape:ellipse' | 'shape:line' | 'shape:arrow'
   | 'note' | 'text:add' | 'text:edit' | 'move' | 'image' | 'sign' | 'stamp'
   | 'redact' | 'whiteout' | 'link'
   | 'field:text' | 'field:check' | 'field:radio' | 'field:choice' | 'field:signature'
-  | 'markup:underline' | 'markup:strike';
+  | 'markup:underline' | 'markup:strike' | 'markup:highlight' | 'ink' | 'comment:text';
 
 export interface Toast { id: number; text: string; kind: 'info' | 'ok' | 'error'; action?: { label: string; run: () => void }; ms: number }
 export interface Busy { label: string; progress: number; detail?: string; cancel?: () => void }

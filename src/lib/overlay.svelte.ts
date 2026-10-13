@@ -18,7 +18,9 @@ export type OItem = Base & (
   | { kind: 'textedit'; x: number; y: number; w: number; h: number; text: string; orig: string; size: number; color: string; bold: boolean; italic?: boolean; family?: 'sans' | 'serif' | 'mono'; fontName?: string; css?: string }
   | { kind: 'link'; x: number; y: number; w: number; h: number; url: string; toPage: number }
   | { kind: 'field'; ftype: 'text' | 'check' | 'radio' | 'choice' | 'signature'; x: number; y: number; w: number; h: number; name: string; options: string; multiline: boolean; group: string }
-  | { kind: 'underline' | 'strike'; rects: [number, number, number, number][]; color: string }
+  | { kind: 'underline' | 'strike' | 'highlight'; rects: [number, number, number, number][]; color: string }
+  | { kind: 'ink'; paths: [number, number][][]; stroke: string; width: number; opacity: number }
+  | { kind: 'comment'; x: number; y: number; w: number; h?: number; text: string; size: number; color: string; bold: boolean }
   // Inhalt des PDFs (Textblock oder Bild), der verschoben, skaliert oder gelöscht wird; o* = ursprüngliche Lage
   | { kind: 'move'; sub: 'text' | 'image'; x: number; y: number; w: number; h: number; ox: number; oy: number; ow: number; oh: number; xref?: number; fonts?: string[]; snap: string; remove?: boolean }
 );
@@ -31,84 +33,85 @@ export function isNoop(it: OItem) {
 }
 
 export const overlay = $state({
-  items: {} as Record<string, OItem[]>,
   selected: null as string | null,
   editing: null as string | null,
-  undoLast(doc: Doc) {
-    const list = overlay.items[doc.id];
-    if (!list?.length) return;
-    list.pop();
-    overlay.selected = null;
-    sync(doc);
-  },
 });
 
-function sync(doc: Doc) { doc.overlayCount = (overlay.items[doc.id] || []).filter(i => !isNoop(i)).length; }
-/** Nach Verschieben/Ändern eines Elements die Zahl offener Änderungen neu bestimmen */
-export const touch = sync;
-const EMPTY: OItem[] = [];
 /** Lesen ohne Zustandsänderung (sicher in Templates/$derived) */
-export function itemsOf(doc: Doc): OItem[] { return overlay.items[doc.id] || EMPTY; }
-function listOf(doc: Doc): OItem[] {
-  // Wichtig: erst zuweisen, dann neu lesen – nur der gelesene Wert ist der reaktive Proxy
-  if (!overlay.items[doc.id]) overlay.items[doc.id] = [];
-  return overlay.items[doc.id];
-}
-export function addItem(doc: Doc, item: Omit<OItem, 'id'> & { id?: string }) {
-  const it = { ...item, id: item.id || uid() } as OItem;
-  listOf(doc).push(it);
-  overlay.selected = it.id;
-  sync(doc);
-  return it;
-}
-export function removeItem(doc: Doc, id: string) {
-  const list = listOf(doc);
-  const i = list.findIndex(x => x.id === id);
-  if (i >= 0) list.splice(i, 1);
-  if (overlay.selected === id) overlay.selected = null;
-  sync(doc);
-}
-export function clearOverlay(doc: Doc) { overlay.items[doc.id] = []; overlay.selected = null; sync(doc); }
-export function findItem(doc: Doc, id: string | null) { return id ? itemsOf(doc).find(x => x.id === id) || null : null; }
+export function itemsOf(doc: Doc): OItem[] { return doc.objects; }
 
-const PY_KINDS = new Set(['rect', 'ellipse', 'line', 'arrow', 'note', 'redact', 'textedit', 'link', 'underline', 'strike', 'move']);
-
-const applying = new Map<string, Promise<void>>();
-/** Alle offenen Overlay-Elemente ins PDF schreiben (ein neuer Stand). Doppelte Aufrufe teilen sich einen Durchlauf. */
-export function applyOverlay(doc: Doc): Promise<void> {
-  const running = applying.get(doc.id);
-  if (running) return running;
-  const p = applyOverlayNow(doc).finally(() => applying.delete(doc.id));
-  applying.set(doc.id, p);
-  return p;
-}
-async function applyOverlayNow(doc: Doc) {
-  const all = [...itemsOf(doc)];
-  // leere Textfelder (angeklickt, nichts geschrieben) ignorieren
-  const items = all.filter(i => !((i.kind === 'text' || i.kind === 'textedit') && !(i as any).text?.trim()) && !isNoop(i));
-  if (!items.length) { overlay.items[doc.id] = []; sync(doc); return; }
-  let bytes = doc.bytes;
-  const contentItems = items.filter(i => !PY_KINDS.has(i.kind));
-  const pyItems = items.filter(i => PY_KINDS.has(i.kind));
-
-  if (contentItems.length) bytes = await bakeContent(bytes, contentItems);
-  if (pyItems.length) bytes = await bakeWithMuPdf(bytes, pyItems);
-
-  overlay.items[doc.id] = [];
-  overlay.selected = null;
-  sync(doc);
-  const redactions = items.filter(i => i.kind === 'redact').length;
-  const label = redactions === items.length ? L("{0} {1} geschwärzt", redactions, redactions === 1 ? L("Stelle") : L("Stellen"))
-    : items.length === 1 ? labelOf(items[0])
-    : L("{0} Änderungen übernommen{1}", items.length, redactions ? L(", davon {0} geschwärzt", redactions) : '');
-  await doc.commit(bytes, label);
-  app.viewerRev++;
+/** Angefangen, aber (noch) ohne Wirkung – zählt nicht als Änderung und wird nicht eingeschrieben */
+export function isPending(it: OItem) {
+  if (isNoop(it)) return true;
+  if ((it.kind === 'text' || it.kind === 'textedit' || it.kind === 'comment') && !(it as any).text?.trim()) return true;
+  if (it.kind === 'textedit') {
+    const t = it as any;
+    return t.text === t.orig && t.size === t.origSize && !!t.bold === !!t.origBold && t.color === t.origColor;
+  }
+  return false;
 }
 
+const KIND: Record<string, string> = {
+  rect: L("Rechteck"), ellipse: L("Ellipse"), line: L("Linie"), arrow: L("Pfeil"), note: L("Notiz"), image: L("Bild"), redact: L("Schwärzung"),
+  whiteout: L("Abdeckung"), text: 'Text', textedit: 'Text', link: 'Link', field: L("Formularfeld"), underline: L("Unterstreichung"),
+  strike: L("Durchstreichung"), highlight: L("Markierung"), ink: L("Freihand"), comment: L("Textkommentar"), move: L("Element"),
+};
 function labelOf(it: OItem) {
   if (it.kind === 'move') return it.remove ? L("Element gelöscht") : L("Element verschoben");
   if (it.kind === 'textedit') return L("Text geändert");
-  return ({ rect: L("Rechteck"), ellipse: L("Ellipse"), line: L("Linie"), arrow: L("Pfeil"), note: L("Notiz"), image: L("Bild"), redact: L("Schwärzung"), whiteout: L("Abdeckung"), text: 'Text', textedit: L("Text geändert"), link: 'Link', field: L("Formularfeld"), underline: L("Unterstreichung"), strike: L("Durchstreichung") } as any)[it.kind] + L(" eingefügt");
+  if (it.kind === 'image') return ({ sign: L("Unterschrift eingefügt"), stamp: L("Stempel eingefügt"), image: L("Bild eingefügt") } as any)[it.role] || L("Bild eingefügt");
+  return L("{0} eingefügt", KIND[it.kind] || L("Element"));
+}
+const GEOMETRY = new Set(['x', 'y', 'x1', 'y1', 'x2', 'y2', 'rects', 'paths']);
+/** Bezeichnung für den Verlauf: neu, verschoben, Größe geändert oder geändert */
+function changeLabel(doc: Doc, it: OItem) {
+  const prev = doc.history[doc.pos].objects.find(o => o.id === it.id) as any;
+  if (!prev) return labelOf(it);
+  const cur = $state.snapshot(it) as any;
+  if (it.kind === 'move' && cur.remove && !prev.remove) return L("Element gelöscht");
+  const keys = Object.keys(cur).filter(k => JSON.stringify(cur[k]) !== JSON.stringify(prev[k]));
+  if (keys.length && keys.every(k => GEOMETRY.has(k))) return L("Element verschoben");
+  if (keys.length && keys.every(k => GEOMETRY.has(k) || k === 'w' || k === 'h')) return L("Größe geändert");
+  return L("{0} geändert", KIND[it.kind] || L("Element"));
+}
+
+/** Den aktuellen Zustand der Elemente als Stand festhalten (unverändert: kein Stand) */
+export function commit(doc: Doc, label: string) {
+  const snap = ($state.snapshot(doc.objects) as OItem[]).filter(i => !isPending(i));
+  return doc.commitObjects(label, snap);
+}
+/** Änderung an einem Element abschließen – Bezeichnung ergibt sich aus der Art der Änderung */
+export function commitItem(doc: Doc, it: OItem) { return commit(doc, changeLabel(doc, it)); }
+
+/** Element hinzufügen; ohne `pending` sofort ein Stand. Text, Notizen und Anfassen werden erst nach der Eingabe festgehalten. */
+export function addItem(doc: Doc, item: Omit<OItem, 'id'> & { id?: string }, opts: { pending?: boolean } = {}) {
+  const it = { ...item, id: item.id || uid() } as OItem;
+  doc.objects.push(it);
+  overlay.selected = it.id;
+  if (!opts.pending) commit(doc, labelOf(it));
+  return it;
+}
+export function removeItem(doc: Doc, id: string) {
+  const i = doc.objects.findIndex(x => x.id === id);
+  const it = i >= 0 ? doc.objects[i] : null;
+  if (i >= 0) doc.objects.splice(i, 1);
+  if (overlay.selected === id) overlay.selected = null;
+  if (overlay.editing === id) overlay.editing = null;
+  if (it) commit(doc, L("{0} entfernt", KIND[it.kind] || L("Element")));
+}
+export function findItem(doc: Doc, id: string | null) { return id ? itemsOf(doc).find(x => x.id === id) || null : null; }
+
+const PY_KINDS = new Set(['rect', 'ellipse', 'line', 'arrow', 'note', 'redact', 'textedit', 'link', 'underline', 'strike', 'highlight', 'ink', 'comment', 'move']);
+
+/** Elemente ins PDF schreiben (reine Funktion: Bytes rein, Bytes raus) */
+export async function bakeObjects(bytes: Uint8Array, all: OItem[]): Promise<Uint8Array> {
+  const items = all.filter(i => !isPending(i));
+  if (!items.length) return bytes;
+  const contentItems = items.filter(i => !PY_KINDS.has(i.kind));
+  const pyItems = items.filter(i => PY_KINDS.has(i.kind));
+  if (contentItems.length) bytes = await bakeContent(bytes, contentItems);
+  if (pyItems.length) bytes = await bakeWithMuPdf(bytes, pyItems);
+  return bytes;
 }
 
 async function bakeContent(bytes: Uint8Array, items: OItem[]) {
@@ -408,6 +411,20 @@ for it in items:
         a = page.add_text_annot(P(page, it['x'], it['y']), it['text'] or ' ', icon='Comment')
         a.set_colors(stroke=it['colorRgb'])
         finish(a, it)
+    elif k == 'highlight':
+        a = page.add_highlight_annot([R(page, *q).quad for q in it['rects']])
+        a.set_colors(stroke=it['colorRgb'])
+        finish(a, it)
+    elif k == 'ink':
+        a = page.add_ink_annot([[tuple(P(page, x, y)) for x, y in path] for path in it['paths']])
+        a.set_border(width=it['width'])
+        a.set_colors(stroke=it['strokeRgb'])
+        a.set_opacity(it.get('opacity', 1))
+        finish(a, it)
+    elif k == 'comment':
+        hh = max(it.get('h') or 0, it['size'] * 1.7 / page.rect.height)
+        a = page.add_freetext_annot(R(page, it['x'], it['y'], it['w'], hh), it['text'], fontsize=it['size'], fontname='helv', text_color=it['colorRgb'], fill_color=(1, 0.98, 0.82), border_width=0.6)
+        finish(a, it)
     elif k in ('underline', 'strike'):
         quads = [R(page, *q).quad for q in it['rects']]
         a = page.add_underline_annot(quads) if k == 'underline' else page.add_strikeout_annot(quads)
@@ -454,6 +471,3 @@ len(items)
   return out;
 }
 
-export function warnIfLarge(doc: Doc) {
-  if ((overlay.items[doc.id]?.length || 0) > 200) toast(L("Sehr viele offene Elemente – „Übernehmen“ schreibt sie ins PDF."));
-}

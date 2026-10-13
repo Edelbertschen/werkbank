@@ -33,14 +33,11 @@ test('Text ändern, schwärzen, Text und Rechteck einfügen, übernehmen', async
   await page.keyboard.type('Neuer Text von Werkbank');
   await page.keyboard.press('Escape');
 
-  await expect(page.locator('.cbar')).toContainText('4 Änderungen');
-  await page.locator('.cbar button', { hasText: 'Übernehmen' }).click();
-  await page.locator('.dialog .buttons .btn.primary').click();
-  await app.idle();
-  await expect.poll(async () => (await app.docInfo())!.history.length, { timeout: 60_000 }).toBe(2);
+  // Jede Änderung ist sofort ein eigener Stand – ohne „Übernehmen“
+  await expect(page.locator('.cbar')).toHaveCount(0);
+  await expect.poll(async () => (await app.docInfo())!.history, { timeout: 60_000 }).toEqual(['Geöffnet', 'Text geändert', 'Schwärzung eingefügt', 'Rechteck eingefügt', 'Text eingefügt']);
 
   const info = (await app.docInfo())!;
-  expect(info.history).toEqual(['Geöffnet', '4 Änderungen übernommen, davon 1 geschwärzt']);
   expect(info.texts[0]).toContain('Kapitel Eins: Geändert');
   expect(info.texts[0]).toContain('Neuer Text von Werkbank');
   expect(info.texts[0]).not.toContain('Kapitel 1: Testdokument');
@@ -74,7 +71,7 @@ test('Unterstreichen aus einer Textauswahl', async ({ app }) => {
   await mode(app, 'Kommentieren', 'Unterstreichen');
   const sp = (await page.locator('.page[data-page-number="1"] .textLayer span').nth(1).boundingBox())!;
   await page.mouse.move(sp.x + 2, sp.y + sp.height / 2); await page.mouse.down(); await page.mouse.move(sp.x + sp.width * 0.5, sp.y + sp.height / 2, { steps: 10 }); await page.mouse.up();
-  await expect(page.locator('.cbar')).toContainText('1 Änderung');
+  await expect.poll(async () => (await app.docInfo())!.history).toEqual(['Geöffnet', 'Unterstreichung eingefügt']);
 });
 
 test('Text im Dokument lässt sich markieren (Kopieren)', async ({ app }) => {
@@ -112,10 +109,9 @@ test('Absatz bearbeiten: neuer Text bricht innerhalb der Spalte um', async ({ ap
   const neu = 'Der Forstbetrieb plant im kommenden Jahr eine vollständige Inventur aller Bestände, einschließlich der neu erworbenen Flächen im Nordschwarzwald und der Versuchsflächen am Kaiserstuhl.';
   await page.keyboard.type(neu);
   await page.keyboard.press('Escape');
-  await page.locator('.cbar button', { hasText: 'Übernehmen' }).click();
-  await app.idle();
+  await expect.poll(async () => (await app.docInfo())!.history.length).toBe(2);
   const r = await page.evaluate(async () => {
-    const d = (window as any).__wb.active(); const p = await d.pdf.getPage(1); const vp = p.getViewport({ scale: 1 });
+    const W = (window as any).__wb; const d = W.active(); const p = await (await W.openPdf(await d.baked())).getPage(1); const vp = p.getViewport({ scale: 1 });
     const items = (await p.getTextContent()).items.filter((x: any) => x.str.trim());
     const mine = items.filter((x: any) => /Forstbetrieb|Inventur|Nordschwarzwald|Kaiserstuhl|Bestände|Flächen|Versuchsflächen/.test(x.str));
     return { all: items.map((x: any) => x.str).join(' '), lines: new Set(mine.map((x: any) => Math.round(x.transform[5]))).size, maxRight: Math.max(...mine.map((x: any) => (x.transform[4] + x.width) / vp.width)) };

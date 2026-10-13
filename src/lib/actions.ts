@@ -157,18 +157,15 @@ export async function newBlankDoc() {
 // ---------------------------------------------------------------------------
 // Speichern
 // ---------------------------------------------------------------------------
-/** Ungespeicherte Formular-/Anmerkungs-Eingaben und Overlay-Elemente übernehmen */
-export async function flush(doc: Doc) {
-  // Zuerst pdf.js-Eingaben sichern (ein Neuladen würde sie verwerfen), dann die eigenen Overlay-Elemente
-  if (doc.pendingEdits) await doc.flushEdits();
-  if (doc.overlayCount > 0) { const { applyOverlay } = await import('./overlay.svelte'); await applyOverlay(doc); }
+/** Das PDF zum Weiterverarbeiten: Formulareingaben und Elemente eingeschrieben (ändert den Verlauf nicht) */
+export function workBytes(doc: Doc): Promise<Uint8Array> {
+  return doc.baked();
 }
 
 export async function save(doc: Doc | null = active(), as = false): Promise<boolean> {
   if (!doc) return false;
   try {
-    await flush(doc);
-    let bytes = doc.bytes;
+    let bytes = await withBusy(L("Wird gespeichert"), () => doc.baked());
     if (doc.protection) { const { encryptBytes } = await import('./tools/protect'); bytes = await encryptBytes(bytes, doc.protection); }
     if (!as && doc.path && P.isTauri) {
       await P.writePath(doc.path, bytes);
@@ -263,8 +260,8 @@ export async function closeAll(): Promise<boolean> {
 // ---------------------------------------------------------------------------
 export async function undo() {
   const d = active(); if (!d) return;
-  if (d.overlayCount) { const { overlay } = await import('./overlay.svelte'); overlay.undoLast(d); return; }
-  if (d.pendingEdits) { toast(L("Erst die Eingaben übernehmen oder mit Esc verwerfen")); return; }
+  // Offene Formulareingaben werden zuerst ein Stand, damit Rückgängig sie zurücknimmt
+  if (d.pendingEdits) await d.flushEdits();
   const l = await d.undo(); if (l) toast(L("Rückgängig: ") + l);
 }
 export async function redo() {
@@ -282,11 +279,13 @@ export async function runTool(tool: Tool, values?: Record<string, any>): Promise
   const v = values ?? defaults(tool.fields);
   const engineHint = tool.engine === 'libreoffice' ? L("Office-Engine") : tool.engine === 'pymupdf' ? L("PDF-Engine") : tool.engine === 'tesseract' ? L("Texterkennung") : '';
   try {
-    if (doc) await flush(doc);
     if (tool.noBusy) { const r = await tool.run({ ...v }, { doc, bytes: doc?.bytes || new Uint8Array(), current: (doc?.current || 1) - 1, selection: doc ? [...doc.selection] : [], progress: () => {} }); if (r) await applyResult(r, tool); return true; }
     const result = await withBusy(tool.label, async progress => {
       if (engineHint) progress(-1, L("{0} wird vorbereitet …", engineHint));
-      const ctx: ToolCtx = { doc, bytes: doc?.bytes || new Uint8Array(), current: (doc?.current || 1) - 1, selection: doc ? [...doc.selection] : [], progress };
+      // Werkzeuge arbeiten mit dem PDF, wie es gespeichert würde (Elemente eingeschrieben).
+      // Ansichtsbefehle (run ohne ctx-Parameter: Zoom, Seitenleiste …) brauchen die Bytes nicht.
+      const needsBytes = !!doc && (tool.run?.length ?? 0) >= 2;
+      const ctx: ToolCtx = { doc, bytes: needsBytes ? await doc!.baked() : doc?.bytes || new Uint8Array(), current: (doc?.current || 1) - 1, selection: doc ? [...doc.selection] : [], progress };
       return tool.run!(v, ctx);
     });
     if (!result) return true;
@@ -333,7 +332,7 @@ export function scheduleRecovery(doc: Doc) {
   recTimers.set(doc.id, setTimeout(async () => {
     if (!doc.dirty || !app.docs.includes(doc)) return;
     try {
-      await P.blobSave('rec-' + doc.id + '.pdf', doc.bytes);
+      await P.blobSave('rec-' + doc.id + '.pdf', await doc.baked());
       const idx = await P.stateLoad<{ list: any[] }>('recovery', { list: [] });
       idx.list = [{ id: doc.id, name: doc.name, path: doc.path, at: Date.now(), size: doc.bytes.length }, ...idx.list.filter((x: any) => x.id !== doc.id)].slice(0, 10);
       P.stateSave('recovery', idx, 0);

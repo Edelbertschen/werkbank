@@ -31,8 +31,7 @@ export async function refBytes(r: DocRef): Promise<Uint8Array> {
   }
   const d = app.docs.find(x => x.id === r.id);
   if (!d) throw new Error(L("„{0}“ ist nicht mehr geöffnet", r.name));
-  if (d.pendingEdits) await d.flushEdits();
-  return d.bytes;
+  return d.baked();
 }
 
 export const POSITIONS: [string, string][] = [['tl', L("Oben links")], ['tc', L("Oben Mitte")], ['tr', L("Oben rechts")], ['bl', L("Unten links")], ['bc', L("Unten Mitte")], ['br', L("Unten rechts")]];

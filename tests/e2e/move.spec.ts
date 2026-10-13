@@ -25,15 +25,14 @@ for b in p.get_text('dict')['blocks']:
         if t: lines.append([t, round(l['bbox'][0]), round(l['bbox'][1])])
 streams = sum(1 for x in range(1, doc.xref_length()) if doc.xref_get_key(x, 'Subtype')[1] == '/Image')
 json.dumps({'imgs': imgs, 'lines': lines, 'imageObjects': streams})
-`, { files: { 'in.pdf': W.active().bytes } });
+`, { files: { 'in.pdf': await W.active().baked() } });
     return JSON.parse(r.result);
   });
 }
 async function apply(app: any) {
+  // Jede Änderung ist sofort ein Stand; Esc beendet nur den Modus
   await app.page.keyboard.press('Escape');
-  await app.page.locator('.cbar button', { hasText: 'Übernehmen' }).click();
-  await app.idle();
-  await expect.poll(async () => app.page.evaluate(() => (window as any).__wb.active().history.length), { timeout: 60_000 }).toBe(2);
+  await expect.poll(async () => app.page.evaluate(() => { const d = (window as any).__wb.active(); return d.pos; }), { timeout: 60_000 }).toBeGreaterThan(0);
 }
 async function drag(page: any, x: number, y: number, dx: number, dy: number) {
   await page.mouse.move(x, y); await page.mouse.down();
@@ -48,7 +47,7 @@ test('Bild im PDF verschieben: gleiche Bilddaten, neue Position, Text bleibt', a
   const b = await pageBox(app); const k = b.width / 595;
   // Bildmitte (440, 260 pt) um 100 pt nach links und 300 pt nach unten ziehen
   await drag(app.page, b.x + 440 * k, b.y + 260 * k, -100 * k, 300 * k);
-  await expect(app.page.locator('.cbar')).toContainText('1 Änderung');
+  await expect.poll(() => app.page.evaluate(() => { const d = (window as any).__wb.active(); return d.history.slice(0, d.pos + 1).map((h: any) => h.label); })).toEqual(['Geöffnet', 'Element verschoben']);
   await apply(app);
   const after = await content(app);
   expect(after.imgs).toHaveLength(1);

@@ -1374,6 +1374,21 @@ const en: Record<string, string> = {
  "verschieben anordnen bewegen positionieren auswählen objekt": "move arrange position select object drag",
  "Element anklicken und ziehen. Pfeiltasten schieben fein, Entf löscht, Doppelklick bearbeitet eigenen Text.": "Click an object and drag it. Arrow keys nudge, Delete removes, double-click edits your own text.",
  "Dieses Bild liegt über einem anderen Bild und lässt sich nicht einzeln verschieben.": "This image lies on top of another image and can't be moved on its own.",
- "Gedrehter Text lässt sich noch nicht verschieben.": "Rotated text can't be moved yet."
+ "Gedrehter Text lässt sich noch nicht verschieben.": "Rotated text can't be moved yet.",
+ "Wird gespeichert": "Saving",
+ "Formular ausgefüllt": "Form filled in",
+ "Unterschrift eingefügt": "Signature added",
+ "Stempel eingefügt": "Stamp added",
+ "Bild eingefügt": "Image added",
+ "{0} eingefügt": "{0} added",
+ "Größe geändert": "Resized",
+ "{0} geändert": "{0} changed",
+ "{0} entfernt": "{0} removed",
+ "Text markieren – über den Text ziehen.": "Highlight text – drag across it.",
+ "Über den Text ziehen, um ihn zu markieren.": "Drag across text to highlight it.",
+ "Klicken und den Kommentar schreiben.": "Click and type your comment.",
+ "Bereiche aufziehen; beim Speichern werden Text und Bilddaten darunter wirklich entfernt.": "Drag over areas; when saving, the text and image data underneath are truly removed.",
+ "{0} Formularfelder erkannt": "{0} form fields detected",
+ "{0} Feld(er) erkannt und eingefügt – Namen und Lage lassen sich anpassen, Rückgängig nimmt alle zurück.": "{0} field(s) detected and added – names and positions can be adjusted, Undo removes them all."
 };
 export default en;

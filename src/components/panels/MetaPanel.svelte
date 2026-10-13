@@ -25,7 +25,7 @@
   async function save() {
     if (!doc) return;
     const bytes = await withBusy(L("Eigenschaften werden gespeichert"), async () => {
-      const pl = await plLoad(doc.bytes);
+      const pl = await plLoad(await doc.baked());
       const { PDFName, PDFString } = await import('pdf-lib');
       pl.setTitle(v.title, { showInWindowTitleBar: !!v.title }); pl.setAuthor(v.author); pl.setSubject(v.subject);
       pl.setKeywords(v.keywords.split(/[,;]/).map(s => s.trim()).filter(Boolean)); pl.setCreator(v.creator); pl.setProducer(v.producer);

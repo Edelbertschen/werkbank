@@ -65,7 +65,7 @@
   }
   async function apply() {
     const toc = normalize();
-    const r = await withBusy(L("Lesezeichen werden gespeichert"), () => pyRun(`doc = open_in()\ndoc.set_toc(json.loads(ARGS['toc']))\nsave_out(doc)`, { files: { 'in.pdf': doc.bytes }, outputs: ['out.pdf'], vars: { toc: JSON.stringify(toc) } }));
+    const r = await withBusy(L("Lesezeichen werden gespeichert"), async () => pyRun(`doc = open_in()\ndoc.set_toc(json.loads(ARGS['toc']))\nsave_out(doc)`, { files: { 'in.pdf': await doc.baked() }, outputs: ['out.pdf'], vars: { toc: JSON.stringify(toc) } }));
     await applyResult({ bytes: r.files['out.pdf'], label: L("Lesezeichen geändert") });
   }
   async function fromHeadings() {

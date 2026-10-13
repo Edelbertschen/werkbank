@@ -17,7 +17,7 @@ for b in open_in()[0].get_text('dict')['blocks']:
         if t:
             out.append([t, max(l['spans'], key=lambda s: len(s['text']))['font']])
 json.dumps(out)
-`, { files: { 'in.pdf': W.active().bytes } });
+`, { files: { 'in.pdf': await W.active().baked() } });
     return JSON.parse(r.result);
   });
 }
@@ -34,9 +34,7 @@ async function editHiermit(app: any, typed: string) {
 }
 async function apply(app: any) {
   await app.page.keyboard.press('Escape');
-  await app.page.locator('.cbar button', { hasText: 'Übernehmen' }).click();
-  await app.idle();
-  await expect.poll(async () => (await app.page.evaluate(() => (window as any).__wb.active().history.length)), { timeout: 60_000 }).toBe(2);
+  await expect.poll(async () => (await app.page.evaluate(() => (window as any).__wb.active().pos)), { timeout: 60_000 }).toBe(1);
 }
 const NEW = 'Hiermit erkläre ich mich einverstanden, dass mein Kind an der Klassenfahrt nach Rust teilnimmt. Die Kosten betragen 275 Euro.';
 

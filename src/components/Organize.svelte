@@ -45,7 +45,7 @@
         const rest = [...Array(n).keys()].filter(i => !moving.includes(i));
         const target = ev.newIndex > ev.oldIndex ? ev.newIndex - moving.length + 1 : ev.newIndex;
         rest.splice(Math.max(0, Math.min(rest.length, target)), 0, ...moving);
-        const r = await withBusy(L("Seiten werden verschoben"), () => movePages(ctx(), rest));
+        const r = await withBusy(L("Seiten werden verschoben"), async () => movePages({ ...ctx(), bytes: await doc.baked() }, rest));
         await applyResult(r);
       },
     });
@@ -61,7 +61,7 @@
     const s = [...doc.selection].sort((a, b) => a - b);
     const rest = [...Array(doc.numPages).keys()].filter(i => !s.includes(i));
     const order = where === 'start' ? [...s, ...rest] : [...rest, ...s];
-    await applyResult(await withBusy(L("Seiten werden verschoben"), () => movePages(ctx(), order)));
+    await applyResult(await withBusy(L("Seiten werden verschoben"), async () => movePages({ ...ctx(), bytes: await doc.baked() }, order)));
   }
   function ctxMenu(e: MouseEvent, i: number) {
     if (!doc.selection.includes(i)) doc.selection = [i];

@@ -3,7 +3,7 @@
   import { app, active, toast, savePrefs } from '../../lib/app.svelte';
   import { pickFiles } from '../../lib/platform';
   import { readP12, signPdf, signatureAppearance, type CertInfo } from '../../lib/sign';
-  import { withBusy, applyResult, flush } from '../../lib/actions';
+  import { withBusy, applyResult } from '../../lib/actions';
   import { openTool } from '../../lib/ui.svelte';
   import { dataUrlToBytes } from '../../lib/util';
   import * as I from '../../lib/icons';
@@ -44,7 +44,7 @@
     if (doc.protection) { toast(L("Für ein Dokument mit Passwortschutz zuerst „Schutz entfernen“ wählen – die Verschlüsselung beim Speichern würde die Signatur ungültig machen."), { kind: 'error', ms: 10000 }); return; }
     check(); if (!info) return;
     try {
-      await flush(doc);
+      const base = await doc.baked();
       const out = await withBusy(L("Dokument wird signiert"), async progress => {
         let visibleOpt;
         if (visible) {
@@ -58,7 +58,7 @@
           visibleOpt = { page: pageIdx, x, y, w, h, png };
         }
         progress(-1, tsa ? L("Zeitstempel wird angefordert …") : L("Signatur wird berechnet …"));
-        return signPdf(doc.bytes, { p12: cert!.bytes, password: pw, reason, location, contact, permission: +perm as any, tsa: tsa ? tsaUrl : undefined, ltv, visible: visibleOpt });
+        return signPdf(base, { p12: cert!.bytes, password: pw, reason, location, contact, permission: +perm as any, tsa: tsa ? tsaUrl : undefined, ltv, visible: visibleOpt });
       });
       await applyResult({ bytes: out, label: L("Digital signiert von {0}", info.cn) });
       toast(L("Signiert. Jetzt speichern – spätere Änderungen machen die Signatur ungültig."), { kind: 'ok', ms: 9000 });

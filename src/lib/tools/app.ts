@@ -19,7 +19,7 @@ export const appTools: Tool[] = [
   { id: 'save-as', label: L("Speichern unter …"), short: L("Speichern unter"), icon: I.SaveAll, direct: true, shortcut: 'Mod+Shift+S', disabled: hasDoc, desc: L("Unter neuem Namen oder an anderem Ort speichern"), run: async () => { await save(active(), true); } },
   { id: 'print', label: L("Drucken …"), short: L("Drucken"), icon: I.Printer, direct: true, shortcut: 'Mod+P', disabled: hasDoc, desc: L("Dokument drucken"), run: async () => { await printDoc(); } },
   { id: 'close', label: L("Dokument schließen"), short: L("Schließen"), icon: I.X, direct: true, shortcut: 'Mod+W', disabled: hasDoc, run: async () => { await closeDoc(); } },
-  { id: 'undo', label: L("Rückgängig"), icon: I.Undo2, direct: true, shortcut: 'Mod+Z', disabled: () => { const d = active(); return !d || (!d.canUndo && !d.overlayCount); }, run: async () => { await undo(); } },
+  { id: 'undo', label: L("Rückgängig"), icon: I.Undo2, direct: true, shortcut: 'Mod+Z', disabled: () => { const d = active(); return !d || (!d.canUndo && !d.pendingEdits); }, run: async () => { await undo(); } },
   { id: 'redo', label: L("Wiederholen"), icon: I.Redo2, direct: true, shortcut: 'Mod+Shift+Z', disabled: () => !active()?.canRedo, run: async () => { await redo(); } },
   { id: 'history', label: L("Verlauf"), icon: I.History, desc: L("Alle Bearbeitungsschritte dieses Dokuments – zu jedem Stand zurückspringen."), panel: HistoryPanel },
   { id: 'settings', label: L("Einstellungen"), icon: I.Settings, noDoc: true, panel: SettingsPanel, desc: L("Name für Kommentare, Erscheinungsbild, Texterkennung") },

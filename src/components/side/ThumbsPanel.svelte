@@ -44,7 +44,7 @@
         const target = ev.newIndex > ev.oldIndex ? ev.newIndex - moving.length + 1 : ev.newIndex;
         rest.splice(Math.max(0, Math.min(rest.length, target)), 0, ...moving);
         // Sortable hat das DOM verändert – Svelte zeichnet nach dem neuen Stand ohnehin neu
-        const bytes = await withBusy(L("Seiten werden verschoben"), async () => movePages({ doc, bytes: doc.bytes, current: doc.current - 1, selection: doc.selection, progress: () => {} }, rest));
+        const bytes = await withBusy(L("Seiten werden verschoben"), async () => movePages({ doc, bytes: await doc.baked(), current: doc.current - 1, selection: doc.selection, progress: () => {} }, rest));
         await applyResult(bytes);
       },
     });

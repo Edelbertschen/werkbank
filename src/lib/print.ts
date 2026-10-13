@@ -1,6 +1,6 @@
 // Drucken: Seiten als Bilder in einen Druckbereich legen und den Druckdialog des Systems öffnen
 import { active, toast } from './app.svelte';
-import { withBusy, flush } from './actions';
+import { withBusy } from './actions';
 import { openPdf, renderPage, canvasBlob } from './pdf';
 import { printView } from './platform';
 import { dialog } from './dialogs.svelte';
@@ -9,7 +9,6 @@ import { parseRange } from './util';
 import { L } from './i18n';
 export async function printDoc() {
   const doc = active(); if (!doc) return;
-  await flush(doc);
   const r = await dialog({
     title: L("Drucken"), icon: 'info',
     fields: [
@@ -28,7 +27,7 @@ export async function printDoc() {
   host.id = 'print-host';
   const urls: string[] = [];
   await withBusy(L("Druck wird vorbereitet"), async progress => {
-    const pdf = await openPdf(doc.bytes);
+    const pdf = await openPdf(await doc.baked());
     for (const [k, i] of idx.entries()) {
       const page = await pdf.getPage(i + 1);
       const v = page.getViewport({ scale: 1 });

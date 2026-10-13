@@ -32,7 +32,7 @@ export const editTools: Tool[] = [
   modeTool('stamp', L("Stempel"), I.Stamp, 'stamp', L("Stempel wie „Genehmigt“, „Entwurf“ oder „Eingang“ mit Datum platzieren."), L("genehmigt erledigt eingang")),
   modeTool('link', L("Link einfügen"), I.Link, 'link', L("Bereich aufziehen und auf eine Webadresse oder Seite verlinken."), L("verknüpfung hyperlink")),
   modeTool('whiteout', L("Weiß abdecken"), I.Eraser, 'whiteout', L("Bereich mit weißer Fläche überdecken. Für vertrauliche Inhalte stattdessen „Schwärzen“ verwenden."), L("tipp-ex abdecken korrektur")),
-  modeTool('redact', L("Schwärzen"), I.SquareX, 'redact', L("Bereiche aufziehen; beim Übernehmen werden Text und Bilddaten darunter wirklich entfernt."), L("schwärzung anonymisieren dsgvo"), { engine: 'pymupdf' }),
+  modeTool('redact', L("Schwärzen"), I.SquareX, 'redact', L("Bereiche aufziehen; beim Speichern werden Text und Bilddaten darunter wirklich entfernt."), L("schwärzung anonymisieren dsgvo"), { engine: 'pymupdf' }),
   {
     id: 'find-redact', label: L("Suchen und schwärzen"), short: L("Suchen & schwärzen"), icon: I.FileSearch, engine: 'pymupdf',
     desc: L("Begriffe oder Muster wie IBAN, E-Mail oder Telefonnummern im ganzen Dokument finden und dauerhaft schwärzen."), keys: L("anonymisieren dsgvo schwärzen suchen muster regex"),
@@ -129,12 +129,12 @@ pages_needed`, { files: { 'in.pdf': ctx.bytes }, outputs: ['out.pdf'], vars: { t
     },
   },
   // ---------------- Kommentieren ----------------
-  modeTool('highlight', L("Textmarker"), I.Highlighter, 'pdfjs:highlight', L("Text markieren – über die Auswahl ziehen oder frei malen."), L("hervorheben markieren gelb")),
+  modeTool('highlight', L("Textmarker"), I.Highlighter, 'markup:highlight', L("Text markieren – über den Text ziehen."), L("hervorheben markieren gelb")),
   modeTool('underline', L("Unterstreichen"), I.Underline, 'markup:underline', L("Text auswählen, um ihn zu unterstreichen."), 'unterstreichen'),
   modeTool('strike', L("Durchstreichen"), I.Strikethrough, 'markup:strike', L("Text auswählen, um ihn durchzustreichen."), L("durchstreichen streichen")),
-  modeTool('freetext', L("Textkommentar"), I.MessageSquareText, 'pdfjs:freetext', L("Sichtbaren Kommentar direkt auf die Seite schreiben."), L("freitext kommentar")),
+  modeTool('freetext', L("Textkommentar"), I.MessageSquareText, 'comment:text', L("Sichtbaren Kommentar direkt auf die Seite schreiben."), L("freitext kommentar")),
   modeTool('note', L("Notiz"), I.StickyNote, 'note', L("Notizzettel anheften – erscheint als Symbol, der Text beim Öffnen."), L("haftnotiz kommentar sticky")),
-  modeTool('ink', L("Freihand"), I.PenLine, 'pdfjs:ink', L("Mit Maus, Stift oder Finger zeichnen."), L("zeichnen stift")),
+  modeTool('ink', L("Freihand"), I.PenLine, 'ink', L("Mit Maus, Stift oder Finger zeichnen."), L("zeichnen stift")),
   modeTool('rect', L("Rechteck"), I.Square, 'shape:rect', L("Rechteck aufziehen."), L("form kasten rahmen")),
   modeTool('ellipse', L("Ellipse"), I.Circle, 'shape:ellipse', L("Ellipse oder Kreis aufziehen (mit Umschalt: Kreis)."), L("form kreis")),
   modeTool('line', L("Linie"), I.Minus, 'shape:line', L("Linie ziehen."), 'strich'),
@@ -279,10 +279,11 @@ for pno in json.loads(ARGS['pages']):
                     found.append(['text', pno, (r.x0 + 1) / W, (r.y0 + 1) / H, (r.width - 2) / W, (r.height - 2) / H])
 found`, { files: { 'in.pdf': ctx.bytes }, vars: { pages: JSON.stringify(pagesOf(v.pages, ctx)) } });
       if (!r.result.length) return { message: L("Keine Linien oder Kästchen für Felder gefunden.") };
-      const { addItem } = await import('../overlay.svelte');
+      const { addItem, commit } = await import('../overlay.svelte');
       let k = 1;
-      for (const [t, page, x, y, w, h] of r.result) addItem(ctx.doc!, { page, kind: 'field', ftype: t === 'check' ? 'check' : 'text', x, y, w, h, name: (t === 'check' ? L("Kästchen ") : L("Feld ")) + k++, options: '', multiline: false, group: '' } as any);
-      return { message: L("{0} Feld(er) vorgeschlagen. Prüfe sie und klicke „Übernehmen“.", r.result.length) };
+      for (const [t, page, x, y, w, h] of r.result) addItem(ctx.doc!, { page, kind: 'field', ftype: t === 'check' ? 'check' : 'text', x, y, w, h, name: (t === 'check' ? L("Kästchen ") : L("Feld ")) + k++, options: '', multiline: false, group: '' } as any, { pending: true });
+      commit(ctx.doc!, L("{0} Formularfelder erkannt", r.result.length));
+      return { message: L("{0} Feld(er) erkannt und eingefügt – Namen und Lage lassen sich anpassen, Rückgängig nimmt alle zurück.", r.result.length) };
     },
   },
 ];

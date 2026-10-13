@@ -11,7 +11,6 @@
   const doc = $derived(active());
   const hosts = new Map<HTMLElement, { el: HTMLDivElement; comp: any; index: number }>();
   const ET = pdfjsLib.AnnotationEditorType;
-  const PT = pdfjsLib.AnnotationEditorParamsType;
 
   function ensureOverlay(h: PageHost) {
     let host = hosts.get(h.div);
@@ -61,12 +60,9 @@
   $effect(() => {
     const m = app.mode;
     if (!viewer.inst || !doc) return;
-    const map: Record<string, number> = { 'pdfjs:freetext': ET.FREETEXT, 'pdfjs:ink': ET.INK, 'pdfjs:highlight': ET.HIGHLIGHT, 'pdfjs:stamp': ET.STAMP };
-    const type = map[m] ?? ET.NONE;
-    viewer.setEditor(type);
-    if (type === ET.INK) setTimeout(() => { viewer.editorParam(PT.INK_COLOR, app.style.ink); viewer.editorParam(PT.INK_THICKNESS, Math.max(1, Math.round(app.style.inkWidth * 1.5))); }, 60);
-    if (type === ET.HIGHLIGHT) setTimeout(() => viewer.editorParam(PT.HIGHLIGHT_COLOR, app.style.highlight), 60);
-    if (type === ET.FREETEXT) setTimeout(() => { viewer.editorParam(PT.FREETEXT_COLOR, app.style.textColor); viewer.editorParam(PT.FREETEXT_SIZE, app.style.fontSize); }, 60);
+    void m;
+    // Alle Bearbeitungen laufen über eigene Elemente; die Editoren von pdf.js bleiben aus
+    viewer.setEditor(ET.NONE);
   });
 
   // Hand-Werkzeug: Ziehen verschiebt die Ansicht
@@ -90,7 +86,7 @@
 
   // Unterstreichen / Durchstreichen per Textauswahl
   function mouseup() {
-    if (!doc || (app.mode !== 'markup:underline' && app.mode !== 'markup:strike')) return;
+    if (!doc || (app.mode !== 'markup:underline' && app.mode !== 'markup:strike' && app.mode !== 'markup:highlight')) return;
     const sel = getSelection();
     if (!sel || sel.isCollapsed) return;
     const byPage = new Map<number, [number, number, number, number][]>();
@@ -106,7 +102,8 @@
         byPage.set(idx, list);
       }
     }
-    for (const [page, rects] of byPage) addItem(doc, { page, kind: app.mode === 'markup:underline' ? 'underline' : 'strike', rects: mergeLines(rects), color: app.mode === 'markup:underline' ? '#1F4FD1' : '#E5383B' } as any);
+    const kind = app.mode === 'markup:underline' ? 'underline' : app.mode === 'markup:strike' ? 'strike' : 'highlight';
+    for (const [page, rects] of byPage) addItem(doc, { page, kind, rects: mergeLines(rects), color: kind === 'underline' ? '#1F4FD1' : kind === 'strike' ? '#E5383B' : app.style.highlight } as any);
     sel.removeAllRanges();
   }
   function mergeLines(rects: [number, number, number, number][]) {

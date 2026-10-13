@@ -5,4 +5,5 @@ import * as actions from './actions';
 import * as overlay from './overlay.svelte';
 import * as sign from './sign';
 import { app, active } from './app.svelte';
-(window as any).__wb = { ...engines, ...tools, actions, overlay, sign, app, active };
+import { openPdf } from './pdf';
+(window as any).__wb = { ...engines, ...tools, actions, overlay, sign, app, active, openPdf };

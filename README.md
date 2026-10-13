@@ -16,7 +16,7 @@ Werkbank baut auf [BentoPDF](https://github.com/alam00000/bentopdf) auf und erg�
 - **Schützen**: AES-256-Verschlüsselung mit Berechtigungen, **digitale Signaturen (PAdES)** inkl. Zeitstempel und Prüfung, Bereinigen, Metadaten
 - **Analysieren**: Dokumente vergleichen (Bild- und Textvergleich), Eigenschaften, Schriften, Bilder/Tabellen extrahieren, Aufbereitung für KI, **Stapelverarbeitung**
 
-Jede Änderung erzeugt einen Stand im Verlauf (Rückgängig/Wiederholen, Sprung zu jedem Stand). Nach einem Absturz werden ungesicherte Dokumente wiederhergestellt.
+Es gibt kein „Übernehmen“: Jede Änderung – Text, Form, Markierung, Stempel, Verschieben – ist sofort ein Stand im Verlauf (Rückgängig/Wiederholen je Änderung, Sprung zu jedem Stand). Eigene Elemente bleiben in der Sitzung bearbeitbar; beim Speichern und vor Werkzeugen wie Drehen oder Komprimieren werden sie ins PDF geschrieben. Nach einem Absturz werden ungesicherte Dokumente wiederhergestellt.
 
 ## Sprachen
 

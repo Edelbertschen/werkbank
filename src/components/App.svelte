@@ -8,7 +8,7 @@
   import { TOOLS, tool } from '../lib/tools';
   import { matches } from '../lib/shortcuts';
   import { viewer } from '../lib/viewer.svelte';
-  import { overlay, removeItem, findItem, touch } from '../lib/overlay.svelte';
+  import { overlay, removeItem, findItem, commitItem } from '../lib/overlay.svelte';
   import { openTool } from '../lib/ui.svelte';
   import TitleBar from './TitleBar.svelte';
   import Ribbon from './Ribbon.svelte';
@@ -23,7 +23,6 @@
   import Toasts from './Toasts.svelte';
   import Busy from './Busy.svelte';
   import Palette from './Palette.svelte';
-  import ContextBar from './ContextBar.svelte';
 
   const doc = $derived(active());
   let dropTarget = $state<DropTarget | null>(null);
@@ -48,6 +47,7 @@
     if (import.meta.env.VITE_WB_TEST) import('../lib/testhook');
   });
 
+  let nudgeTimer: ReturnType<typeof setTimeout> | undefined;
   function onKey(e: KeyboardEvent) {
     const t = e.target as HTMLElement;
     const typing = t.closest('input, textarea, select, [contenteditable="true"], .freeTextEditor, .annotationEditorLayer [contenteditable]');
@@ -55,6 +55,8 @@
     if (e.key === 'Escape') {
       if (viewer.presenting) { viewer.endPresent(); return; }
       if (app.palette) { app.palette = false; return; }
+      // Esc im Text eines Elements beendet die Eingabe (und hält sie als Stand fest)
+      if (typing && t.closest('.ov-host')) { (t.closest('[contenteditable], textarea') as HTMLElement | null)?.blur(); return; }
       if (typing) return;
       if (overlay.selected) { overlay.selected = null; return; }
       if (app.mode !== 'select') { app.mode = 'select'; return; }
@@ -71,8 +73,8 @@
     if (!typing && (e.key === 'Delete' || e.key === 'Backspace') && overlay.selected && doc) {
       e.preventDefault();
       const it = findItem(doc, overlay.selected);
-      // Inhalt des PDFs: als gelöscht vormerken (wird beim Übernehmen entfernt); eigene Elemente: verwerfen
-      if (it?.kind === 'move') { it.remove = true; touch(doc); } else removeItem(doc, overlay.selected);
+      // Inhalt des PDFs: als gelöscht vormerken (beim Speichern entfernt); eigene Elemente: entfernen
+      if (it?.kind === 'move') { it.remove = true; commitItem(doc, it); } else removeItem(doc, overlay.selected);
       return;
     }
     // Ausgewähltes Element mit den Pfeiltasten verschieben (1 pt, mit Umschalt 10 pt)
@@ -87,7 +89,9 @@
         if ('x1' in it) { it.x1 += dx; it.x2 += dx; it.y1 += dy; it.y2 += dy; }
         else if ('rects' in it) it.rects = it.rects.map((q: number[]) => [q[0] + dx, q[1] + dy, q[2], q[3]]);
         else { it.x += dx; it.y += dy; }
-        touch(doc);
+        // Mehrere Tastendrücke kurz hintereinander ergeben einen Stand
+        const d = doc;
+        clearTimeout(nudgeTimer); nudgeTimer = setTimeout(() => commitItem(d, it), 500);
         return;
       }
     }
@@ -129,7 +133,6 @@
     <main class="center">
       <div class="viewer-area" class:hidden={!doc || app.backstage || app.organize}>
         <ViewerHost />
-        {#if doc && !viewer.presenting}<ContextBar {doc} />{/if}
       </div>
       {#if doc && app.organize && !app.backstage}<Organize {doc} />{/if}
       {#if !doc || app.backstage}<StartScreen />{/if}
