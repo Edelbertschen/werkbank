@@ -106,7 +106,7 @@
     <label class="zoom" title={L("Vorschaugröße")}><I.ZoomOut size={13} /><input type="range" min="100" max="320" bind:value={size} aria-label={L("Vorschaugröße")} /><I.ZoomIn size={13} /></label>
     <button class="btn sm primary" onclick={() => (app.organize = false)}>{L("Fertig")}</button>
   </div>
-  <div class="grid scroll" bind:this={grid} style:--size={size + 'px'} role="listbox" aria-multiselectable="true" aria-label={L("Seiten")}>
+  <div class="grid scroll" bind:this={grid} data-drop-insert="grid" style:--size={size + 'px'} role="listbox" aria-multiselectable="true" aria-label={L("Seiten")}>
     {#each doc.pages as p, i (doc.rev + ':' + i)}
       <div class="cell" class:sel={sel.includes(i)} role="option" aria-selected={sel.includes(i)} tabindex="-1"
         onclick={e => select(i, e)} ondblclick={() => open(i)} oncontextmenu={e => ctxMenu(e, i)} onkeydown={() => {}}>

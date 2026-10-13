@@ -113,7 +113,7 @@ export const pageTools: Tool[] = [
     run: async (v, ctx) => {
       if (!v.src?.length) throw new Error(L("Bitte mindestens ein Dokument wählen"));
       const n = ctx.doc!.numPages, c = ctx.current;
-      const at = v.where === 'start' ? 0 : v.where === 'after' ? c + 1 : v.where === 'before' ? c : n;
+      const at = typeof v.at === 'number' ? Math.max(0, Math.min(n, v.at)) : v.where === 'start' ? 0 : v.where === 'after' ? c + 1 : v.where === 'before' ? c : n;
       return insertDocs(ctx, v.src, at);
     },
   },

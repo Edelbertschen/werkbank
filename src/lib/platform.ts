@@ -178,26 +178,30 @@ export async function onOpenFiles(cb: (paths: string[]) => void) {
   if (initial.length) cb(initial);
 }
 
-export type DropState = 'enter' | 'leave' | 'drop';
-export async function onFileDrop(cb: (state: DropState, files?: { paths?: string[]; files?: File[] }) => void) {
+export type DropState = 'enter' | 'over' | 'leave' | 'drop';
+export interface DropPayload { paths?: string[]; files?: File[]; x?: number; y?: number }
+export async function onFileDrop(cb: (state: DropState, payload?: DropPayload) => void) {
   if (isTauri) {
     const { getCurrentWebview } = await import('@tauri-apps/api/webview');
     // Nur Ziehvorgänge mit echten Dateipfaden zeigen das Drop-Ziel – internes Ziehen bleibt unberührt
     let active = false;
+    // Position kommt in physischen Pixeln relativ zur WebView
+    const at = (pos?: { x: number; y: number }) => pos ? { x: pos.x / devicePixelRatio, y: pos.y / devicePixelRatio } : {};
     await getCurrentWebview().onDragDropEvent(e => {
-      const p = e.payload as { type: string; paths?: string[] };
-      if (p.type === 'enter') { active = !!p.paths?.length; if (active) cb('enter'); }
+      const p = e.payload as { type: string; paths?: string[]; position?: { x: number; y: number } };
+      if (p.type === 'enter') { active = !!p.paths?.length; if (active) cb('enter', at(p.position)); }
+      else if (p.type === 'over') { if (active) cb('over', at(p.position)); }
       else if (p.type === 'leave') { if (active) cb('leave'); active = false; }
-      else if (p.type === 'drop') { const was = active; active = false; if (p.paths?.length) cb('drop', { paths: p.paths }); else if (was) cb('leave'); }
+      else if (p.type === 'drop') { const was = active; active = false; if (p.paths?.length) cb('drop', { paths: p.paths, ...at(p.position) }); else if (was) cb('leave'); }
     });
     return;
   }
   let depth = 0;
   const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer?.types || []).includes('Files');
-  addEventListener('dragenter', e => { if (hasFiles(e)) { depth++; cb('enter'); } });
-  addEventListener('dragleave', () => { if (--depth <= 0) { depth = 0; cb('leave'); } });
-  addEventListener('dragover', e => { if (hasFiles(e)) e.preventDefault(); });
-  addEventListener('drop', e => { if (!e.dataTransfer?.files.length) return; e.preventDefault(); depth = 0; cb('drop', { files: Array.from(e.dataTransfer.files) }); });
+  addEventListener('dragenter', e => { if (hasFiles(e)) { depth++; cb('enter', { x: e.clientX, y: e.clientY }); } });
+  addEventListener('dragleave', e => { if (hasFiles(e) && --depth <= 0) { depth = 0; cb('leave'); } });
+  addEventListener('dragover', e => { if (hasFiles(e)) { e.preventDefault(); cb('over', { x: e.clientX, y: e.clientY }); } });
+  addEventListener('drop', e => { if (!e.dataTransfer?.files.length) return; e.preventDefault(); depth = 0; cb('drop', { files: Array.from(e.dataTransfer.files), x: e.clientX, y: e.clientY }); });
 }
 
 export async function revealInFolder(path: string) { if (isTauri) await invoke('reveal_in_folder', { path }); }

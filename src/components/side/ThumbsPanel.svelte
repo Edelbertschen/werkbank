@@ -75,7 +75,7 @@
   }
 </script>
 
-<div class="thumbs scroll" bind:this={list} role="listbox" aria-label={L("Seiten")} aria-multiselectable="true">
+<div class="thumbs scroll" bind:this={list} data-drop-insert="vertical" role="listbox" aria-label={L("Seiten")} aria-multiselectable="true">
   {#each doc.pages as p, i (doc.rev + ':' + i)}
     <div class="item" class:cur={doc.current === i + 1} class:sel={doc.selection.includes(i)} role="option" aria-selected={doc.selection.includes(i)} tabindex="-1"
       onclick={e => select(i, e)} oncontextmenu={e => ctx(e, i)} ondblclick={() => { app.organize = false; viewer.goto(i + 1); }} onkeydown={() => {}}>

@@ -1364,6 +1364,8 @@ const en: Record<string, string> = {
  "„{0}“ wird geöffnet": "Opening “{0}”",
  "… und {0} weitere": "… and {0} more",
  "﻿Feld;Wert\n": "﻿Field;Value\n",
- "﻿Seite;Art;Autor;Datum;Text\n": "﻿Page;Type;Author;Date;Text\n"
+ "﻿Seite;Art;Autor;Datum;Text\n": "﻿Page;Type;Author;Date;Text\n",
+ "Hier einfügen": "Insert here",
+ "Datei ließ sich nicht lesen: {0}": "Could not read file: {0}"
 };
 export default en;

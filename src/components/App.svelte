@@ -3,7 +3,8 @@
   import { onMount } from 'svelte';
   import { app, active, loadPersisted, toast } from '../lib/app.svelte';
   import { onOpenFiles, onFileDrop, onCloseRequested, closeWindowNow, isTauri } from '../lib/platform';
-  import { openPaths, openDropped, confirmQuit, offerRecovery, runTool } from '../lib/actions';
+  import { openPaths, openDropped, insertDropped, confirmQuit, offerRecovery, runTool } from '../lib/actions';
+  import { dropTargetAt, type DropTarget } from '../lib/dropzone';
   import { TOOLS, tool } from '../lib/tools';
   import { matches } from '../lib/shortcuts';
   import { viewer } from '../lib/viewer.svelte';
@@ -25,15 +26,18 @@
   import ContextBar from './ContextBar.svelte';
 
   const doc = $derived(active());
+  let dropTarget = $state<DropTarget | null>(null);
 
   onMount(async () => {
     await loadPersisted();
     app.ready = true;
     await onOpenFiles(paths => openPaths(paths));
-    await onFileDrop((state, payload) => {
-      if (state === 'enter') app.dropping = true;
-      else if (state === 'leave') app.dropping = false;
-      else { app.dropping = false; if (payload) openDropped(payload); }
+    await onFileDrop((state, p) => {
+      if (state === 'leave') { app.dropping = false; dropTarget = null; return; }
+      // Über den Miniaturen: an der Stelle einfügen; sonst öffnen
+      const t = p?.x != null && p.y != null && active() ? dropTargetAt(p.x, p.y) : null;
+      if (state === 'drop') { app.dropping = false; dropTarget = null; if (p) t ? insertDropped(p, t.at) : openDropped(p); return; }
+      dropTarget = t; app.dropping = !t;
     });
     await onCloseRequested(async () => {
       const ok = await confirmQuit();
@@ -113,6 +117,12 @@
   {#if !viewer.presenting}<StatusBar />{/if}
 </div>
 
+{#if dropTarget}
+  {@const l = dropTarget.line}
+  <div class="insert-line" class:v={dropTarget.layout === 'grid'} style:left={l.x + 'px'} style:top={l.y + 'px'} style:width={l.w ? l.w + 'px' : null} style:height={l.h ? l.h + 'px' : null}>
+    <span>{L("Hier einfügen")}</span>
+  </div>
+{/if}
 {#if app.dropping}
   <div class="drop-veil"><div class="drop-card">{L("Zum Öffnen loslassen")}<span>{L("PDF, Office, Bilder, E-Books, Mails")}</span></div></div>
 {/if}
@@ -131,5 +141,8 @@
   .presenting .center { background: #000; }
   .drop-veil { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: color-mix(in srgb, var(--win) 55%, transparent); backdrop-filter: blur(3px); animation: fade-in 0.12s; pointer-events: none; }
   .drop-card { border: 2px dashed var(--accent); border-radius: 16px; padding: 34px 48px; background: var(--surface); font: 600 17px var(--font-display); display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: var(--shadow-pop); }
+  .insert-line { position: fixed; z-index: 80; pointer-events: none; height: 3px; margin-top: -1.5px; border-radius: 2px; background: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .insert-line.v { width: 3px; height: auto; margin: 0 0 0 -1.5px; }
+  .insert-line span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; padding: 3px 9px; border-radius: 999px; background: var(--accent); color: #fff; font: 600 11.5px var(--font); box-shadow: var(--shadow-pop); }
   .drop-card span { font: 400 12.5px var(--font); color: var(--text-2); }
 </style>

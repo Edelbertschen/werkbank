@@ -108,6 +108,18 @@ export async function openPaths(paths: string[]) {
   if (last) activate(last);
 }
 
+/** Abgelegte Dateien an Position `at` (0 = vor der ersten Seite) ins aktive Dokument einfügen */
+export async function insertDropped(payload: { paths?: string[]; files?: File[] }, at: number) {
+  const src: { id: string; name: string; bytes: Uint8Array }[] = [];
+  try {
+    for (const p of payload.paths || []) src.push({ id: p, name: p.split(/[\\/]/).pop() || p, bytes: await P.readPath(p) });
+    for (const f of payload.files || []) src.push({ id: f.name, name: f.name, bytes: new Uint8Array(await f.arrayBuffer()) });
+  } catch (e: any) { toast(L("Datei ließ sich nicht lesen: {0}", e.message || e), { kind: 'error' }); return; }
+  if (!src.length) return;
+  const { tool } = await import('./tools');
+  await runTool(tool('insert-file'), { src, where: 'at', at });
+}
+
 export async function openDialog() {
   const files = await P.pickFiles({ multiple: true, filters: P.FILTERS.openable, title: L("Öffnen") });
   for (const f of files) {
