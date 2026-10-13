@@ -74,7 +74,7 @@ class ViewerController {
     bus.on('pagesinit', () => {
       const r = this.restore; this.restore = null;
       this.applyLayout();
-      inst.currentScaleValue = String(r?.scale ?? (this.zoomMode === 'custom' ? this.scale : this.zoomMode));
+      if (r?.scale != null) inst.currentScaleValue = String(r.scale); else if (this.zoomMode === 'custom') inst.currentScaleValue = String(this.scale); else this.fit(this.zoomMode);
       if (r?.top != null) inst.scrollPageIntoView({ pageNumber: r.page, destArray: [null, { name: 'XYZ' }, r.left ?? null, r.top, null], allowNegativeOffset: true });
       else if (r?.page && r.page > 1) inst.currentPageNumber = r.page;
       this.pages = inst.pagesCount;
@@ -138,7 +138,19 @@ class ViewerController {
   // Zoom & Layout
   zoomBy(f: number) { if (!this.inst?.pdfDocument) return; this.zoomMode = 'custom'; this.inst.currentScale = clamp(this.inst.currentScale * f, 0.1, 8); }
   setScale(s: number) { if (!this.inst?.pdfDocument) return; this.zoomMode = 'custom'; this.inst.currentScale = clamp(s, 0.1, 8); }
-  setZoom(mode: 'page-width' | 'page-fit' | 'page-actual') { this.zoomMode = mode; if (this.inst?.pdfDocument) this.inst.currentScaleValue = mode; }
+  setZoom(mode: 'page-width' | 'page-fit' | 'page-actual') { this.zoomMode = mode; this.fit(mode); }
+  /** Seitenbreite mit Luft: die Seite füllt die Fläche bis auf einen ruhigen Rand und wird nicht übergroß */
+  private fit(mode: 'page-width' | 'page-fit' | 'page-actual') {
+    const inst = this.inst;
+    if (!inst?.pdfDocument) return;
+    const pv = inst.getPageView?.(Math.max(0, inst.currentPageNumber - 1));
+    if (mode !== 'page-width' || !pv?.pdfPage || inst.spreadMode !== 0) { inst.currentScaleValue = mode; return; }
+    const rot = ((pv.rotation ?? 0) + (inst.pagesRotation ?? 0)) % 180 !== 0;
+    const vp = pv.pdfPage.getViewport({ scale: 1, rotation: rot ? 90 : 0 });
+    const margin = Math.min(72, Math.max(28, inst.container.clientWidth * 0.05));
+    const s = (inst.container.clientWidth - 2 * margin - 14) / (vp.width * (96 / 72));
+    inst.currentScale = clamp(s, 0.25, 1.75);
+  }
   applyLayout() {
     if (!this.inst) return;
     try { this.inst.scrollMode = app.prefs.scroll; } catch { /* egal */ }
@@ -148,7 +160,7 @@ class ViewerController {
   goto(n: number) { if (this.inst?.pdfDocument) this.inst.currentPageNumber = clamp(n, 1, this.inst.pagesCount); }
   next() { this.inst?.nextPage(); }
   prev() { this.inst?.previousPage(); }
-  refit() { if (this.inst?.pdfDocument && this.zoomMode !== 'custom') this.inst.currentScaleValue = this.zoomMode; }
+  refit() { if (this.inst?.pdfDocument && this.zoomMode !== 'custom') this.fit(this.zoomMode); }
 
   // Suche
   search(query: string, opts: { again?: boolean; previous?: boolean; caseSensitive?: boolean; entireWord?: boolean } = {}) {

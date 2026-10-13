@@ -45,21 +45,21 @@
 {/if}
 
 <style>
-  .toasts { position: fixed; bottom: 38px; left: 50%; transform: translateX(-50%); z-index: 120; display: flex; flex-direction: column-reverse; gap: 8px; align-items: center; pointer-events: none; width: max-content; max-width: min(640px, calc(100vw - 32px)); }
-  .toast { pointer-events: auto; display: flex; align-items: center; gap: 9px; padding: 8px 8px 8px 13px; border-radius: 10px; background: color-mix(in srgb, var(--text) 92%, transparent); color: var(--win); font-size: 12.5px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25); animation: pop-in 0.16s ease-out; backdrop-filter: blur(10px); }
-  .toast.ok :global(svg:first-child) { color: #5ad37a; }
+  .toasts { position: fixed; bottom: 46px; left: 50%; transform: translateX(-50%); z-index: 120; display: flex; flex-direction: column-reverse; gap: 8px; align-items: center; pointer-events: none; width: max-content; max-width: min(640px, calc(100vw - 32px)); }
+  .toast { pointer-events: auto; display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px; border-radius: 12px; background: color-mix(in srgb, #141A1C 94%, transparent); color: #EEF2F1; font-size: 12.75px; font-weight: 500; box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.35), 0 0 0 0.5px rgba(255, 255, 255, 0.08); animation: pop-in 0.2s var(--ease); backdrop-filter: blur(12px); }
+  .toast.ok :global(svg:first-child) { color: #4CC27D; }
   .toast.error { background: var(--danger); color: #fff; }
   .toast span { line-height: 1.4; }
   .act { border: 0; background: rgba(255, 255, 255, 0.16); color: inherit; font-weight: 600; height: 22px; padding: 0 9px; border-radius: 6px; white-space: nowrap; }
   .act:hover { background: rgba(255, 255, 255, 0.26); }
   .x { border: 0; background: none; color: inherit; opacity: 0.6; width: 20px; height: 20px; border-radius: 5px; display: grid; place-items: center; }
   .x:hover { opacity: 1; background: rgba(255, 255, 255, 0.12); }
-  .ctxmenu { position: fixed; z-index: 130; min-width: 210px; background: var(--surface); border-radius: 9px; box-shadow: var(--shadow-pop); padding: 4px; display: flex; flex-direction: column; animation: pop-in 0.08s; }
-  .ctxmenu button { display: flex; align-items: center; gap: 8px; border: 0; background: none; text-align: left; padding: 0 10px 0 6px; height: 26px; border-radius: 5px; font-size: 12.5px; color: var(--text); }
-  .ctxmenu button:hover:not(:disabled) { background: var(--accent); color: var(--on-accent); }
+  .ctxmenu { position: fixed; z-index: 130; min-width: 220px; background: var(--surface); border-radius: 11px; box-shadow: var(--shadow-pop); padding: 5px; display: flex; flex-direction: column; animation: pop-in 0.1s var(--ease); }
+  .ctxmenu button { display: flex; align-items: center; gap: 9px; border: 0; background: none; text-align: left; padding: 0 10px 0 7px; height: 28px; border-radius: 7px; font-size: 12.75px; color: var(--text); }
+  .ctxmenu button:hover:not(:disabled) { background: var(--accent-soft); color: var(--accent-text); }
   .ctxmenu button:disabled { opacity: 0.4; }
   .ctxmenu button.danger { color: var(--danger); }
-  .ctxmenu button.danger:hover { background: var(--danger); color: #fff; }
+  .ctxmenu button.danger:hover { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); }
   .mi { width: 18px; display: grid; place-items: center; }
   hr { border: 0; border-top: 0.5px solid var(--line); margin: 4px 6px; }
 </style>

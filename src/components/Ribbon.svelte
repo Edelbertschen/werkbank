@@ -46,6 +46,19 @@
     return out;
   }
   const idOf = (it: RibbonItem) => (typeof it === 'string' ? it : 'id' in it ? it.id : '');
+  // Ohne Dokument nur zeigen, was auch geht – keine Wand aus ausgegrauten Befehlen
+  const usable = (it: RibbonItem) => (typeof it === 'object' && 'custom' in it) ? !!doc : hasTool(idOf(it)) && (!!doc || !!tool(idOf(it)).noDoc);
+  const groups = $derived(tabDef.groups.map(g => ({ ...g, items: g.items.filter(usable) })).filter(g => g.items.length));
+
+  // Gleitender Strich unter dem aktiven Reiter
+  let tabrow: HTMLDivElement | undefined = $state();
+  let ink = $state({ x: 0, w: 0, ready: false });
+  function placeInk() {
+    const el = tabrow?.querySelector<HTMLElement>('.rtab.on');
+    if (!el || !tabrow) { ink = { ...ink, w: 0 }; return; }
+    ink = { x: el.offsetLeft + 10, w: el.offsetWidth - 20, ready: true };
+  }
+  $effect(() => { tabDef.id; app.backstage; tabs.length; tick().then(placeInk); document.fonts?.ready.then(placeInk); });
   const iconOf = (g: { items: RibbonItem[] }) => { const id = g.items.map(idOf).find(x => x && hasTool(x)); return id ? tool(id).icon : I.ChevronDown; };
 
   // Zu wenig Platz: Gruppen von rechts nach links zu einer Schaltfläche mit Ausklappmenü zusammenfalten
@@ -59,12 +72,12 @@
     measuring = true;
     foldFrom = Infinity; popGroup = null;
     await tick();
-    let n = tabDef.groups.length;
+    let n = groups.length;
     while (body && body.scrollWidth > body.clientWidth + 1 && n > 1) { n--; foldFrom = n; await tick(); }
     measuring = false;
   }
   $effect(() => {
-    tabDef; collapsed;
+    tabDef; collapsed; groups.length;
     if (!body) return;
     measure();
     let raf = 0, lastW = body.clientWidth;
@@ -101,7 +114,8 @@
 {/snippet}
 
 <div class="ribbon" class:collapsed class:peek={app.ribbonPeek}>
-  <div class="tabrow" role="tablist">
+  <div class="tabrow" role="tablist" bind:this={tabrow}>
+    <span class="ink" class:ready={ink.ready} style:transform={`translateX(${ink.x}px)`} style:width={ink.w + 'px'}></span>
     {#each tabs as t (t.id)}
       <button role="tab" class="rtab" class:on={tabDef.id === t.id && !app.backstage} aria-selected={tabDef.id === t.id} onclick={() => pickTab(t.id)} ondblclick={toggleCollapse} oncontextmenu={e => tabMenu(e, t.id, t.label)}>{t.label}</button>
     {/each}
@@ -116,7 +130,7 @@
   </div>
   {#if !collapsed}
     <div class="body" role="toolbar" aria-label={tabDef.label} bind:this={body}>
-      {#each tabDef.groups as g, gi (g.label)}
+      {#each groups as g, gi (g.label)}
         {#if gi >= foldFrom}
           {@const Ic = iconOf(g)}
           <section class="group">
@@ -132,8 +146,8 @@
         {/if}
       {/each}
     </div>
-    {#if popGroup !== null && tabDef.groups[popGroup]}
-      {@const g = tabDef.groups[popGroup]}
+    {#if popGroup !== null && groups[popGroup]}
+      {@const g = groups[popGroup]}
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <div class="gpop" style:left={popX + 'px'} style:top={popY + 'px'} role="dialog" tabindex="-1" aria-label={g.label} onclick={e => { if ((e.target as HTMLElement).closest('.rb')) popGroup = null; }}>
         <section class="group">{@render groupBody(g)}<div class="glabel">{g.label}</div></section>
@@ -143,29 +157,34 @@
 </div>
 
 <style>
-  .ribbon { background: var(--bar); border-bottom: 0.5px solid var(--line); position: relative; z-index: 20; }
-  .ribbon.peek { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12); }
-  .tabrow { display: flex; align-items: center; gap: 2px; height: 32px; padding: 0 10px; border-bottom: 0.5px solid var(--line); background: var(--win); }
-  .rtab { border: 0; background: none; height: 24px; padding: 0 11px; border-radius: 6px; color: var(--text-2); font-weight: 500; white-space: nowrap; }
-  .rtab:hover { color: var(--text); background: var(--hover); }
-  .rtab.on { color: var(--accent-text); background: var(--accent-softer); }
+  .ribbon { background: var(--win); position: relative; z-index: 20; padding-bottom: 8px; }
+  .ribbon.collapsed { padding-bottom: 0; border-bottom: 0.5px solid var(--line); }
+  .ribbon.peek .body { box-shadow: var(--shadow-pop); }
+  .tabrow { display: flex; align-items: center; gap: 0; height: 34px; padding: 0 12px; position: relative; }
+  .rtab { border: 0; background: none; height: 30px; padding: 0 12px; border-radius: 7px; color: var(--text-2); font-weight: 550; white-space: nowrap; letter-spacing: 0.005em; transition: color 0.15s; }
+  .rtab:hover { color: var(--text); }
+  .rtab.on { color: var(--text); }
+  /* Das eine markante Element: ein Petrol-Strich, der zum aktiven Reiter gleitet */
+  .ink { position: absolute; left: 12px; bottom: 1px; height: 2.5px; border-radius: 2px; background: var(--accent); pointer-events: none; opacity: 0; }
+  .ink.ready { opacity: 1; transition: transform 0.28s var(--ease), width 0.28s var(--ease); }
   .spacer { flex: 1; }
-  .collapse { border: 0; background: none; width: 24px; height: 24px; border-radius: 6px; color: var(--text-3); display: grid; place-items: center; }
+  .collapse { border: 0; background: none; width: 26px; height: 26px; border-radius: 7px; color: var(--text-3); display: grid; place-items: center; }
   .collapse:hover { background: var(--hover); color: var(--text); }
-  .modechip { display: inline-flex; align-items: center; gap: 7px; height: 22px; padding: 0 4px 0 9px; border-radius: 11px; background: var(--accent-soft); color: var(--accent-text); font-size: 11.5px; font-weight: 600; margin-right: 6px; }
-  .modechip button { border: 0; background: none; color: inherit; width: 16px; height: 16px; border-radius: 8px; display: grid; place-items: center; }
-  .modechip button:hover { background: var(--accent-soft); }
-  .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.6s ease-in-out infinite; }
+  .modechip { display: inline-flex; align-items: center; gap: 7px; height: 24px; padding: 0 4px 0 10px; border-radius: 12px; background: var(--accent); color: var(--on-accent); font-size: 11.5px; font-weight: 600; margin-right: 6px; box-shadow: 0 1px 3px rgba(11, 110, 123, 0.3); animation: pop-in 0.18s var(--ease); }
+  .modechip button { border: 0; background: none; color: inherit; width: 18px; height: 18px; border-radius: 9px; display: grid; place-items: center; }
+  .modechip button:hover { background: rgba(255, 255, 255, 0.2); }
+  .pulse { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulse 1.6s ease-in-out infinite; }
   @keyframes pulse { 50% { opacity: 0.35; } }
-  .body { display: flex; align-items: stretch; height: 96px; padding: 5px 8px 0; overflow: hidden; }
-  .group { display: flex; flex-direction: column; padding: 0 8px; position: relative; flex: none; }
-  .group + .group::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 8px; width: 0.5px; background: var(--line-strong); }
+  /* Werkzeug-Ablage: als Fläche vom Fensterchrom abgesetzt */
+  .body { display: flex; align-items: stretch; height: 94px; padding: 6px 6px 0; margin: 0 10px; overflow: hidden; background: var(--bar); border-radius: 12px; box-shadow: var(--shadow-1); }
+  .group { display: flex; flex-direction: column; padding: 0 7px; position: relative; flex: none; }
+  .group + .group::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 14px; width: 1px; background: var(--line); }
   .cols { display: flex; gap: 2px; flex: 1; min-height: 0; align-items: flex-start; }
-  .fold { border: 0; background: none; color: var(--text); border-radius: 6px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 58px; min-height: 66px; padding: 6px 6px 4px; }
+  .fold { border: 0; background: none; color: var(--text); border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 58px; min-height: 64px; padding: 6px 6px 4px; }
   .fold:hover, .fold.on { background: var(--hover); }
   .fold .ic { height: 26px; display: grid; place-items: center; }
-  .fold .lb { font-size: 11px; line-height: 1.18; display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; }
-  .gpop { position: fixed; z-index: 60; background: var(--bar); border-radius: 10px; box-shadow: var(--shadow-pop, 0 12px 32px rgba(0,0,0,.18)), 0 0 0 0.5px var(--line-strong); padding: 6px 4px 0; height: 96px; display: flex; animation: pop-in 0.12s ease-out; }
+  .fold .lb { font-size: 11px; line-height: 1.18; display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; font-stretch: 94%; }
+  .gpop { position: fixed; z-index: 60; background: var(--bar); border-radius: 12px; box-shadow: var(--shadow-pop); padding: 6px 4px 0; height: 94px; display: flex; animation: pop-in 0.14s var(--ease); }
   .stack { display: flex; flex-direction: column; gap: 1px; padding-top: 1px; }
-  .glabel { font-size: 10.5px; color: var(--text-3); text-align: center; padding: 1px 0 5px; white-space: nowrap; letter-spacing: 0.01em; }
+  .glabel { font-size: 10.5px; font-weight: 500; color: var(--text-3); text-align: center; padding: 2px 0 6px; white-space: nowrap; font-stretch: 94%; }
 </style>

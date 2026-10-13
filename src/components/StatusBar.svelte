@@ -57,25 +57,25 @@
 </footer>
 
 <style>
-  .status { height: 26px; display: flex; align-items: center; gap: 12px; padding: 0 10px; background: var(--win); border-top: 0.5px solid var(--line); font-size: 11.5px; color: var(--text-2); min-width: 0; }
+  .status { height: 30px; display: flex; align-items: center; gap: 14px; padding: 0 12px; background: var(--win); font-size: 11.75px; color: var(--text-2); min-width: 0; }
   .seg-left, .right, .mid { display: flex; align-items: center; gap: 6px; min-width: 0; }
   .mid { flex: 1; justify-content: center; gap: 10px; }
-  .nb { width: 20px; height: 20px; border: 0; background: none; border-radius: 4px; display: grid; place-items: center; color: var(--text-2); }
+  .nb { width: 22px; height: 22px; border: 0; background: none; border-radius: 6px; display: grid; place-items: center; color: var(--text-2); }
   .nb:hover:not(:disabled) { background: var(--hover); color: var(--text); }
-  .nb:disabled { opacity: 0.35; }
-  .pgb { border: 0; background: none; border-radius: 4px; padding: 1px 6px; color: var(--text); font-size: 11.5px; }
-  .pgb:hover { background: var(--hover); }
-  .pg { width: 56px; height: 19px; border: 0.5px solid var(--accent); border-radius: 4px; text-align: center; font-size: 11.5px; background: var(--surface); }
+  .nb:disabled { opacity: 0.32; }
+  .pgb { border: 0; background: var(--hover); border-radius: 6px; padding: 2px 9px; color: var(--text); font-size: 11.75px; font-weight: 550; font-variant-numeric: tabular-nums; }
+  .pgb:hover { background: var(--pressed); }
+  .pg { width: 60px; height: 22px; border: 0; box-shadow: var(--focus); border-radius: 6px; text-align: center; font-size: 11.75px; background: var(--surface); }
   .dim { color: var(--text-3); white-space: nowrap; }
-  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; border-radius: 9px; background: var(--selected); color: var(--text-2); white-space: nowrap; }
-  .badge.warm { background: color-mix(in srgb, var(--brand) 16%, transparent); color: color-mix(in srgb, var(--brand) 70%, var(--text)); }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; background: var(--selected); color: var(--text-2); white-space: nowrap; font-weight: 500; }
+  .badge.warm { background: var(--accent-soft); color: var(--accent-text); }
   .eng { display: inline-flex; align-items: center; gap: 6px; color: var(--accent-text); }
   .spin { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid currentColor; border-right-color: transparent; animation: spin 0.8s linear infinite; }
-  .views { display: flex; gap: 1px; margin-right: 6px; }
-  .views button { width: 22px; height: 20px; border: 0; background: none; border-radius: 4px; display: grid; place-items: center; color: var(--text-3); }
-  .views button:hover { background: var(--hover); color: var(--text); }
-  .views button.on { color: var(--accent-text); background: var(--accent-softer); }
+  .views { display: flex; gap: 2px; margin-right: 8px; padding: 2px; border-radius: 8px; background: var(--hover); }
+  .views button { width: 24px; height: 20px; border: 0; background: none; border-radius: 6px; display: grid; place-items: center; color: var(--text-3); }
+  .views button:hover { color: var(--text); }
+  .views button.on { color: var(--accent); background: var(--surface); box-shadow: var(--shadow-1); }
   .zs { width: 110px; accent-color: var(--accent); }
-  .zp { width: 40px; text-align: right; }
+  .zp { width: 42px; text-align: right; font-variant-numeric: tabular-nums; }
   @media (max-width: 1000px) { .dim, .zs { display: none; } }
 </style>

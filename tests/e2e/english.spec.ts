@@ -16,8 +16,9 @@ test('startet auf Englisch, wenn das System Englisch spricht', async ({ page }) 
   page.on('pageerror', e => errors.push(String(e)));
   await page.goto('/');
   await page.waitForFunction(() => (window as any).__wb, null, { timeout: 30_000 });
-  await expect(page.getByRole('tab', { name: 'Pages', exact: true })).toBeVisible();
-  await expect(page.getByRole('tab', { name: 'Convert', exact: true })).toBeVisible();
+  // Startseite (ohne Dokument gibt es keine Bandleiste)
+  await expect(page.getByRole('heading', { name: 'Recently opened' })).toBeVisible();
+  await expect(page.getByText('Drag a file here')).toBeVisible();
   expect(await visibleGerman(page)).toEqual([]);
 
   // Dokument öffnen und durch alle Registerkarten blättern
@@ -51,5 +52,6 @@ test('Sprache lässt sich in den Einstellungen festlegen', async ({ page }) => {
   await expect(page.getByText('The new language takes effect after restarting Werkbank.')).toBeVisible();
   await page.getByRole('button', { name: 'Restart now' }).click();
   await page.waitForFunction(() => (window as any).__wb, null, { timeout: 30_000 });
-  await expect(page.getByRole('tab', { name: 'Seiten', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Zuletzt geöffnet' })).toBeVisible();
+  await expect(page.getByText('Datei hierher ziehen')).toBeVisible();
 });

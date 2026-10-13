@@ -20,16 +20,17 @@
 {/if}
 
 <style>
-  .rb { border: 0; background: none; color: var(--text); border-radius: 6px; display: flex; align-items: center; }
+  .rb { border: 0; background: none; color: var(--text); border-radius: 8px; display: flex; align-items: center; transition: background-color 0.12s, color 0.12s; }
   .rb:hover:not(:disabled) { background: var(--hover); }
   .rb:active:not(:disabled) { background: var(--pressed); }
-  .rb:disabled { opacity: 0.38; }
+  .rb:disabled { opacity: 0.34; }
   .rb.on { background: var(--accent-soft); color: var(--accent-text); }
-  .large { flex-direction: column; justify-content: flex-start; gap: 4px; min-width: 54px; max-width: 92px; min-height: 66px; padding: 6px 6px 4px; }
-  .large .ic { height: 26px; display: grid; place-items: center; color: var(--text); }
-  .large.on .ic { color: var(--accent-text); }
-  .large .lb { font-size: 11px; line-height: 1.18; text-align: center; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; hyphens: auto; }
-  .small { gap: 6px; height: 22px; padding: 0 8px 0 5px; white-space: nowrap; font-size: 12px; }
+  .large { flex-direction: column; justify-content: flex-start; gap: 5px; min-width: 56px; max-width: 92px; min-height: 64px; padding: 7px 7px 4px; }
+  .large .ic { height: 24px; display: grid; place-items: center; color: var(--text); }
+  .large.on .ic { color: var(--accent); }
+  .large .lb { font-size: 11.25px; font-weight: 500; font-stretch: 94%; line-height: 1.16; text-align: center; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; hyphens: auto; }
+  .small { gap: 7px; height: 22px; padding: 0 9px 0 5px; white-space: nowrap; font-size: 12px; font-weight: 500; }
   .small .ic { width: 18px; display: grid; place-items: center; color: var(--text-2); }
-  .small.on .ic { color: var(--accent-text); }
+  .small:hover:not(:disabled) .ic { color: var(--text); }
+  .small.on .ic { color: var(--accent); }
 </style>

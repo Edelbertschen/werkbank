@@ -87,15 +87,15 @@
 
 <style>
   .thumbs { flex: 1; padding: 6px 20px 24px; display: flex; flex-direction: column; gap: 14px; }
-  .item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 8px 6px; border-radius: 9px; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 8px 6px; border-radius: 10px; transition: background-color 0.12s; }
   .item:hover { background: var(--hover); }
-  .frame { width: 100%; max-width: 150px; border-radius: 3px; outline: 2px solid transparent; outline-offset: 3px; }
-  .item.cur .frame { outline-color: var(--line-strong); }
+  .frame { width: 100%; max-width: 150px; border-radius: 2px; outline: 2px solid transparent; outline-offset: 4px; transition: outline-color 0.15s; }
+  .item.cur .frame { outline-color: var(--accent); }
   .item.sel { background: var(--accent-softer); }
   .item.sel .frame { outline-color: var(--accent); }
-  .cap { display: flex; gap: 6px; align-items: center; font-size: 11px; color: var(--text-2); }
-  .num { font-weight: 600; font-variant-numeric: tabular-nums; }
-  .item.cur .num { color: var(--accent-text); }
+  .cap { display: flex; gap: 6px; align-items: center; font-size: 11px; color: var(--text-3); }
+  .num { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-2); padding: 0 6px; border-radius: 6px; }
+  .item.cur .num { color: var(--on-accent); background: var(--accent); }
   .rot { font-size: 10px; padding: 0 4px; border-radius: 3px; background: var(--selected); }
   .paper { color: var(--text-3); }
   :global(.thumbs .ghost) { opacity: 0.3; }

@@ -53,20 +53,22 @@
 {/if}
 
 <style>
-  .veil { position: fixed; inset: 0; z-index: 105; background: rgba(15, 18, 28, 0.2); display: flex; justify-content: center; padding-top: 12vh; animation: fade-in 0.1s; }
-  .pal { width: 620px; max-width: calc(100vw - 32px); max-height: 62vh; display: flex; flex-direction: column; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-pop); overflow: hidden; animation: pop-in 0.12s; }
-  .field { display: flex; align-items: center; gap: 10px; padding: 0 16px; height: 50px; border-bottom: 0.5px solid var(--line); color: var(--text-3); }
-  .field input { flex: 1; border: 0; background: none; font-size: 15px; color: var(--text); outline: none; }
+  .veil { position: fixed; inset: 0; z-index: 105; background: rgba(10, 20, 22, 0.22); backdrop-filter: blur(2px); display: flex; justify-content: center; align-items: flex-start; padding-top: 13vh; animation: fade-in 0.12s; }
+  .pal { width: 640px; max-width: calc(100vw - 32px); max-height: 64vh; height: max-content; display: flex; flex-direction: column; background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-pop); overflow: hidden; animation: pop-in 0.16s var(--ease); }
+  .field { display: flex; align-items: center; gap: 12px; padding: 0 18px; height: 56px; border-bottom: 0.5px solid var(--line); color: var(--text-3); flex: none; }
+  .field input { flex: 1; border: 0; background: none; font: 500 17px var(--font-display); letter-spacing: -0.01em; color: var(--text); outline: none; box-shadow: none; }
+  .field input::placeholder { color: var(--text-3); }
   .list { padding: 6px; overflow: auto; }
-  .item { width: 100%; display: flex; align-items: center; gap: 11px; border: 0; background: none; text-align: left; padding: 7px 10px; border-radius: 8px; color: var(--text); }
-  .item.on { background: var(--accent); color: var(--on-accent); }
+  .item { width: 100%; display: flex; align-items: center; gap: 12px; border: 0; background: none; text-align: left; padding: 8px 10px; border-radius: 10px; color: var(--text); position: relative; }
+  .item.on { background: var(--accent-soft); }
+  .item.on::before { content: ''; position: absolute; left: 0; top: 9px; bottom: 9px; width: 3px; border-radius: 2px; background: var(--accent); }
   .item.dis { opacity: 0.5; }
-  .ic { width: 28px; height: 28px; border-radius: 7px; display: grid; place-items: center; background: var(--selected); flex: none; }
-  .item.on .ic { background: rgba(255, 255, 255, 0.2); }
-  .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  .txt b { font-weight: 500; font-size: 13px; }
-  .txt small { font-size: 11.5px; opacity: 0.7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .meta { font-size: 11px; opacity: 0.6; display: flex; gap: 8px; align-items: center; white-space: nowrap; }
-  kbd { font: 11px var(--font); }
-  .empty { padding: 18px; text-align: center; color: var(--text-3); margin: 0; }
+  .ic { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--surface); box-shadow: var(--shadow-1); color: var(--text-2); flex: none; }
+  .item.on .ic { color: var(--accent); }
+  .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .txt b { font-weight: 600; font-size: 13px; }
+  .txt small { font-size: 11.75px; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .meta { font-size: 11px; color: var(--text-3); display: flex; gap: 8px; align-items: center; white-space: nowrap; }
+  kbd { font: 500 11px var(--font); padding: 1px 6px; border-radius: 5px; background: var(--hover); color: var(--text-2); }
+  .empty { padding: 22px; text-align: center; color: var(--text-3); margin: 0; }
 </style>

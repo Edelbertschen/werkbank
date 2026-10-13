@@ -70,18 +70,17 @@
 {/if}
 
 <style>
-  .pane { flex: none; display: flex; flex-direction: column; background: var(--panel); border-left: 0.5px solid var(--line); position: relative; min-height: 0; animation: slide 0.14s ease-out; }
-  @keyframes slide { from { transform: translateX(12px); opacity: 0; } }
+  .pane { flex: none; display: flex; flex-direction: column; background: var(--bar); border-radius: 12px; box-shadow: var(--shadow-1); overflow: hidden; position: relative; min-height: 0; animation: slide-in-right 0.2s var(--ease); }
   .grip { position: absolute; left: -3px; top: 0; bottom: 0; width: 6px; cursor: col-resize; z-index: 3; }
-  header { display: flex; align-items: center; gap: 9px; padding: 12px 12px 6px 16px; }
-  .ic { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-softer); color: var(--accent-text); flex: none; }
-  h2 { margin: 0; flex: 1; font: 600 14.5px/1.25 var(--font-display); letter-spacing: -0.01em; }
+  header { display: flex; align-items: center; gap: 11px; padding: 16px 12px 8px 18px; }
+  .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); flex: none; }
+  h2 { margin: 0; flex: 1; font: 600 16px/1.2 var(--font-display); letter-spacing: -0.015em; }
   .x { width: 24px; height: 24px; border: 0; background: none; border-radius: 6px; color: var(--text-3); display: grid; place-items: center; }
   .x:hover { background: var(--hover); color: var(--text); }
-  .body { flex: 1; min-height: 0; padding: 4px 16px 20px; }
-  .desc { margin: 0 0 14px; color: var(--text-2); font-size: 12.5px; line-height: 1.5; }
+  .body { flex: 1; min-height: 0; padding: 4px 18px 22px; }
+  .desc { margin: 0 0 18px; color: var(--text-2); font-size: 12.75px; line-height: 1.55; max-width: 46ch; }
   .note { color: var(--text-2); }
-  footer { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-top: 0.5px solid var(--line); background: var(--panel); }
+  footer { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-top: 0.5px solid var(--line); background: var(--bar); }
   .grow { flex: 1; }
   .done { display: inline-flex; align-items: center; gap: 4px; color: var(--ok); font-size: 12px; font-weight: 500; }
 </style>

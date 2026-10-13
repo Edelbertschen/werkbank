@@ -13,6 +13,25 @@
   let filter = $state('');
   const recent = $derived(app.recent.filter(r => !filter || r.name.toLowerCase().includes(filter.toLowerCase())));
   const tasks = ['to-word', 'compress', 'ocr', 'sign', 'redact', 'organize', 'protect', 'to-excel'];
+  // Eine Zeile je Aufgabe – was sie bewirkt, nicht wie
+  const SHORT: Record<string, string> = {
+    'to-word': L("Bearbeitbare Word-Datei mit Absätzen und Tabellen"),
+    compress: L("Datei verkleinern, Text bleibt durchsuchbar"),
+    ocr: L("Scans durchsuchbar und kopierbar machen"),
+    sign: L("Unterschrift zeichnen, tippen oder laden"),
+    redact: L("Inhalte dauerhaft unkenntlich machen"),
+    organize: L("Seiten ordnen, drehen und löschen"),
+    protect: L("Passwort und Berechtigungen festlegen"),
+    'to-excel': L("Tabellen als Arbeitsblätter exportieren"),
+  };
+  const starts: [string, any, () => void][] = [
+    [L("Leeres Dokument"), I.FilePlus2, () => newBlankDoc()],
+    [L("Dateien zusammenführen"), I.Combine, () => startTask('merge')],
+    [L("Office-Datei in PDF"), I.FileText, () => startTask('create-office')],
+    [L("Bilder in PDF"), I.Images, () => startTask('create-images')],
+    [L("Stapelverarbeitung"), I.Workflow, () => startTask('batch')],
+    [L("Zwei PDFs vergleichen"), I.GitCompare, () => startTask('compare')],
+  ];
 
   async function startTask(id: string) {
     const t = tool(id);
@@ -39,27 +58,49 @@
 <div class="start scroll">
   <div class="inner">
     <header class="hero">
-      <img src="/icon.png" alt="" />
-      <div>
+      <div class="mark">
+        <img src="/icon.png" alt="" />
         <h1>Werkbank</h1>
-        <p>{L("PDFs lesen, bearbeiten, umwandeln und schützen – alles auf diesem Rechner.")}</p>
       </div>
-      {#if doc}<button class="btn" onclick={() => (app.backstage = false)}>{L("Zurück zum Dokument")}<I.ChevronRight size={14} /></button>{/if}
+      <p>{L("PDFs lesen, bearbeiten, umwandeln und schützen – alles auf diesem Rechner.")}</p>
+      {#if doc}<button class="btn back" onclick={() => (app.backstage = false)}>{L("Zurück zu „{0}“", doc.title)}<I.ChevronRight size={14} /></button>{/if}
     </header>
 
-    <section class="actions">
-      <button class="primary-tile" onclick={() => openDialog()}>
-        <span class="pi"><I.FolderOpen size={22} strokeWidth={1.6} /></span>
-        <span><b>{L("Datei öffnen")}</b><small>{L("PDF, Word, Excel, PowerPoint, Bilder, E-Books, Mails – oder einfach ins Fenster ziehen")}</small></span>
+    <section class="bench">
+      <button class="drop" class:hot={app.dropping} onclick={() => openDialog()}>
+        <span class="di"><I.FolderOpen size={26} strokeWidth={1.4} /></span>
+        <span class="dt">
+          <b>{L("Datei hierher ziehen")}</b>
+          <small>{L("PDF, Word, Excel, PowerPoint, Bilder, E-Books oder E-Mails")}</small>
+        </span>
+        <span class="btn primary open">{L("Datei öffnen")}</span>
       </button>
-      <div class="mini">
-        <button onclick={() => newBlankDoc()}><I.FilePlus2 size={16} />{L("Neues Dokument")}</button>
-        <button onclick={() => startTask('merge')}><I.Combine size={16} />{L("Dateien zusammenführen")}</button>
-        <button onclick={() => startTask('create-office')}><I.FileText size={16} />{L("Office in PDF")}</button>
-        <button onclick={() => startTask('create-images')}><I.Images size={16} />{L("Bilder in PDF")}</button>
-        <button onclick={() => startTask('batch')}><I.Workflow size={16} />{L("Stapelverarbeitung")}</button>
-        <button onclick={() => startTask('compare')}><I.GitCompare size={16} />{L("Vergleichen")}</button>
+      <nav class="starts" aria-label={L("Neu beginnen")}>
+        {#each starts as [label, Icon, run] (label)}
+          <button onclick={run}><Icon size={16} strokeWidth={1.7} /><span>{label}</span></button>
+        {/each}
+      </nav>
+    </section>
+
+    <section>
+      <div class="rhead">
+        <h2>{L("Zuletzt geöffnet")}</h2>
+        {#if app.recent.length > 6}<input class="input" type="search" placeholder={L("Filtern")} bind:value={filter} />{/if}
       </div>
+      {#if !recent.length}
+        <p class="empty">{app.recent.length ? L("Kein Dokument passt zum Filter.") : L("Noch nichts geöffnet. Was du hier öffnest, liegt beim nächsten Mal griffbereit.")}</p>
+      {:else}
+        <div class="recent">
+          {#each recent.slice(0, 18) as r (r.path)}
+            <button class="rf" onclick={() => openRecent(r.path)} oncontextmenu={e => ctx(e, r.path)} title={r.path}>
+              <span class="rt">{#if r.thumb}<img src={r.thumb} alt="" />{:else}<I.FileText size={22} />{/if}</span>
+              <span class="rn">{r.name}</span>
+              <span class="rm num">{fmtAgo(r.at)}{r.pages ? ` · ${r.pages} S.` : ''}{r.size ? ` · ${fmtSize(r.size)}` : ''}</span>
+              <span class="rd">{dirOf(r.path)}</span>
+            </button>
+          {/each}
+        </div>
+      {/if}
     </section>
 
     <section>
@@ -68,72 +109,60 @@
         {#each tasks as id (id)}
           {@const t = tool(id)}
           <button class="task" onclick={() => startTask(id)}>
-            <span class="ti"><t.icon size={18} strokeWidth={1.6} /></span>
+            <span class="ti"><t.icon size={17} strokeWidth={1.6} /></span>
             <span class="tl">{t.label}</span>
-            <span class="td">{t.desc}</span>
+            <span class="td">{SHORT[id]}</span>
           </button>
         {/each}
       </div>
-    </section>
-
-    <section>
-      <div class="rhead">
-        <h2>{L("Zuletzt geöffnet")}</h2>
-        {#if app.recent.length > 6}<input class="input sm" type="search" placeholder={L("Filtern")} bind:value={filter} />{/if}
-      </div>
-      {#if !recent.length}
-        <p class="empty">{app.recent.length ? L("Keine Treffer.") : L("Hier erscheinen deine zuletzt geöffneten Dokumente.")}</p>
-      {:else}
-        <div class="recent">
-          {#each recent.slice(0, 18) as r (r.path)}
-            <button class="rf" onclick={() => openRecent(r.path)} oncontextmenu={e => ctx(e, r.path)} title={r.path}>
-              <span class="rt">{#if r.thumb}<img src={r.thumb} alt="" />{:else}<I.FileText size={22} />{/if}</span>
-              <span class="rn">{r.name}</span>
-              <span class="rd">{dirOf(r.path)}</span>
-              <span class="rm num">{fmtAgo(r.at)}{r.pages ? ` · ${r.pages} S.` : ''}{r.size ? ` · ${fmtSize(r.size)}` : ''}</span>
-            </button>
-          {/each}
-        </div>
-      {/if}
     </section>
   </div>
 </div>
 
 <style>
-  .start { position: absolute; inset: 0; background: var(--win); }
-  .inner { max-width: 1080px; margin: 0 auto; padding: 40px 40px 56px; display: flex; flex-direction: column; gap: 34px; }
-  .hero { display: flex; align-items: center; gap: 18px; }
-  .hero img { width: 64px; height: 64px; }
-  .hero div { flex: 1; }
-  h1 { margin: 0; font: 700 28px/1.1 var(--font-display); letter-spacing: -0.02em; }
-  .hero p { margin: 5px 0 0; color: var(--text-2); font-size: 14px; }
-  h2 { margin: 0 0 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-3); }
-  .actions { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 16px; }
-  .primary-tile { display: flex; align-items: center; gap: 16px; text-align: left; padding: 20px 22px; border-radius: 14px; border: 0; background: var(--accent); color: var(--on-accent); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 30%, transparent); }
-  .primary-tile:hover { background: color-mix(in srgb, var(--accent) 92%, #000); }
-  .primary-tile .pi { width: 46px; height: 46px; border-radius: 12px; background: rgba(255, 255, 255, 0.18); display: grid; place-items: center; flex: none; }
-  .primary-tile b { display: block; font-size: 16px; font-weight: 600; margin-bottom: 3px; }
-  .primary-tile small { font-size: 12.5px; opacity: 0.88; line-height: 1.4; }
-  .mini { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  .mini button { display: flex; align-items: center; gap: 9px; border: 0; background: var(--surface); border-radius: 10px; padding: 0 12px; height: 40px; box-shadow: var(--shadow-1); font-weight: 500; color: var(--text); text-align: left; }
-  .mini button :global(svg) { color: var(--accent-text); flex: none; }
-  .mini button:hover { background: color-mix(in srgb, var(--surface) 94%, var(--text)); }
-  .tasks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-  .task { display: grid; grid-template-columns: 34px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 10px; row-gap: 3px; align-items: start; text-align: left; border: 0; background: var(--surface); border-radius: 11px; padding: 12px; box-shadow: var(--shadow-1); color: var(--text); }
-  .task:hover { box-shadow: var(--shadow-1), 0 4px 14px rgba(0, 0, 0, 0.06); transform: translateY(-1px); }
-  .task { transition: transform 0.12s, box-shadow 0.12s; }
-  .ti { grid-row: span 2; width: 34px; height: 34px; border-radius: 9px; background: var(--accent-softer); color: var(--accent-text); display: grid; place-items: center; }
-  .tl { font-weight: 600; font-size: 13px; }
-  .td { font-size: 11.5px; color: var(--text-2); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .rhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .rhead .input { width: 200px; height: 26px; margin-bottom: 10px; }
-  .empty { color: var(--text-3); margin: 0; }
-  .recent { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px 16px; }
-  .rf { border: 0; background: none; text-align: left; display: flex; flex-direction: column; gap: 3px; padding: 8px; border-radius: 10px; color: var(--text); min-width: 0; }
-  .rf:hover { background: var(--hover); }
-  .rt { aspect-ratio: 0.74; border-radius: 4px; background: var(--surface); box-shadow: var(--shadow-page); display: grid; place-items: center; overflow: hidden; color: var(--text-3); margin-bottom: 6px; }
+  .start { position: absolute; inset: 0; background: var(--bar); }
+  .inner { max-width: 1040px; margin: 0 auto; padding: 56px 48px 64px; display: flex; flex-direction: column; gap: 44px; }
+  .hero { display: grid; grid-template-columns: 1fr auto; align-items: end; row-gap: 8px; }
+  .mark { display: flex; align-items: center; gap: 14px; }
+  .mark img { width: 46px; height: 46px; filter: drop-shadow(0 2px 4px rgba(14, 28, 30, 0.18)); }
+  h1 { margin: 0; font: 650 40px/1 var(--font-display); letter-spacing: -0.035em; font-stretch: 100%; }
+  .hero p { grid-column: 1; margin: 0; color: var(--text-2); font-size: 15px; max-width: 60ch; }
+  .back { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+  h2 { margin: 0 0 14px; font: 600 15px/1.2 var(--font-display); letter-spacing: -0.01em; color: var(--text); }
+
+  /* Die Werkbank: Ablagefläche zum Hineinziehen und daneben die Einstiege */
+  .bench { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 20px; align-items: stretch; }
+  .drop { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 18px; text-align: left; min-height: 128px; padding: 24px 26px; border-radius: 16px;
+    border: 1.5px dashed color-mix(in srgb, var(--accent) 45%, var(--line-strong)); background: color-mix(in srgb, var(--accent) 4%, var(--surface)); color: var(--text);
+    transition: border-color 0.15s, background-color 0.15s, transform 0.15s var(--ease); }
+  .drop:hover, .drop.hot { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); }
+  .drop.hot { transform: scale(1.01); }
+  .di { width: 58px; height: 58px; border-radius: 15px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+  .dt b { display: block; font: 600 19px/1.2 var(--font-display); letter-spacing: -0.015em; margin-bottom: 6px; }
+  .dt small { font-size: 13px; color: var(--text-2); line-height: 1.45; }
+  .open { pointer-events: none; height: 34px; padding: 0 16px; font-size: 13px; }
+  .starts { display: flex; flex-direction: column; gap: 2px; padding: 8px; border-radius: 16px; background: var(--surface); box-shadow: var(--shadow-1); }
+  .starts button { display: flex; align-items: center; gap: 11px; border: 0; background: none; border-radius: 9px; padding: 0 11px; height: 36px; font-weight: 500; color: var(--text); text-align: left; transition: background-color 0.12s; }
+  .starts button :global(svg) { color: var(--text-2); flex: none; }
+  .starts button:hover { background: var(--hover); }
+  .starts button:hover :global(svg) { color: var(--accent); }
+
+  .rhead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .rhead .input { width: 220px; }
+  .empty { color: var(--text-3); margin: 0; font-size: 13px; }
+  .recent { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 22px 18px; }
+  .rf { border: 0; background: none; text-align: left; display: flex; flex-direction: column; gap: 2px; padding: 0; color: var(--text); min-width: 0; }
+  .rt { aspect-ratio: 0.74; border-radius: 3px; background: var(--surface); box-shadow: var(--shadow-page); display: grid; place-items: center; overflow: hidden; color: var(--text-3); margin-bottom: 10px; transition: transform 0.18s var(--ease), box-shadow 0.18s; }
+  .rf:hover .rt { transform: translateY(-3px); box-shadow: var(--shadow-page), 0 14px 26px -10px rgba(14, 28, 30, 0.3); }
   .rt img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-  .rn { font-weight: 500; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .rd, .rm { font-size: 11px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  @media (max-width: 980px) { .actions { grid-template-columns: 1fr; } .tasks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .rn { font-weight: 550; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rd, .rm { font-size: 11.25px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .tasks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 24px; }
+  .task { display: grid; grid-template-columns: 36px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 12px; align-items: center; text-align: left; border: 0; background: none; border-radius: 10px; padding: 9px 10px; color: var(--text); transition: background-color 0.12s; }
+  .task:hover { background: var(--hover); }
+  .ti { grid-row: span 2; width: 36px; height: 36px; border-radius: 10px; background: var(--surface); box-shadow: var(--shadow-1); color: var(--accent); display: grid; place-items: center; }
+  .tl { font-weight: 600; font-size: 13px; }
+  .td { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 900px) { .bench { grid-template-columns: 1fr; } .tasks { grid-template-columns: 1fr; } .inner { padding: 36px 24px; } }
 </style>

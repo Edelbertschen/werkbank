@@ -1,16 +1,17 @@
 /* Anpassung der pdf.js-Viewerdarstellung an das App-Design */
-.pdfViewer { padding: 18px 0 64px; }
+.pdfViewer { padding: 28px 0 88px; }
 .pdfViewer .page {
   border: 0 !important;
   border-image: none !important;
-  margin: 14px auto !important;
+  margin: 22px auto !important;
   box-shadow: var(--shadow-page);
+  border-radius: 2px;
   background-clip: content-box;
 }
 .pdfViewer.scrollHorizontal .page, .pdfViewer.scrollWrapped .page, .pdfViewer .spread .page { margin: 14px 8px !important; }
 .pdfViewer .spread { margin: 0 auto; }
 .pdfViewer.singlePageView .page { margin: 24px auto !important; }
-.textLayer ::selection { background: rgba(10, 108, 255, 0.28); }
+.textLayer ::selection { background: rgba(11, 110, 123, 0.26); }
 .textLayer .highlight { background-color: rgba(255, 196, 0, 0.42); border-radius: 2px; }
 .textLayer .highlight.selected { background-color: rgba(255, 120, 0, 0.6); }
 
@@ -18,10 +19,10 @@
 .vc.fieldhl .annotationLayer .textWidgetAnnotation :is(input, textarea),
 .vc.fieldhl .annotationLayer .choiceWidgetAnnotation select,
 .vc.fieldhl .annotationLayer .buttonWidgetAnnotation:is(.checkBox, .radioButton) input {
-  background-color: rgba(10, 108, 255, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(10, 108, 255, 0.35);
+  background-color: rgba(11, 110, 123, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(11, 110, 123, 0.38);
 }
-.annotationLayer .textWidgetAnnotation :is(input, textarea):focus { background-color: rgba(10, 108, 255, 0.12); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.annotationLayer .textWidgetAnnotation :is(input, textarea):focus { background-color: rgba(11, 110, 123, 0.12); box-shadow: inset 0 0 0 1.5px var(--accent); }
 
 /* Nachtmodus: nur die Anzeige */
 .app.night .pdfViewer .canvasWrapper { filter: invert(0.92) hue-rotate(180deg) brightness(0.95); }

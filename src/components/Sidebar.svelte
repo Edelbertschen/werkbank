@@ -44,10 +44,10 @@
 </aside>
 
 <style>
-  .sidebar { flex: none; display: flex; flex-direction: column; background: var(--panel); border-right: 0.5px solid var(--line); position: relative; min-height: 0; }
-  header { display: flex; align-items: center; height: 36px; padding: 0 8px 0 14px; flex: none; }
-  h2 { margin: 0; flex: 1; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); }
-  .x { width: 22px; height: 22px; border: 0; background: none; border-radius: 5px; color: var(--text-3); display: grid; place-items: center; }
+  .sidebar { flex: none; display: flex; flex-direction: column; background: var(--bar); border-radius: 12px; box-shadow: var(--shadow-1); position: relative; min-height: 0; }
+  header { display: flex; align-items: center; height: 42px; padding: 0 8px 0 16px; flex: none; }
+  h2 { margin: 0; flex: 1; font: 600 13px/1 var(--font-display); letter-spacing: -0.005em; color: var(--text); }
+  .x { width: 24px; height: 24px; border: 0; background: none; border-radius: 6px; color: var(--text-3); display: grid; place-items: center; }
   .x:hover { background: var(--hover); color: var(--text); }
   .content { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .pad { padding: 4px 12px 16px; overflow: auto; flex: 1; }

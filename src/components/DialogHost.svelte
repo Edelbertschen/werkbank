@@ -62,13 +62,13 @@
 {/if}
 
 <style>
-  .dialog-veil { position: fixed; inset: 0; z-index: 100; background: rgba(15, 18, 28, 0.28); display: grid; place-items: center; padding: 24px; animation: fade-in 0.12s; }
-  .dialog { max-width: 100%; max-height: calc(100vh - 48px); overflow: auto; background: var(--surface); border-radius: 13px; box-shadow: var(--shadow-pop); padding: 20px 20px 16px; animation: pop-in 0.14s ease-out; }
+  .dialog-veil { position: fixed; inset: 0; z-index: 100; background: rgba(10, 20, 22, 0.3); backdrop-filter: blur(3px); display: grid; place-items: center; padding: 24px; animation: fade-in 0.14s; }
+  .dialog { max-width: 100%; max-height: calc(100vh - 48px); overflow: auto; background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-pop); padding: 22px 22px 18px; animation: pop-in 0.18s var(--ease); }
   .head { display: flex; gap: 14px; align-items: flex-start; }
-  .ic { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; flex: none; background: var(--accent-softer); color: var(--accent-text); }
+  .ic { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; flex: none; background: var(--accent-soft); color: var(--accent); }
   .ic.warn { background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--warn); }
   .tx { flex: 1; min-width: 0; }
-  h2 { margin: 2px 0 6px; font: 600 15px/1.3 var(--font-display); }
+  h2 { margin: 2px 0 6px; font: 600 16.5px/1.3 var(--font-display); letter-spacing: -0.015em; }
   p { margin: 0 0 4px; color: var(--text-2); line-height: 1.5; font-size: 13px; }
   .detail { font-size: 12px; color: var(--text-3); white-space: pre-wrap; }
   .fields { margin: 16px 0 4px; }

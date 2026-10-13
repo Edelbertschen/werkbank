@@ -44,33 +44,35 @@
   <button class="search" onclick={() => (app.palette = true)} title={L("Befehl oder Werkzeug suchen")}>
     <I.Search size={13} strokeWidth={2} /><span>{L("Werkzeug suchen")}</span><kbd>{scLabel('Mod+K')}</kbd>
   </button>
+  <button class="qa gear" title={L("Einstellungen")} aria-label={L("Einstellungen")} onclick={() => openTool('settings')}><I.Settings size={15} strokeWidth={1.7} /></button>
 </header>
 
 <style>
-  .titlebar { height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: var(--win); border-bottom: 0.5px solid var(--line); min-width: 0; }
-  .titlebar.mac { padding-left: 80px; height: 38px; }
-  .quick { display: flex; align-items: center; gap: 1px; flex: none; }
-  .brand { width: 26px; height: 26px; border-radius: 7px; border: 0; padding: 3px; background: none; margin-right: 6px; display: grid; place-items: center; }
-  .brand img { width: 20px; height: 20px; }
+  .titlebar { height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px; background: var(--win); min-width: 0; }
+  .titlebar.mac { padding-left: 82px; height: 42px; }
+  .quick { display: flex; align-items: center; gap: 2px; flex: none; }
+  .brand { width: 28px; height: 28px; border-radius: 8px; border: 0; padding: 3px; background: none; margin-right: 6px; display: grid; place-items: center; transition: background-color 0.12s; }
+  .brand img { width: 21px; height: 21px; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.12)); }
   .brand:hover, .brand.on { background: var(--hover); }
-  .qa { width: 26px; height: 26px; border: 0; background: none; border-radius: 6px; display: grid; place-items: center; color: var(--text-2); }
+  .qa { width: 28px; height: 28px; border: 0; background: none; border-radius: 7px; display: grid; place-items: center; color: var(--text-2); transition: background-color 0.12s, color 0.12s; }
   .qa:hover:not(:disabled) { background: var(--hover); color: var(--text); }
-  .qa:disabled { opacity: 0.35; }
-  .tabs { flex: 1; display: flex; align-items: center; gap: 3px; min-width: 0; overflow-x: auto; scrollbar-width: none; height: 100%; padding: 0 4px; }
+  .qa:disabled { opacity: 0.32; }
+  /* Dokument-Reiter: der aktive liegt als Blatt auf dem Chrom */
+  .tabs { flex: 1; display: flex; align-items: center; gap: 4px; min-width: 0; overflow-x: auto; scrollbar-width: none; height: 100%; padding: 0 6px; }
   .tabs::-webkit-scrollbar { display: none; }
-  .tab { display: flex; align-items: center; gap: 6px; height: 27px; padding: 0 6px 0 11px; border-radius: 7px; min-width: 0; max-width: 220px; flex: 0 1 auto; color: var(--text-2); font-weight: 500; position: relative; }
+  .tab { display: flex; align-items: center; gap: 7px; height: 30px; padding: 0 6px 0 12px; border-radius: 8px; min-width: 0; max-width: 240px; flex: 0 1 auto; color: var(--text-2); font-weight: 550; position: relative; transition: background-color 0.12s, color 0.12s; }
   .tab:hover { background: var(--hover); color: var(--text); }
-  .tab.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow-1); }
+  .tab.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow-2); }
   .tab .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-  .tab .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); flex: none; }
-  .tab .x { width: 18px; height: 18px; border: 0; background: none; border-radius: 4px; display: grid; place-items: center; color: var(--text-3); flex: none; opacity: 0; }
+  .tab .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; box-shadow: 0 0 0 2px var(--accent-soft); }
+  .tab .x { width: 20px; height: 20px; border: 0; background: none; border-radius: 5px; display: grid; place-items: center; color: var(--text-3); flex: none; opacity: 0; transition: opacity 0.12s; }
   .tab:hover .x, .tab.active .x { opacity: 1; }
   .tab .x:hover { background: var(--pressed); color: var(--text); }
-  .newtab { width: 24px; height: 24px; border: 0; background: none; border-radius: 6px; color: var(--text-2); display: grid; place-items: center; flex: none; }
+  .newtab { width: 26px; height: 26px; border: 0; background: none; border-radius: 7px; color: var(--text-2); display: grid; place-items: center; flex: none; }
   .newtab:hover { background: var(--hover); color: var(--text); }
-  .search { flex: none; display: flex; align-items: center; gap: 7px; height: 26px; padding: 0 8px 0 9px; border-radius: 7px; border: 0.5px solid var(--line); background: var(--surface); color: var(--text-3); width: 210px; }
-  .search span { flex: 1; text-align: left; font-size: 12px; }
-  .search kbd { font: 11px var(--font); color: var(--text-3); }
-  .search:hover { border-color: var(--line-strong); color: var(--text-2); }
+  .search { flex: none; display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 8px 0 10px; border-radius: 9px; border: 0; background: var(--hover); color: var(--text-3); width: 240px; transition: background-color 0.12s, box-shadow 0.12s; }
+  .search span { flex: 1; text-align: left; font-size: 12.5px; }
+  .search kbd { font: 500 11px var(--font); color: var(--text-3); padding: 1px 6px; border-radius: 5px; background: var(--surface); box-shadow: var(--shadow-1); }
+  .search:hover { background: var(--surface); box-shadow: var(--shadow-1); color: var(--text-2); }
   @media (max-width: 1050px) { .search { width: auto; } .search span, .search kbd { display: none; } }
 </style>

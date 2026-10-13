@@ -125,7 +125,8 @@
 <div class="app" class:presenting={viewer.presenting} class:night={app.prefs.nightReading}>
   {#if !viewer.presenting}
     <TitleBar />
-    <Ribbon />
+    <!-- Ohne Dokument hat die Bandleiste nichts zu tun: die Startseite bietet die Einstiege -->
+    {#if doc}<Ribbon />{:else}<div class="ribbon-gap"></div>{/if}
   {/if}
   <div class="work">
     {#if doc && !viewer.presenting}<Rail />{/if}
@@ -159,13 +160,17 @@
 <style>
   .app { height: 100%; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; background: var(--win); }
   .app.presenting { grid-template-rows: minmax(0, 1fr); background: #000; }
-  .work { display: flex; min-height: 0; min-width: 0; }
-  .center { flex: 1; position: relative; min-width: 0; min-height: 0; background: var(--canvas); }
+  /* Arbeitsbereich: Seitenleiste, Dokumentfläche und Aufgabenbereich liegen als Blätter auf dem Fensterchrom */
+  .ribbon-gap { height: 4px; }
+  .work { display: flex; gap: 8px; padding: 0 8px 0 0; min-height: 0; min-width: 0; }
+  .center { flex: 1; position: relative; min-width: 0; min-height: 0; background: var(--canvas); border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 0 0.5px var(--line); }
+  .work:not(:has(:global(.rail))) { padding-left: 8px; }
   .viewer-area { position: absolute; inset: 0; }
   .viewer-area.hidden { visibility: hidden; pointer-events: none; }
-  .presenting .center { background: #000; }
-  .drop-veil { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: color-mix(in srgb, var(--win) 55%, transparent); backdrop-filter: blur(3px); animation: fade-in 0.12s; pointer-events: none; }
-  .drop-card { border: 2px dashed var(--accent); border-radius: 16px; padding: 34px 48px; background: var(--surface); font: 600 17px var(--font-display); display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: var(--shadow-pop); }
+  .presenting .center { background: #000; border-radius: 0; }
+  .presenting .work { padding: 0; gap: 0; }
+  .drop-veil { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: color-mix(in srgb, var(--win) 60%, transparent); backdrop-filter: blur(6px) saturate(1.2); animation: fade-in 0.14s; pointer-events: none; }
+  .drop-card { border: 1.5px dashed var(--accent); border-radius: 18px; padding: 36px 56px; background: var(--surface); font: 600 19px var(--font-display); letter-spacing: -0.015em; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: var(--shadow-pop); animation: pop-in 0.18s var(--ease); }
   .insert-line { position: fixed; z-index: 80; pointer-events: none; height: 3px; margin-top: -1.5px; border-radius: 2px; background: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent); }
   .insert-line.v { width: 3px; height: auto; margin: 0 0 0 -1.5px; }
   .insert-line span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; padding: 3px 9px; border-radius: 999px; background: var(--accent); color: #fff; font: 600 11.5px var(--font); box-shadow: var(--shadow-pop); }

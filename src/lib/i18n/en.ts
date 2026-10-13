@@ -1417,6 +1417,23 @@ const en: Record<string, string> = {
  "Unterstrichen": "Underline",
  "Zeilenabstand": "Line spacing",
  "Abstand": "Spacing",
- "Formatierung entfernen": "Clear formatting"
+ "Formatierung entfernen": "Clear formatting",
+ "Bearbeitbare Word-Datei mit Absätzen und Tabellen": "Editable Word file with paragraphs and tables",
+ "Datei verkleinern, Text bleibt durchsuchbar": "Make the file smaller, text stays searchable",
+ "Scans durchsuchbar und kopierbar machen": "Make scans searchable and copyable",
+ "Unterschrift zeichnen, tippen oder laden": "Draw, type or load a signature",
+ "Inhalte dauerhaft unkenntlich machen": "Remove content permanently",
+ "Seiten ordnen, drehen und löschen": "Reorder, rotate and delete pages",
+ "Passwort und Berechtigungen festlegen": "Set a password and permissions",
+ "Tabellen als Arbeitsblätter exportieren": "Export tables as worksheets",
+ "Leeres Dokument": "Blank document",
+ "Office-Datei in PDF": "Office file to PDF",
+ "Zwei PDFs vergleichen": "Compare two PDFs",
+ "Zurück zu „{0}“": "Back to “{0}”",
+ "Datei hierher ziehen": "Drag a file here",
+ "PDF, Word, Excel, PowerPoint, Bilder, E-Books oder E-Mails": "PDF, Word, Excel, PowerPoint, images, e-books or emails",
+ "Neu beginnen": "Start new",
+ "Kein Dokument passt zum Filter.": "No document matches the filter.",
+ "Noch nichts geöffnet. Was du hier öffnest, liegt beim nächsten Mal griffbereit.": "Nothing opened yet. Whatever you open here will be ready next time."
 };
 export default en;

@@ -23,8 +23,8 @@
 </nav>
 
 <style>
-  .rail { width: 42px; flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; background: var(--panel); border-right: 0.5px solid var(--line); }
-  button { width: 30px; height: 30px; border: 0; background: none; border-radius: 7px; display: grid; place-items: center; color: var(--text-2); }
+  .rail { width: 46px; flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; background: var(--win); }
+  button { width: 32px; height: 32px; border: 0; background: none; border-radius: 9px; display: grid; place-items: center; color: var(--text-2); position: relative; transition: background-color 0.12s, color 0.12s; }
   button:hover { background: var(--hover); color: var(--text); }
-  button.on { background: var(--accent-soft); color: var(--accent-text); }
+  button.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-1); }
 </style>
