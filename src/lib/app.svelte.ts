@@ -34,6 +34,7 @@ export interface Prefs {
   quickAccess: string[];
   showFieldHighlight: boolean;
   preloadEngines: boolean;
+  hiddenTabs: RibbonTab[];
 }
 
 const defaultPrefs: Prefs = {
@@ -51,6 +52,7 @@ const defaultPrefs: Prefs = {
   quickAccess: ['open', 'save', 'undo', 'redo', 'print'],
   showFieldHighlight: true,
   preloadEngines: true,
+  hiddenTabs: [],
 };
 
 export const app = $state({

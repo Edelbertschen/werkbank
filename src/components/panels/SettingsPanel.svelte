@@ -2,6 +2,7 @@
   import { app, savePrefs, saveRecent, applyTheme, toast } from '../../lib/app.svelte';
   import { OCR_LANGS } from '../../lib/tools/optimize';
   import { TOOLS } from '../../lib/tools';
+  import { RIBBON, ESSENTIAL_HIDDEN } from '../../lib/ribbon';
   import { warmPy, warmLibreOffice, resetEngines } from '../../lib/engines';
   import { openExternal, os, officeInfo, isTauri } from '../../lib/platform';
   import * as I from '../../lib/icons';
@@ -73,6 +74,21 @@
       {/each}
     </div>
     <p class="hint">Standardsprachen für neue Texterkennungen. Die Sprachdaten sind in der App enthalten, es wird nichts heruntergeladen.</p>
+  </section>
+
+  <section>
+    <h3>Bandleiste</h3>
+    <div class="chips">
+      {#each RIBBON as t (t.id)}
+        {@const shown = t.id === 'start' || !p.hiddenTabs.includes(t.id)}
+        <button class="chip" class:on={shown} disabled={t.id === 'start'} onclick={() => set('hiddenTabs', shown ? [...p.hiddenTabs, t.id] : p.hiddenTabs.filter(x => x !== t.id))}>{#if shown}<I.Check size={12} />{/if}{t.label}</button>
+      {/each}
+    </div>
+    <div class="btns">
+      <button class="btn sm" onclick={() => set('hiddenTabs', [...ESSENTIAL_HIDDEN])}>Nur das Wichtigste</button>
+      <button class="btn sm ghost" disabled={!p.hiddenTabs.length} onclick={() => set('hiddenTabs', [])}>Alle zeigen</button>
+    </div>
+    <p class="hint">Ausgeblendete Werkzeuge bleiben über die Befehlssuche (Strg+K) erreichbar. Rechtsklick auf eine Registerkarte blendet sie direkt aus.</p>
   </section>
 
   <section>

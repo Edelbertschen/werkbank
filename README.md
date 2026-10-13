@@ -48,6 +48,17 @@ npx tauri build        # Installationspakete bauen
 npm run check          # Typprüfung
 ```
 
+## Tests
+
+Testgetrieben im Chicago-Stil: Die Tests prüfen das Ergebnis echter Abläufe mit echten Bausteinen (pdf-lib, pdf.js, WebAssembly-Engines) statt Attrappen.
+
+```bash
+npm test           # Kernlogik: Seitenwerkzeuge, Verlauf, Overlay, Textbearbeitung, Suche (Vitest)
+npm run test:e2e   # Oberfläche und Engines im echten Chromium gegen den Produktions-Build (Playwright)
+```
+
+Der Korpus schwieriger PDFs in `tests/fixtures` (verschlüsselt, beschädigt, gedreht, gemischte Formate, Formulare, Scan, Unicode …) entsteht mit `scripts/make-corpus.py`. Der Workflow `.github/workflows/test.yml` führt alles bei jedem Push aus.
+
 Pakete für alle Systeme baut der Workflow `.github/workflows/release.yml` (Tag `v*` pushen oder manuell starten). Ergebnis: `.dmg` (macOS, Universal), `.msi`/`.exe` (Windows), `.deb`/`.rpm`/`.AppImage` (Linux).
 
 ## Lizenz

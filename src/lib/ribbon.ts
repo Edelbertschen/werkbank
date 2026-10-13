@@ -96,3 +96,14 @@ export const RIBBON: RibbonTabDef[] = [
 ];
 
 export const RIBBON_LABEL: Record<RibbonTab, string> = Object.fromEntries(RIBBON.map(t => [t.id, t.label])) as any;
+
+/** Registerkarten, die „Nur das Wichtigste“ ausblendet (bleiben über Strg+K erreichbar) */
+export const ESSENTIAL_HIDDEN: RibbonTab[] = ['forms', 'optimize', 'analyze'];
+
+/** Sichtbare Registerkarten; Start lässt sich nicht ausblenden */
+export function visibleTabs(hidden: string[]): RibbonTabDef[] {
+  return RIBBON.filter(t => t.id === 'start' || !hidden.includes(t.id));
+}
+export function effectiveTab(tab: RibbonTab, hidden: string[]): RibbonTab {
+  return tab !== 'start' && hidden.includes(tab) ? 'start' : tab;
+}

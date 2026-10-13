@@ -74,7 +74,7 @@
             <button type="button" aria-pressed={v.mode === 'sel'} disabled={!doc?.selection.length} onclick={() => (v.mode = 'sel')}>Auswahl ({doc?.selection.length || 0})</button>
             <button type="button" aria-pressed={v.mode === 'range'} onclick={() => (v.mode = 'range')}>Bereich</button>
           </div>
-          {#if v.mode === 'range'}<input class="input" placeholder="z. B. 1-3, 5, 8- oder ungerade" bind:value={v.range} aria-label="Seitenbereich" />{/if}
+          {#if v.mode === 'range'}<input class="input" placeholder="z. B. 1-3, 5, 8-letzte oder ungerade" bind:value={v.range} aria-label="Seitenbereich" />{/if}
           {#if v.mode === 'sel' && !doc?.selection.length}<p class="hint">Keine Seiten markiert – es wird die aktuelle Seite verwendet.</p>{/if}
         {:else if f.type === 'position'}
           <div class="pos" role="radiogroup" aria-label={f.label}>

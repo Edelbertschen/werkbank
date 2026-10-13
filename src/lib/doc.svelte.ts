@@ -6,6 +6,12 @@ export interface PageInfo { w: number; h: number; rot: number }
 export interface Protection { user: string; owner: string; print: boolean; copy: boolean; forms: boolean; annotate: boolean; modify: boolean }
 interface Version { bytes: Uint8Array; label: string; at: number }
 
+/** pdf.js-Dokument verzögert schließen: sofortiges destroy() lässt laufende Render-Aufträge mit
+ *  „UnknownErrorException“ abbrechen, weil Viewer und Miniaturen noch kurz darauf zugreifen. */
+function retire(pdf: PDFDocumentProxy) {
+  setTimeout(() => { try { void pdf.destroy().catch(() => {}); } catch { /* egal */ } }, 3000);
+}
+
 const MAX_VERSIONS = 30;
 const MAX_HISTORY_BYTES = 600 * 1024 * 1024;
 
@@ -79,7 +85,8 @@ export class Doc {
     this.selection = this.selection.filter(i => i < pages.length);
     this.current = Math.min(Math.max(1, this.current), pages.length || 1);
     this.rev++;
-    if (old) setTimeout(() => old.destroy(), 200);
+    // Alte Fassung erst freigeben, wenn laufende Darstellungen (Viewer, Miniaturen) sicher fertig sind
+    if (old) retire(old);
   }
 
   /** Neuen Stand übernehmen */
@@ -133,5 +140,5 @@ export class Doc {
     return url;
   }
 
-  destroy() { try { this.pdf?.destroy(); } catch { /* egal */ } this.history = []; }
+  destroy() { if (this.pdf) retire(this.pdf); this.history = []; this.thumbs.clear(); }
 }

@@ -214,8 +214,22 @@ for it in items:
         page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_REDACT_LINE_ART_NONE)
         ff = '/w/sansb.ttf' if it.get('bold') else '/w/sans.ttf'
         fname = 'WerkbankSansB' if it.get('bold') else 'WerkbankSans'
-        base = P(page, it['x'], it['y'] + it['h'] * 0.80)
-        page.insert_text(base, it['text'], fontsize=it['size'], fontname=fname, fontfile=ff, color=it['colorRgb'], rotate=page.rotation)
+        if it.get('multi'):
+            # Absatz: neu umbrechen. Passt der Text nicht, erst leicht verkleinern, dann den Kasten nach unten verlängern.
+            size = it['size']
+            lh = max(1.0, min(2.2, it.get('lineHeight', size * 1.2) / size))
+            placed = False
+            for f in (1.0, 0.95, 0.9, 0.85):
+                rc = page.insert_textbox(r, it['text'], fontsize=size * f, fontname=fname, fontfile=ff, color=it['colorRgb'], rotate=page.rotation, lineheight=lh)
+                if rc >= 0:
+                    placed = True
+                    break
+            if not placed:
+                grow = R(page, it['x'], it['y'], it['w'], min(1 - it['y'], it['h'] * 3))
+                page.insert_textbox(grow, it['text'], fontsize=size * 0.85, fontname=fname, fontfile=ff, color=it['colorRgb'], rotate=page.rotation, lineheight=lh)
+        else:
+            base = P(page, it['x'], it['y'] + it['h'] * 0.80)
+            page.insert_text(base, it['text'], fontsize=it['size'], fontname=fname, fontfile=ff, color=it['colorRgb'], rotate=page.rotation)
 for pno in redact_pages:
     doc[pno].apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_PIXELS)
 if any(it['kind'] == 'textedit' for it in items):

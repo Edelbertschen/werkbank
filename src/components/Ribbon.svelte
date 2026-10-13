@@ -1,6 +1,8 @@
 <script lang="ts">
   import { app, active, savePrefs, type RibbonTab } from '../lib/app.svelte';
-  import { RIBBON, type RibbonItem } from '../lib/ribbon';
+  import { RIBBON, visibleTabs, effectiveTab, type RibbonItem } from '../lib/ribbon';
+  import { showMenu } from '../lib/menu.svelte';
+  import { openTool } from '../lib/ui.svelte';
   import RibbonButton from './RibbonButton.svelte';
   import ZoomField from './ZoomField.svelte';
   import StyleControls from './StyleControls.svelte';
@@ -10,7 +12,15 @@
 
   const doc = $derived(active());
   const collapsed = $derived(app.prefs.ribbonCollapsed && !app.ribbonPeek);
-  const tabDef = $derived(RIBBON.find(t => t.id === app.tab) || RIBBON[0]);
+  const tabs = $derived(visibleTabs(app.prefs.hiddenTabs || []));
+  const tabDef = $derived(RIBBON.find(t => t.id === effectiveTab(app.tab, app.prefs.hiddenTabs || [])) || RIBBON[0]);
+  function tabMenu(e: MouseEvent, id: RibbonTab, label: string) {
+    showMenu(e, [
+      ...(id !== 'start' ? [{ label: `„${label}“ ausblenden`, run: () => { app.prefs.hiddenTabs = [...(app.prefs.hiddenTabs || []), id]; if (app.tab === id) app.tab = 'start'; savePrefs(); } }] : []),
+      ...((app.prefs.hiddenTabs || []).length ? [{ label: 'Alle Registerkarten zeigen', run: () => { app.prefs.hiddenTabs = []; savePrefs(); } }] : []),
+      { label: 'Bandleiste anpassen …', run: () => openTool('settings') },
+    ]);
+  }
 
   function pickTab(id: RibbonTab) {
     if (app.backstage) app.backstage = false;
@@ -91,8 +101,8 @@
 
 <div class="ribbon" class:collapsed class:peek={app.ribbonPeek}>
   <div class="tabrow" role="tablist">
-    {#each RIBBON as t (t.id)}
-      <button role="tab" class="rtab" class:on={app.tab === t.id && !app.backstage} aria-selected={app.tab === t.id} onclick={() => pickTab(t.id)} ondblclick={toggleCollapse}>{t.label}</button>
+    {#each tabs as t (t.id)}
+      <button role="tab" class="rtab" class:on={tabDef.id === t.id && !app.backstage} aria-selected={tabDef.id === t.id} onclick={() => pickTab(t.id)} ondblclick={toggleCollapse} oncontextmenu={e => tabMenu(e, t.id, t.label)}>{t.label}</button>
     {/each}
     <span class="spacer"></span>
     {#if doc && (app.mode !== 'select' && app.mode !== 'hand')}

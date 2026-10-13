@@ -203,12 +203,23 @@ export const pageTools: Tool[] = [
   },
   {
     id: 'alternate', label: 'Vorder- und Rückseiten mischen', short: 'Duplex mischen', icon: I.Shuffle, desc: 'Getrennt gescannte Vorder- und Rückseiten abwechselnd verzahnen.', keys: 'duplex reißverschluss abwechselnd',
-    fields: [{ key: 'src', type: 'doc', label: 'Rückseiten aus' }, { key: 'rev', type: 'check', label: 'Rückseiten in umgekehrter Reihenfolge (Stapel umgedreht gescannt)', def: true }],
+    fields: [{ key: 'src', type: 'doc', label: 'Rückseiten aus', hint: 'Leer lassen, wenn Vorder- und Rückseiten in diesem Dokument nacheinander liegen (erst alle Vorder-, dann alle Rückseiten).' }, { key: 'rev', type: 'check', label: 'Rückseiten in umgekehrter Reihenfolge (Stapel umgedreht gescannt)', def: true }],
     action: 'Mischen',
     run: async (v, ctx) => {
-      if (!v.src) throw new Error('Bitte das Dokument mit den Rückseiten wählen');
-      const a = await plLoad(ctx.bytes); const b = await plLoad(await refBytes(v.src)); const out = await PDFDocument.create();
-      const A = await out.copyPages(a, a.getPageIndices()); let B = await out.copyPages(b, b.getPageIndices()); if (v.rev) B = B.reverse();
+      const a = await plLoad(ctx.bytes); const out = await PDFDocument.create();
+      let A, B;
+      if (v.src) {
+        const b = await plLoad(await refBytes(v.src));
+        A = await out.copyPages(a, a.getPageIndices()); B = await out.copyPages(b, b.getPageIndices());
+      } else {
+        // Ein Dokument: erste Hälfte Vorderseiten, zweite Hälfte Rückseiten
+        const n = a.getPageCount();
+        if (n < 2) throw new Error('Das Dokument hat zu wenige Seiten zum Mischen');
+        const half = Math.ceil(n / 2);
+        const all = await out.copyPages(a, a.getPageIndices());
+        A = all.slice(0, half); B = all.slice(half);
+      }
+      if (v.rev) B = B.reverse();
       for (let i = 0; i < Math.max(A.length, B.length); i++) { if (A[i]) out.addPage(A[i]); if (B[i]) out.addPage(B[i]); }
       return { bytes: await out.save({ useObjectStreams: true }), label: 'Vorder- und Rückseiten gemischt' };
     },
@@ -369,7 +380,7 @@ export const pageTools: Tool[] = [
   },
   // ---------------- Kennzeichnen ----------------
   {
-    id: 'page-numbers', label: 'Seitenzahlen', short: 'Seitenzahlen', icon: I.Hash, desc: 'Seiten nummerieren – Position, Format, Startwert und Schrift frei wählbar.', keys: 'paginierung nummerieren',
+    id: 'page-numbers', label: 'Seitenzahlen', short: 'Seitenzahlen', icon: I.Hash, desc: 'Seiten nummerieren – Position, Format, Startwert und Schrift frei wählbar.', keys: 'paginierung nummerieren seitenzahlen einfügen paginieren',
     fields: [
       { key: 'pos', type: 'position', label: 'Position', def: 'bc' },
       { key: 'fmt', type: 'select', label: 'Format', opts: [['{n}', '1'], ['Seite {n}', 'Seite 1'], ['Seite {n} von {N}', 'Seite 1 von 9'], ['{n} / {N}', '1 / 9'], ['– {n} –', '– 1 –'], ['{r}', 'i, ii, iii'], ['{R}', 'I, II, III']], def: 'Seite {n} von {N}' },

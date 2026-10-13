@@ -4,6 +4,7 @@
   import { overlay, itemsOf, addItem, removeItem, type OItem } from '../lib/overlay.svelte';
   import { dialog } from '../lib/dialogs.svelte';
   import * as I from '../lib/icons';
+  import { groupLines, paragraphAt, type Box } from '../lib/textedit';
 
   let { index }: { index: number } = $props();
   let host: HTMLDivElement;
@@ -113,24 +114,21 @@
     const pageEl = (host.closest('.page') as HTMLElement) || host.parentElement!;
     const spans = Array.from(pageEl.querySelectorAll('.textLayer span')) as HTMLElement[];
     const hr = host.getBoundingClientRect();
-    const hit = spans.find(s => { const r = s.getBoundingClientRect(); return r.width > 0 && e.clientX >= r.left - 2 && e.clientX <= r.right + 2 && e.clientY >= r.top - 2 && e.clientY <= r.bottom + 2; });
-    if (!hit || !doc) return;
-    const hr0 = hit.getBoundingClientRect();
-    const line = spans.map(s => ({ s, r: s.getBoundingClientRect() })).filter(({ r }) => r.width > 0 && Math.abs((r.top + r.bottom) / 2 - (hr0.top + hr0.bottom) / 2) < hr0.height * 0.45).sort((a, b) => a.r.left - b.r.left);
-    // zusammenhängender Abschnitt um den Treffer
-    const iHit = line.findIndex(x => x.s === hit);
-    let a = iHit, b = iHit;
-    while (a > 0 && line[a].r.left - line[a - 1].r.right < hr0.height * 1.4) a--;
-    while (b < line.length - 1 && line[b + 1].r.left - line[b].r.right < hr0.height * 1.4) b++;
-    const seg = line.slice(a, b + 1);
-    let text = '';
-    seg.forEach((x, i) => { if (i > 0 && x.r.left - seg[i - 1].r.right > hr0.height * 0.18 && !text.endsWith(' ') && !x.s.textContent!.startsWith(' ')) text += ' '; text += x.s.textContent; });
-    const left = Math.min(...seg.map(x => x.r.left)), right = Math.max(...seg.map(x => x.r.right));
-    const top = Math.min(...seg.map(x => x.r.top)), bottom = Math.max(...seg.map(x => x.r.bottom));
-    const sizePt = (bottom - top) / k * 0.92;
+    const boxes: (Box & { el: HTMLElement })[] = spans.map(s => { const r = s.getBoundingClientRect(); return { el: s, text: s.textContent || '', left: r.left, right: r.right, top: r.top, bottom: r.bottom }; }).filter(b => b.right - b.left > 0 && b.text.trim());
+    const lines = groupLines(boxes);
+    const iHit = lines.findIndex(l => e.clientX >= l.left - 2 && e.clientX <= l.right + 2 && e.clientY >= l.top - 2 && e.clientY <= l.bottom + 2);
+    if (iHit < 0 || !doc) return;
+    // Ganzer Absatz, damit der Text beim Ändern neu umbrechen kann; einzelne Zeilen (Überschriften) bleiben einzeilig
+    const para = paragraphAt(lines, iHit);
+    const multi = para.lines.length > 1;
+    const { left, right, top, bottom } = multi ? para.box : lines[iHit];
+    const text = multi ? para.box.text : lines[iHit].text;
+    const lineH = multi ? para.lineHeight : bottom - top;
+    const glyphH = Math.min(...(multi ? para.lines : [lines[iHit]]).map(l => l.height));
+    const sizePt = glyphH / k * 0.92;
     // Textfarbe aus dem Seitenbild schätzen
     const color = await sampleColor(pageEl, left, top, right, bottom);
-    const it = addItem(doc, { page: index, kind: 'textedit', x: (left - hr.left) / hr.width, y: (top - hr.top) / hr.height, w: (right - left) / hr.width, h: (bottom - top) / hr.height, text: text.trim(), orig: text.trim(), size: Math.max(4, Math.round(sizePt * 10) / 10), color, bold: false } as any);
+    const it = addItem(doc, { page: index, kind: 'textedit', x: (left - hr.left) / hr.width, y: (top - hr.top) / hr.height, w: (right - left) / hr.width, h: (bottom - top) / hr.height, text, orig: text, size: Math.max(4, Math.round(sizePt * 10) / 10), color, bold: false, multi, lineHeight: lineH / k } as any);
     overlay.editing = it.id;
     await tick(); focusText(it.id, true);
   }
@@ -247,7 +245,7 @@
     {:else}
       {@const box = it as any}
       <div class="item {it.kind}" class:sel data-id={it.id}
-        style:left={box.x * 100 + '%'} style:top={box.y * 100 + '%'} style:width={box.w * 100 + '%'} style:height={it.kind === 'text' ? 'auto' : box.h * 100 + '%'}
+        style:left={box.x * 100 + '%'} style:top={box.y * 100 + '%'} style:width={box.w * 100 + '%'} style:height={it.kind === 'text' || box.multi ? 'auto' : box.h * 100 + '%'} style:min-height={box.multi ? box.h * 100 + '%' : null}
         onpointerdown={e => startDrag(e, it, 'move')} ondblclick={() => edit(it)} role="presentation">
         {#if it.kind === 'rect'}
           <div class="fillbox" style:border={`${Math.max(1, it.width * k)}px solid ${it.stroke}`} style:background={it.fill === 'transparent' ? 'none' : it.fill + '55'} style:opacity={it.opacity}></div>
@@ -266,7 +264,8 @@
         {:else if it.kind === 'text' || it.kind === 'textedit'}
           {#if it.kind === 'textedit'}<div class="cover"></div>{/if}
           <div class="tx" contenteditable="true" spellcheck="false" role="textbox" tabindex="0"
-            style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:line-height={it.kind === 'textedit' ? box.h * page!.h * k + 'px' : 1.2}
+            style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:line-height={it.kind === 'textedit' ? ((it as any).multi ? (it as any).lineHeight * k : box.h * page!.h * k) + 'px' : 1.2}
+            class:multi={(it as any).multi}
             onpointerdown={e => { e.stopPropagation(); overlay.selected = it.id; }}
             onfocus={() => { overlay.selected = it.id; overlay.editing = it.id; }}
             oninput={e => { it.text = (e.target as HTMLElement).innerText.replace(/\n$/, ''); }}
@@ -316,6 +315,7 @@
   .cover { position: absolute; inset: -1px -2px; background: #fff; }
   .tx { position: relative; outline: none; white-space: pre-wrap; word-break: break-word; font-family: "Liberation Sans", Arial, Helvetica, sans-serif; line-height: 1.2; min-height: 1em; cursor: text; }
   .item.textedit .tx { white-space: nowrap; }
+  .item.textedit .tx.multi { white-space: pre-wrap; overflow-wrap: anywhere; width: 100%; }
   .item.text .tx:empty::before { content: 'Text eingeben'; color: rgba(0, 0, 0, 0.35); }
   .tools { position: absolute; bottom: calc(100% + 8px); left: -2px; display: flex; align-items: center; gap: 1px; padding: 2px; background: var(--surface); border-radius: 7px; box-shadow: var(--shadow-pop); z-index: 3; white-space: nowrap; }
   .tools button { border: 0; background: none; height: 22px; min-width: 24px; padding: 0 5px; border-radius: 5px; font-size: 11.5px; color: var(--text); display: grid; place-items: center; }

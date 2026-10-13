@@ -1,6 +1,6 @@
 <script lang="ts">
   import { app, active } from '../lib/app.svelte';
-  import { TOOLS } from '../lib/tools';
+  import { searchTools } from '../lib/search';
   import { RIBBON } from '../lib/ribbon';
   import { openTool } from '../lib/ui.svelte';
   import { label as scLabel } from '../lib/shortcuts';
@@ -16,18 +16,7 @@
   const tabOf = new Map<string, string>();
   for (const t of RIBBON) for (const g of t.groups) for (const it of g.items) { const id = typeof it === 'string' ? it : 'id' in it ? it.id : ''; if (id && !tabOf.has(id)) tabOf.set(id, t.label); }
 
-  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-  const results = $derived.by(() => {
-    const words = norm(q).split(/\s+/).filter(Boolean);
-    const list = TOOLS.filter(t => !['palette'].includes(t.id)).map(t => {
-      const hay = norm(`${t.label} ${t.short || ''} ${t.keys || ''} ${t.desc || ''} ${tabOf.get(t.id) || ''}`);
-      const label = norm(t.label);
-      let score = 0;
-      for (const w of words) { if (!hay.includes(w)) return null; score += label.startsWith(w) ? 5 : label.includes(w) ? 3 : 1; }
-      return { t, score: score + (t.noDoc || doc ? 0.5 : 0) };
-    }).filter(Boolean) as { t: (typeof TOOLS)[0]; score: number }[];
-    return list.sort((a, b) => b.score - a.score).slice(0, 40).map(x => x.t);
-  });
+  const results = $derived(searchTools(q, { hasDoc: !!doc }).slice(0, 40));
 
   $effect(() => { if (app.palette) { q = ''; idx = 0; tick().then(() => input?.focus()); } });
   $effect(() => { q; idx = 0; });

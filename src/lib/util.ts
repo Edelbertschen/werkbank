@@ -5,8 +5,10 @@ export const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b
 export const MM = 72 / 25.4;
 export const mm = (pt: number) => Math.round(pt / MM);
 
-export const baseName = (n: string) => String(n || 'Dokument').replace(/\.[a-z0-9]{1,5}$/i, '');
-export const extOf = (n: string) => (String(n).match(/\.([a-z0-9]{1,5})$/i)?.[1] || '').toLowerCase();
+// Endung = 1–5 Zeichen mit mindestens einem Buchstaben („Version 1.2“ hat keine Endung)
+const EXT = /\.((?=[a-z0-9]*[a-z])[a-z0-9]{1,5})$/i;
+export const baseName = (n: string) => String(n || 'Dokument').replace(EXT, '');
+export const extOf = (n: string) => (String(n).match(EXT)?.[1] || '').toLowerCase();
 export const withExt = (n: string, ext: string) => baseName(n) + '.' + ext;
 
 export function fmtSize(b: number) {
@@ -34,11 +36,21 @@ export function paperName(wPt: number, hPt: number) {
 /** "1-3, 5, 8-" -> 0-basierte, sortierte Indizes */
 export function parseRange(str: string, n: number): number[] {
   const out = new Set<number>();
-  for (const part of String(str).split(/[,;\s]+/).filter(Boolean)) {
-    const m = part.match(/^(\d*)\s*[-–]\s*(\d*)$/);
-    if (m) { const a = m[1] ? +m[1] : 1, b = m[2] ? +m[2] : n; for (let k = Math.min(a, b); k <= Math.max(a, b); k++) if (k >= 1 && k <= n) out.add(k - 1); }
-    else if (/^\d+$/.test(part)) { const k = +part; if (k >= 1 && k <= n) out.add(k - 1); }
-    else if (/^ungerade$/i.test(part)) for (let k = 0; k < n; k += 2) out.add(k);
+  const missing = (k: number) => new Error(`Seite ${k} gibt es nicht – das Dokument hat ${n} Seite${n === 1 ? '' : 'n'}`);
+  // „letzte“ als Seitenzahl; Leerzeichen um Bindestriche gehören zum Bereich („1 - 3“)
+  const norm = String(str).replace(/\bletzte\b/gi, String(n)).replace(/\s*([-–])\s*/g, '$1');
+  for (const part of norm.split(/[,;\s]+/).filter(Boolean)) {
+    const m = part.match(/^(\d*)[-–](\d*)$/);
+    if (m) {
+      const a = m[1] ? +m[1] : 1, b = m[2] ? +m[2] : n;
+      const lo = Math.min(a, b), hi = Math.max(a, b);
+      if (lo > n || hi < 1) throw missing(lo > n ? lo : hi);
+      for (let k = Math.max(1, lo); k <= Math.min(n, hi); k++) out.add(k - 1);
+    } else if (/^\d+$/.test(part)) {
+      const k = +part;
+      if (k < 1 || k > n) throw missing(k);
+      out.add(k - 1);
+    } else if (/^ungerade$/i.test(part)) for (let k = 0; k < n; k += 2) out.add(k);
     else if (/^gerade$/i.test(part)) for (let k = 1; k < n; k += 2) out.add(k);
     else throw new Error(`„${part}“ ist keine gültige Seitenangabe`);
   }
@@ -65,7 +77,9 @@ export function bytesToDataUrl(b: Uint8Array, mime: string) {
   return `data:${mime};base64,${btoa(s)}`;
 }
 export function hexToRgb01(hex: string): [number, number, number] {
-  const n = parseInt(hex.replace('#', ''), 16);
+  let h = hex.replace('#', '').trim();
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const n = parseInt(h, 16);
   return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
 }
 export const isPdf = (b: Uint8Array) => b.length > 4 && b[0] === 0x25 && b[1] === 0x50 && b[2] === 0x44 && b[3] === 0x46;

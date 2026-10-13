@@ -200,3 +200,13 @@ export function adjustFilter(brightness: number, contrast: number, saturation: n
     ctx.putImageData(im, 0, 0);
   };
 }
+
+/** Ist das PDF verschlüsselt (auch nur mit Rechte-Passwort)? */
+export async function isEncryptedPdf(b: Uint8Array): Promise<boolean> {
+  try { return (await PDFDocument.load(b, { ignoreEncryption: true, updateMetadata: false, throwOnInvalidObject: false })).isEncrypted; }
+  catch {
+    // Notfalls im Rohtext nach dem Verschlüsselungs-Eintrag suchen
+    const s = new TextDecoder('latin1').decode(b.length > 65536 ? new Uint8Array([...b.subarray(0, 32768), ...b.subarray(b.length - 32768)]) : b);
+    return /\/Encrypt\s*(<<|\d+\s+\d+\s+R)/.test(s);
+  }
+}

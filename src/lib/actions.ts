@@ -5,6 +5,7 @@ import { PasswordNeeded, openPdf } from './pdf';
 import { askPassword, confirm, dialog } from './dialogs.svelte';
 import { anyToPdf, kindOf, hasPdfHeader } from './convert';
 import { qpdf } from './engines';
+import { isEncryptedPdf } from './ops';
 import * as P from './platform';
 import { baseName, extOf, sleep, fmtSize } from './util';
 import { defaults } from './fields';
@@ -95,13 +96,7 @@ export async function openBytes(name: string, bytes: Uint8Array, path: string | 
   });
 }
 
-async function isEncrypted(b: Uint8Array) {
-  // Schnelltest: /Encrypt im Trailer
-  const tail = new TextDecoder('latin1').decode(b.subarray(Math.max(0, b.length - 4096)));
-  if (/\/Encrypt\s/.test(tail)) return true;
-  const head = new TextDecoder('latin1').decode(b.subarray(0, Math.min(b.length, 8192)));
-  return /\/Encrypt\s/.test(head);
-}
+const isEncrypted = (b: Uint8Array) => isEncryptedPdf(b);
 
 export async function openPaths(paths: string[]) {
   let last: Doc | null = null;
