@@ -36,6 +36,8 @@ Deutsch und Englisch. Die App startet in der Systemsprache; unter Einstellungen 
 | Verschlüsselung | qpdf (WebAssembly) |
 | Signaturen | zgapdfsigner, node-forge |
 
+Beim Bearbeiten von Text behält Werkbank die Schrift: Ist die Originalschrift vollständig eingebettet, wird sie wiederverwendet; sonst eine installierte Schrift gleichen Namens (sofern ihre Lizenz das Einbetten erlaubt); sonst eine metrisch passende Ersatzschrift (Helvetica, Times oder Courier im gleichen Schnitt).
+
 Ist LibreOffice installiert, nutzt Werkbank es automatisch für Office-Umwandlungen (etwa 1 Sekunde statt Startzeit der eingebauten Engine). Die PDF-Engine wird im Hintergrund vorbereitet, sobald ein Dokument offen ist.
 
 Die App liefert ihre Oberfläche über einen kleinen lokalen Server (nur `127.0.0.1`) mit Cross-Origin-Isolation aus, damit die WebAssembly-Engines mehrere Threads nutzen können.

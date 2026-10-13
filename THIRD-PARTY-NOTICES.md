@@ -36,3 +36,5 @@ Werkbank enthält oder verwendet die folgenden Komponenten. Die vollständigen L
 | Tauri und Plugins | MIT / Apache-2.0 | https://tauri.app |
 | tiny_http | MIT / Apache-2.0 | https://github.com/tiny-http/tiny-http |
 | ureq | MIT / Apache-2.0 | https://github.com/algesten/ureq |
+| fontdb, ttf-parser | MIT | https://github.com/RazrFalcon/fontdb |
+| Nimbus Sans/Roman/Mono (Ersatzschriften aus MuPDF) | AGPL-3.0 (Artifex) | https://mupdf.com |

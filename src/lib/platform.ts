@@ -218,6 +218,18 @@ export async function httpFetch(url: string, opts: { method?: string; body?: Uin
   return new Uint8Array(await invoke<ArrayBuffer>('http_fetch', opts.body || new Uint8Array(), { headers }));
 }
 
+// Installierte Schrift zum Namen einer PDF-Schrift (nur Desktop-App; Testbuilds können Schriften vorgeben)
+export async function findSystemFont(name: string, bold: boolean, italic: boolean): Promise<Uint8Array | null> {
+  if (!name) return null;
+  if (!isTauri) {
+    const fake = import.meta.env.VITE_WB_TEST ? (globalThis as any).__wbSystemFonts : null;
+    const key = name.replace(/^[A-Z]{6}\+/, '');
+    return fake?.[key] ? Uint8Array.from(atob(fake[key]), c => c.charCodeAt(0)) : null;
+  }
+  try { const b = new Uint8Array(await invoke<ArrayBuffer>('system_font', { name, bold, italic })); return b.length ? b : null; }
+  catch { return null; }
+}
+
 // Installiertes LibreOffice (nur Desktop-App)
 let officeInfoP: Promise<{ available: boolean; path?: string }> | null = null;
 export function officeInfo() {

@@ -6,6 +6,7 @@
   import { dialog } from '../lib/dialogs.svelte';
   import * as I from '../lib/icons';
   import { groupLines, paragraphAt, classifyFont, FONT_STACK, type Box, type FontStyle } from '../lib/textedit';
+  import { previewFamily } from '../lib/sysfonts';
 
   let { index }: { index: number } = $props();
   let host: HTMLDivElement;
@@ -111,7 +112,7 @@
   }
 
   // Schrift des Originals laut pdf.js (Name und Schnitt), für eine passende Vorschau
-  async function fontAt(x0: number, y0: number, x1: number, y1: number): Promise<FontStyle> {
+  async function fontAt(x0: number, y0: number, x1: number, y1: number): Promise<FontStyle & { name: string }> {
     try {
       const pg = await doc!.pdf!.getPage(index + 1);
       const tc = await pg.getTextContent();
@@ -123,10 +124,10 @@
         const u = px / vp.width, v = py / vp.height;
         if (u >= x0 - 0.01 && u <= x1 && v >= y0 && v <= y1 + 0.01 && t.str.length > n) { best = t; n = t.str.length; }
       }
-      if (!best) return classifyFont('');
+      if (!best) return { ...classifyFont(''), name: '' };
       const f: any = pg.commonObjs.has(best.fontName) ? pg.commonObjs.get(best.fontName) : null;
-      return classifyFont(f?.name || '', { bold: f?.bold || f?.black, italic: f?.italic, mono: f?.isMonospace });
-    } catch { return classifyFont(''); }
+      return { ...classifyFont(f?.name || '', { bold: f?.bold || f?.black, italic: f?.italic, mono: f?.isMonospace }), name: f?.name || '' };
+    } catch { return { ...classifyFont(''), name: '' }; }
   }
 
   // ---------------- Text einer Zeile bearbeiten ----------------
@@ -156,7 +157,9 @@
     const d = doc;
     fontAt(fx, fy, fx + fw, fy + fh).then(f => {
       const live = itemsOf(d).find(x => x.id === it.id) as any;
-      if (live) { live.bold = f.bold; live.italic = f.italic; live.family = f.family; }
+      if (live) { live.bold = f.bold; live.italic = f.italic; live.family = f.family; live.fontName = f.name; }
+      // Ist die Schrift installiert, zeigt die Vorschau genau diese
+      if (f.name) previewFamily(f.name, f.bold, f.italic).then(fam => { if (fam && live) live.css = fam; });
     });
   }
   async function sampleColor(pageEl: HTMLElement, l: number, t: number, r: number, b: number) {
@@ -291,7 +294,7 @@
         {:else if it.kind === 'text' || it.kind === 'textedit'}
           {#if it.kind === 'textedit'}<div class="cover"></div>{/if}
           <div class="tx" contenteditable="true" spellcheck="false" role="textbox" tabindex="0"
-            style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:font-style={(it as any).italic ? 'italic' : null} style:font-family={it.kind === 'textedit' ? FONT_STACK[((it as any).family || 'sans') as 'sans'] : null} style:line-height={it.kind === 'textedit' ? ((it as any).multi ? (it as any).lineHeight * k : box.h * page!.h * k) + 'px' : 1.2}
+            style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:font-style={(it as any).italic ? 'italic' : null} style:font-family={it.kind === 'textedit' ? ((it as any).css ? `"${(it as any).css}", ` : '') + FONT_STACK[((it as any).family || 'sans') as 'sans'] : null} style:line-height={it.kind === 'textedit' ? ((it as any).multi ? (it as any).lineHeight * k : box.h * page!.h * k) + 'px' : 1.2}
             class:multi={(it as any).multi}
             onpointerdown={e => { e.stopPropagation(); overlay.selected = it.id; }}
             onfocus={() => { overlay.selected = it.id; overlay.editing = it.id; }}

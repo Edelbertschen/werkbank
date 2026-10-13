@@ -15,7 +15,7 @@ export type OItem = Base & (
   | { kind: 'image'; x: number; y: number; w: number; h: number; src: string; role: 'sign' | 'stamp' | 'image' }
   | { kind: 'redact' | 'whiteout'; x: number; y: number; w: number; h: number }
   | { kind: 'text'; x: number; y: number; w: number; text: string; size: number; color: string; bold: boolean }
-  | { kind: 'textedit'; x: number; y: number; w: number; h: number; text: string; orig: string; size: number; color: string; bold: boolean; italic?: boolean; family?: 'sans' | 'serif' | 'mono' }
+  | { kind: 'textedit'; x: number; y: number; w: number; h: number; text: string; orig: string; size: number; color: string; bold: boolean; italic?: boolean; family?: 'sans' | 'serif' | 'mono'; fontName?: string; css?: string }
   | { kind: 'link'; x: number; y: number; w: number; h: number; url: string; toPage: number }
   | { kind: 'field'; ftype: 'text' | 'check' | 'radio' | 'choice' | 'signature'; x: number; y: number; w: number; h: number; name: string; options: string; multiline: boolean; group: string }
   | { kind: 'underline' | 'strike'; rects: [number, number, number, number][]; color: string }
@@ -158,7 +158,16 @@ async function bakeWithMuPdf(bytes: Uint8Array, items: OItem[]) {
   const fontBytes: Record<string, Uint8Array> = items.some(i => i.kind === 'textedit')
     ? { 'sans.ttf': new Uint8Array(await (await fetch('/engines/pdfjs/standard_fonts/LiberationSans-Regular.ttf')).arrayBuffer()), 'sansb.ttf': new Uint8Array(await (await fetch('/engines/pdfjs/standard_fonts/LiberationSans-Bold.ttf')).arrayBuffer()) }
     : {};
-  const data = items.map(i => ({ ...i, ...('stroke' in i ? { strokeRgb: hexToRgb01(i.stroke) } : {}), ...('fill' in i && i.fill && i.fill !== 'transparent' ? { fillRgb: hexToRgb01(i.fill) } : {}), ...('color' in i ? { colorRgb: hexToRgb01((i as any).color) } : {}) }));
+  // Installierte Schriften mit dem Namen der Originalschrift mitgeben (Desktop-App)
+  const sysFiles: Record<string, Uint8Array> = {};
+  const sysPath = new Map<string, string>();
+  for (const i of items) {
+    if (i.kind !== 'textedit' || !i.fontName) continue;
+    const { systemFont } = await import('./sysfonts');
+    const b = await systemFont(i.fontName, i.bold, !!i.italic);
+    if (b) { const n = `sys${Object.keys(sysFiles).length}.font`; sysFiles[n] = b; sysPath.set(i.id, '/w/' + n); }
+  }
+  const data = items.map(i => ({ sysfont: sysPath.get(i.id), ...i, ...('stroke' in i ? { strokeRgb: hexToRgb01(i.stroke) } : {}), ...('fill' in i && i.fill && i.fill !== 'transparent' ? { fillRgb: hexToRgb01(i.fill) } : {}), ...('color' in i ? { colorRgb: hexToRgb01((i as any).color) } : {}) }));
   const r = await pyRun(`
 items = json.loads(ARGS['items'])
 author = ARGS['author']
@@ -191,8 +200,8 @@ def use_font(page, key, buf):
             fh.write(buf)
         font_files[key] = path
     return key, font_files[key]
-def text_font(page, r, text, want_bold):
-    """Schrift des Originals, wenn eingebettet und alle Zeichen vorhanden; sonst passende Ersatzschrift"""
+def text_font(page, r, text, want_bold, sysfont=None):
+    """Originalschrift (eingebettet, vollständig) > installierte Schrift gleichen Namens > passende Ersatzschrift"""
     best, cnt = None, 0
     for b in page.get_text('dict', clip=r)['blocks']:
         for l in b.get('lines', []):
@@ -213,6 +222,15 @@ def text_font(page, r, text, want_bold):
                 except Exception:
                     pass
                 break
+    if sysfont:
+        try:
+            with open(sysfont, 'rb') as fh:
+                sb = fh.read()
+            f = pymupdf.Font(fontbuffer=sb)
+            if all(f.has_glyph(ord(c)) for c in text if not c.isspace()):
+                return use_font(page, 'WbS' + sysfont.split('/')[-1].split('.')[0], sb)
+        except Exception:
+            pass
     fam, bold, italic = font_style(name, best['flags'] if best else 0)
     code = BASE14[(fam, max(bold, int(bool(want_bold))), italic)]
     try:
@@ -278,7 +296,7 @@ for it in items:
         redact_pages.add(it['page'])
     elif k == 'textedit':
         r = R(page, it['x'], it['y'], it['w'], it['h'])
-        fname, ff = text_font(page, r, it['text'], it.get('bold'))
+        fname, ff = text_font(page, r, it['text'], it.get('bold'), it.get('sysfont'))
         erase_text(page, r)
         if it.get('multi'):
             # Absatz: neu umbrechen. Passt der Text nicht, erst leicht verkleinern, dann den Kasten nach unten verlängern.
@@ -300,7 +318,7 @@ for pno in redact_pages:
     doc[pno].apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_PIXELS)
 save_out(doc)
 len(items)
-`, { files: { 'in.pdf': bytes, ...fontBytes }, outputs: ['out.pdf'], vars: { items: JSON.stringify(data), author } });
+`, { files: { 'in.pdf': bytes, ...fontBytes, ...sysFiles }, outputs: ['out.pdf'], vars: { items: JSON.stringify(data), author } });
   const out = r.files['out.pdf'];
   if (!out) { console.error('bake: keine Ausgabe', r.result); throw new Error(L("Änderungen konnten nicht geschrieben werden")); }
   return out;

@@ -15,6 +15,7 @@ const COMMANDS: &[&str] = &[
     "platform_info",
     "office_info",
     "office_convert",
+    "system_font",
 ];
 
 fn main() {

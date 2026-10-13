@@ -6,6 +6,8 @@
 //! COOP/COEP-Headern auf einem sicheren Ursprung. 127.0.0.1 gilt in allen drei WebViews
 //! (WebView2, WKWebView, WebKitGTK) als sicherer Ursprung.
 
+mod sysfont;
+
 use std::{
     fs,
     io::Read,
@@ -509,6 +511,15 @@ fn deliver_files(app: &AppHandle, files: Vec<String>) {
     let _ = app.emit("open-files", files);
 }
 
+/// Installierte Schrift zum Namen einer PDF-Schrift (leere Antwort: keine passende oder Einbetten nicht erlaubt)
+#[tauri::command]
+async fn system_font(name: String, bold: bool, italic: bool) -> Result<Response, String> {
+    let found = tauri::async_runtime::spawn_blocking(move || sysfont::lookup(&name, bold, italic))
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(Response::new(found.unwrap_or_default()))
+}
+
 pub fn run() {
     // WebKitGTK gibt SharedArrayBuffer nur mit dieser JavaScriptCore-Option frei.
     // Ohne sie laufen LibreOffice und andere Multithread-Engines unter Linux nicht.
@@ -544,7 +555,8 @@ pub fn run() {
             print_view,
             platform_info,
             office_info,
-            office_convert
+            office_convert,
+            system_font
         ])
         .setup(|app| {
             let root = app

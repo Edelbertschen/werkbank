@@ -40,6 +40,7 @@
     "allow-print-view",
     "allow-platform-info",
     "allow-office-info",
-    "allow-office-convert"
+    "allow-office-convert",
+    "allow-system-font"
   ]
 }
