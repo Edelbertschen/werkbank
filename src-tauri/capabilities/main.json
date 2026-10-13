@@ -1,0 +1,45 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main",
+  "description": "Rechte des Hauptfensters (die Oberfläche läuft über den lokalen Server)",
+  "windows": [
+    "main"
+  ],
+  "remote": {
+    "urls": [
+      "http://127.0.0.1:*"
+    ]
+  },
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-set-title",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-is-fullscreen",
+    "core:window:allow-close",
+    "core:window:allow-destroy",
+    "dialog:default",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "dialog:allow-message",
+    "dialog:allow-ask",
+    "dialog:allow-confirm",
+    "allow-read-file",
+    "allow-write-file",
+    "allow-file-info",
+    "allow-state-load",
+    "allow-state-save",
+    "allow-blob-save",
+    "allow-blob-load",
+    "allow-blob-delete",
+    "allow-take-pending-files",
+    "allow-reveal-in-folder",
+    "allow-open-external",
+    "allow-http-fetch",
+    "allow-print-view",
+    "allow-platform-info",
+    "allow-office-info",
+    "allow-office-convert"
+  ]
+}

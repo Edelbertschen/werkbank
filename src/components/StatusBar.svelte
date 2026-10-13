@@ -1,0 +1,80 @@
+<script lang="ts">
+  import { app, active, savePrefs } from '../lib/app.svelte';
+  import { viewer } from '../lib/viewer.svelte';
+  import { engineState, ENGINE_LABEL, type EngineName } from '../lib/engines/state.svelte';
+  import { paperName, mm, fmtSize } from '../lib/util';
+  import * as I from '../lib/icons';
+
+  const doc = $derived(active());
+  const pinfo = $derived(doc ? doc.pages[(doc.current || 1) - 1] : null);
+  const loading = $derived((Object.entries(engineState.all) as [EngineName, string][]).filter(([, s]) => s === 'loading').map(([n]) => ENGINE_LABEL[n]));
+  let pageInput = $state('');
+  let editing = $state(false);
+
+  function commitPage() { editing = false; const n = parseInt(pageInput, 10); if (n) viewer.goto(n); }
+  function layout(scroll: 0 | 1 | 2 | 3, spread: 0 | 1 | 2) { app.prefs.scroll = scroll; app.prefs.spread = spread; savePrefs(); viewer.applyLayout(); }
+  const zoomPct = $derived(Math.round((viewer.scale || 1) * 100));
+</script>
+
+<footer class="status">
+  {#if doc}
+    <div class="seg-left">
+      <button class="nb" aria-label="Vorherige Seite" disabled={doc.current <= 1} onclick={() => viewer.prev()}><I.ChevronLeft size={13} /></button>
+      {#if editing}
+        <!-- svelte-ignore a11y_autofocus -->
+        <input class="pg num" bind:value={pageInput} autofocus onblur={commitPage} onkeydown={e => { if (e.key === 'Enter') commitPage(); if (e.key === 'Escape') editing = false; }} aria-label="Seite" />
+      {:else}
+        <button class="pgb num" onclick={() => { pageInput = String(doc.current); editing = true; }} title="Zu Seite springen">Seite {doc.current} von {doc.numPages}</button>
+      {/if}
+      <button class="nb" aria-label="Nächste Seite" disabled={doc.current >= doc.numPages} onclick={() => viewer.next()}><I.ChevronRight size={13} /></button>
+      {#if pinfo}<span class="dim num">{paperName(pinfo.w, pinfo.h) || ''} {mm(pinfo.w)} × {mm(pinfo.h)} mm</span>{/if}
+      {#if doc.selection.length > 1}<span class="dim">{doc.selection.length} Seiten ausgewählt</span>{/if}
+    </div>
+  {/if}
+  <div class="mid">
+    {#if loading.length}<span class="eng"><span class="spin"></span>{loading.join(', ')} wird geladen …</span>
+    {:else if doc}
+      <span class="dim num">{fmtSize(doc.bytes.length)}</span>
+      {#if doc.protection}<span class="badge"><I.Lock size={11} />Geschützt beim Speichern</span>{/if}
+      {#if doc.dirty}<span class="badge warm">Nicht gespeichert</span>{:else if doc.path}<span class="dim">Gespeichert</span>{/if}
+    {/if}
+  </div>
+  {#if doc}
+    <div class="right">
+      <div class="views" role="group" aria-label="Seitenansicht">
+        <button title="Fortlaufend" aria-label="Fortlaufend" class:on={app.prefs.scroll === 0 && app.prefs.spread === 0} onclick={() => layout(0, 0)}><I.Rows3 size={13} /></button>
+        <button title="Einzelseite" aria-label="Einzelseite" class:on={app.prefs.scroll === 3} onclick={() => layout(3, 0)}><I.FileText size={13} /></button>
+        <button title="Doppelseite" aria-label="Doppelseite" class:on={app.prefs.spread > 0 && app.prefs.scroll !== 1} onclick={() => layout(0, 1)}><I.BookOpen size={13} /></button>
+        <button title="Seiten organisieren" aria-label="Seiten organisieren" class:on={app.organize} onclick={() => (app.organize = !app.organize)}><I.LayoutGrid size={13} /></button>
+      </div>
+      <button class="nb" aria-label="Verkleinern" onclick={() => viewer.zoomBy(1 / 1.15)}><I.Minus size={12} /></button>
+      <input class="zs" type="range" min="10" max="400" value={zoomPct} oninput={e => viewer.setScale(+(e.target as HTMLInputElement).value / 100)} aria-label="Zoom" />
+      <button class="nb" aria-label="Vergrößern" onclick={() => viewer.zoomBy(1.15)}><I.Plus size={12} /></button>
+      <span class="zp num">{zoomPct} %</span>
+    </div>
+  {/if}
+</footer>
+
+<style>
+  .status { height: 26px; display: flex; align-items: center; gap: 12px; padding: 0 10px; background: var(--win); border-top: 0.5px solid var(--line); font-size: 11.5px; color: var(--text-2); min-width: 0; }
+  .seg-left, .right, .mid { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .mid { flex: 1; justify-content: center; gap: 10px; }
+  .nb { width: 20px; height: 20px; border: 0; background: none; border-radius: 4px; display: grid; place-items: center; color: var(--text-2); }
+  .nb:hover:not(:disabled) { background: var(--hover); color: var(--text); }
+  .nb:disabled { opacity: 0.35; }
+  .pgb { border: 0; background: none; border-radius: 4px; padding: 1px 6px; color: var(--text); font-size: 11.5px; }
+  .pgb:hover { background: var(--hover); }
+  .pg { width: 56px; height: 19px; border: 0.5px solid var(--accent); border-radius: 4px; text-align: center; font-size: 11.5px; background: var(--surface); }
+  .dim { color: var(--text-3); white-space: nowrap; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; border-radius: 9px; background: var(--selected); color: var(--text-2); white-space: nowrap; }
+  .badge.warm { background: color-mix(in srgb, var(--brand) 16%, transparent); color: color-mix(in srgb, var(--brand) 70%, var(--text)); }
+  .eng { display: inline-flex; align-items: center; gap: 6px; color: var(--accent-text); }
+  .spin { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid currentColor; border-right-color: transparent; animation: spin 0.8s linear infinite; }
+  .views { display: flex; gap: 1px; margin-right: 6px; }
+  .views button { width: 22px; height: 20px; border: 0; background: none; border-radius: 4px; display: grid; place-items: center; color: var(--text-3); }
+  .views button:hover { background: var(--hover); color: var(--text); }
+  .views button.on { color: var(--accent-text); background: var(--accent-softer); }
+  .zs { width: 110px; accent-color: var(--accent); }
+  .zp { width: 40px; text-align: right; }
+  @media (max-width: 1000px) { .dim, .zs { display: none; } }
+</style>

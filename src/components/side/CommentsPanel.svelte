@@ -1,0 +1,96 @@
+<script lang="ts">
+  import type { Doc } from '../../lib/doc.svelte';
+  import { viewer } from '../../lib/viewer.svelte';
+  import { plLoad, plSave } from '../../lib/ops';
+  import { applyResult, withBusy } from '../../lib/actions';
+  import { openTool } from '../../lib/ui.svelte';
+  import * as I from '../../lib/icons';
+
+  let { doc }: { doc: Doc } = $props();
+  interface C { id: string; page: number; type: string; author: string; text: string; date: string; color?: string }
+  let items = $state<C[]>([]);
+  let filter = $state('');
+  let loading = $state(true);
+
+  const TYPES: Record<string, string> = { Text: 'Notiz', FreeText: 'Textkommentar', Highlight: 'Markierung', Underline: 'Unterstreichung', StrikeOut: 'Durchstreichung', Squiggly: 'Wellenlinie', Ink: 'Freihand', Square: 'Rechteck', Circle: 'Ellipse', Line: 'Linie', Polygon: 'Polygon', PolyLine: 'Linienzug', Stamp: 'Stempel', Caret: 'Einfügemarke', FileAttachment: 'Dateianhang' };
+
+  async function load() {
+    loading = true;
+    const out: C[] = [];
+    const pdf = doc.pdf!;
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const anns = await (await pdf.getPage(i)).getAnnotations();
+      for (const a of anns as any[]) {
+        const t = a.subtype as string;
+        if (!TYPES[t]) continue;
+        const col = a.color ? `rgb(${a.color[0]},${a.color[1]},${a.color[2]})` : undefined;
+        out.push({ id: a.id, page: i, type: t, author: a.titleObj?.str || '', text: a.contentsObj?.str || a.textContent?.join(' ') || '', date: fmtDate(a.modificationDate || a.creationDate), color: col });
+      }
+    }
+    items = out; loading = false;
+  }
+  function fmtDate(d?: string) {
+    const m = d && d.match(/D:(\d{4})(\d{2})(\d{2})(\d{2})?(\d{2})?/);
+    if (!m) return '';
+    const dt = new Date(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0));
+    return dt.toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' });
+  }
+  $effect(() => { doc.rev; load(); });
+
+  const shown = $derived(items.filter(c => !filter || (c.text + ' ' + c.author + ' ' + TYPES[c.type]).toLowerCase().includes(filter.toLowerCase())));
+
+  async function remove(c: C) {
+    const r = await withBusy('Kommentar wird gelöscht', async () => {
+      const pl = await plLoad(doc.bytes);
+      const page = pl.getPage(c.page - 1); const arr = page.node.Annots();
+      const num = parseInt(c.id, 10);
+      if (arr) for (let k = arr.size() - 1; k >= 0; k--) { const ref: any = arr.get(k); if (ref?.objectNumber === num) arr.remove(k); }
+      return plSave(pl);
+    });
+    await applyResult({ bytes: r, label: `${TYPES[c.type]} gelöscht` });
+  }
+</script>
+
+<div class="box">
+  <input class="input" type="search" placeholder="Kommentare filtern" bind:value={filter} />
+  {#if doc.pendingEdits}<p class="hint">Neue Anmerkungen erscheinen hier nach dem Speichern oder Übernehmen.</p>{/if}
+</div>
+<div class="list scroll">
+  {#if loading}<p class="empty">Lädt …</p>
+  {:else if !shown.length}
+    <p class="empty">{items.length ? 'Keine Treffer.' : 'Noch keine Kommentare.'}</p>
+    {#if !items.length}<div class="start"><button class="btn sm" onclick={() => openTool('highlight')}><I.Highlighter size={13} />Markieren</button><button class="btn sm" onclick={() => openTool('note')}><I.StickyNote size={13} />Notiz</button></div>{/if}
+  {:else}
+    {#each shown as c (c.id + c.page)}
+      <div class="c" role="button" tabindex="0" onclick={() => viewer.goto(c.page)} onkeydown={e => e.key === 'Enter' && viewer.goto(c.page)}>
+        <div class="head">
+          <span class="sw" style:background={c.color || 'var(--text-3)'}></span>
+          <span class="type">{TYPES[c.type]}</span>
+          <span class="pg num">S. {c.page}</span>
+          <button class="del" aria-label="Kommentar löschen" title="Löschen" onclick={e => { e.stopPropagation(); remove(c); }}><I.Trash2 size={12} /></button>
+        </div>
+        {#if c.text}<p class="text">{c.text}</p>{/if}
+        {#if c.author || c.date}<p class="meta">{c.author}{c.author && c.date ? ' · ' : ''}{c.date}</p>{/if}
+      </div>
+    {/each}
+  {/if}
+</div>
+
+<style>
+  .box { padding: 0 12px 8px; }
+  .hint { font-size: 11.5px; color: var(--text-3); margin: 6px 2px 0; }
+  .list { flex: 1; padding: 0 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .empty { color: var(--text-3); font-size: 12px; padding: 4px; }
+  .start { display: flex; gap: 6px; padding: 0 4px; }
+  .c { background: var(--surface); border-radius: 8px; padding: 8px 10px; box-shadow: var(--shadow-1); display: flex; flex-direction: column; gap: 4px; }
+  .c:hover { box-shadow: var(--shadow-1), 0 0 0 1px var(--accent-soft); }
+  .head { display: flex; align-items: center; gap: 7px; }
+  .sw { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+  .type { font-weight: 600; font-size: 12px; flex: 1; }
+  .pg { font-size: 11px; color: var(--text-3); }
+  .del { border: 0; background: none; width: 20px; height: 20px; border-radius: 4px; display: grid; place-items: center; color: var(--text-3); opacity: 0; }
+  .c:hover .del { opacity: 1; }
+  .del:hover { color: var(--danger); background: var(--hover); }
+  .text { margin: 0; font-size: 12.5px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
+  .meta { margin: 0; font-size: 11px; color: var(--text-3); }
+</style>

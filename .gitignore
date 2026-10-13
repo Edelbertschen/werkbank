@@ -1,0 +1,8 @@
+node_modules/
+dist/
+public/engines/
+public/pdfjs-images/
+src-tauri/target/
+src-tauri/gen/
+*.log
+.DS_Store

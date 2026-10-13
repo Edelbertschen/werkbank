@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3D5A80"/>
+      <stop offset="1" stop-color="#22324A"/>
+    </linearGradient>
+    <linearGradient id="sheet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EEF1F5"/>
+    </linearGradient>
+    <linearGradient id="back" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C9D6E6"/>
+      <stop offset="1" stop-color="#A9BBD2"/>
+    </linearGradient>
+    <linearGradient id="band" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#F2A93B"/>
+      <stop offset="1" stop-color="#E9822E"/>
+    </linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#0B1424" flood-opacity="0.45"/>
+    </filter>
+    <clipPath id="sq"><rect x="100" y="100" width="824" height="824" rx="186"/></clipPath>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#bg)"/>
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="none" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="4"/>
+  <g clip-path="url(#sq)">
+    <!-- hinteres Blatt -->
+    <g transform="rotate(-8 512 512)" filter="url(#sh)">
+      <rect x="318" y="238" width="400" height="520" rx="26" fill="url(#back)"/>
+    </g>
+    <!-- vorderes Blatt mit Eselsohr -->
+    <g filter="url(#sh)">
+      <path d="M332 262 h282 l104 104 v394 a26 26 0 0 1 -26 26 h-360 a26 26 0 0 1 -26 -26 v-472 a26 26 0 0 1 26 -26z" fill="url(#sheet)"/>
+      <path d="M614 262 v78 a26 26 0 0 0 26 26 h78z" fill="#D5DEEA"/>
+    </g>
+    <!-- Zeilen -->
+    <rect x="374" y="404" width="210" height="22" rx="11" fill="#22324A"/>
+    <rect x="374" y="456" width="290" height="16" rx="8" fill="#AEBBCC"/>
+    <rect x="374" y="494" width="250" height="16" rx="8" fill="#AEBBCC"/>
+    <rect x="374" y="532" width="276" height="16" rx="8" fill="#AEBBCC"/>
+    <!-- Band (Ribbon / Werkzeug) -->
+    <path d="M296 610 h436 a18 18 0 0 1 18 18 v76 a18 18 0 0 1 -18 18 h-436 z" fill="url(#band)"/>
+    <path d="M296 610 l-34 56 l34 56z" fill="#C46A24"/>
+    <rect x="336" y="652" width="150" height="28" rx="14" fill="#FFFFFF" fill-opacity="0.92"/>
+    <circle cx="676" cy="666" r="22" fill="#FFFFFF" fill-opacity="0.92"/>
+  </g>
+</svg>
