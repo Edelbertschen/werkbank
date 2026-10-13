@@ -41,7 +41,7 @@ function files(dir) {
   for (const f of readdirSync(dir)) {
     const p = join(dir, f);
     if (statSync(p).isDirectory()) out.push(...files(p));
-    else if (/\.(ts|svelte)$/.test(f) && !SKIP_FILES.some(r => r.test(p))) out.push(p);
+    else if (/\.(ts|svelte)$/.test(f) && !SKIP_FILES.some(r => r.test(p.replace(/\\/g, '/')))) out.push(p);
   }
   return out;
 }
