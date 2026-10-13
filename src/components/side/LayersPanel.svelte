@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Empty from '../Empty.svelte';
   import { L } from '../../lib/i18n';
   import type { Doc } from '../../lib/doc.svelte';
   import { viewer } from '../../lib/viewer.svelte';
@@ -29,7 +30,7 @@
 
 <div class="list scroll">
   {#if !groups.length}
-    <p class="empty">{L("Dieses Dokument hat keine Ebenen. Ebenen kommen vor allem in CAD-Plänen, Karten und Druckvorlagen vor.")}</p>
+    <Empty icon={I.Layers} title={L("Keine Ebenen")} text={L("Ebenen kommen vor allem in CAD-Plänen, Karten und Druckvorlagen vor.")} />
   {:else}
     <p class="hint">{L("Ein- und Ausblenden ändert nur die Anzeige.")}</p>
     {#each groups as g (g.id)}

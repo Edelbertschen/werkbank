@@ -35,6 +35,8 @@ export interface Prefs {
   preloadEngines: boolean;
   lang: 'system' | 'de' | 'en';
   hiddenTabs: RibbonTab[];
+  /** Einführung beim ersten Start gesehen */
+  introSeen: boolean;
 }
 
 const defaultPrefs: Prefs = {
@@ -54,6 +56,7 @@ const defaultPrefs: Prefs = {
   preloadEngines: true,
   lang: 'system',
   hiddenTabs: [],
+  introSeen: false,
 };
 
 export const app = $state({

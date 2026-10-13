@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Empty from '../Empty.svelte';
+  import { openTool } from '../../lib/ui.svelte';
   import { L } from '../../lib/i18n';
   import type { Doc } from '../../lib/doc.svelte';
   import { viewer } from '../../lib/viewer.svelte';
@@ -70,6 +72,11 @@
   {/if}
 </div>
 <div class="results scroll">
+  {#if q.trim().length < 2}
+    <Empty icon={I.Search} title={L("Im ganzen Dokument suchen")} text={L("Treffer erscheinen hier mit Textauszug. Enter springt zum nächsten, Umschalt+Enter zurück.")} />
+  {:else if !total && !viewer.findPending}
+    <Empty icon={I.SearchX} title={L("Nichts gefunden")} text={L("Prüfe die Schreibweise. Gescannte Seiten werden erst nach einer Texterkennung durchsuchbar.")}><button class="btn sm" onclick={() => openTool('ocr')}><I.ScanText size={13} />{L("Text erkennen")}</button></Empty>
+  {/if}
   {#each results as r, k (k)}
     <button class="res" onclick={() => viewer.goto(r.page)}>
       <span class="pg">{L("Seite {0}", r.page)}</span>

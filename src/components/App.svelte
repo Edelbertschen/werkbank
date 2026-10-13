@@ -60,7 +60,7 @@
       if (typing) return;
       if (overlay.selected) { overlay.selected = null; return; }
       if (app.mode !== 'select') { app.mode = 'select'; return; }
-      if (app.organize) { app.organize = false; return; }
+      if (app.organize) { if (doc?.selection.length) doc.selection = []; else app.organize = false; return; }
       if (app.pane) { app.pane = null; return; }
       return;
     }

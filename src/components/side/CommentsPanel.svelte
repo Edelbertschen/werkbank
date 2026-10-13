@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Empty from '../Empty.svelte';
   import { L, intlLocale } from '../../lib/i18n';
   import type { Doc } from '../../lib/doc.svelte';
   import { viewer } from '../../lib/viewer.svelte';
@@ -67,8 +68,8 @@
 <div class="list scroll">
   {#if loading}<p class="empty">{L("Lädt …")}</p>
   {:else if !shown.length}
-    <p class="empty">{all.length ? L("Keine Treffer.") : L("Noch keine Kommentare.")}</p>
-    {#if !all.length}<div class="start"><button class="btn sm" onclick={() => openTool('highlight')}><I.Highlighter size={13} />{L("Markieren")}</button><button class="btn sm" onclick={() => openTool('note')}><I.StickyNote size={13} />{L("Notiz")}</button></div>{/if}
+    {#if all.length}<Empty icon={I.SearchX} title={L("Keine Treffer")} text={L("Kein Kommentar passt zum Filter.")} />
+    {:else}<Empty icon={I.MessagesSquare} title={L("Noch keine Kommentare")} text={L("Markierungen, Notizen und Textkommentare erscheinen hier – mit Seite und Autor.")}><button class="btn sm" onclick={() => openTool('highlight')}><I.Highlighter size={13} />{L("Markieren")}</button><button class="btn sm" onclick={() => openTool('note')}><I.StickyNote size={13} />{L("Notiz")}</button></Empty>{/if}
   {:else}
     {#each shown as c (c.id + c.page)}
       <div class="c" role="button" tabindex="0" onclick={() => viewer.goto(c.page)} onkeydown={e => e.key === 'Enter' && viewer.goto(c.page)}>
@@ -88,8 +89,6 @@
 <style>
   .box { padding: 0 12px 8px; }
   .list { flex: 1; padding: 0 10px 12px; display: flex; flex-direction: column; gap: 6px; }
-  .empty { color: var(--text-3); font-size: 12px; padding: 4px; }
-  .start { display: flex; gap: 6px; padding: 0 4px; }
   .c { background: var(--surface); border-radius: 8px; padding: 8px 10px; box-shadow: var(--shadow-1); display: flex; flex-direction: column; gap: 4px; }
   .c:hover { box-shadow: var(--shadow-1), 0 0 0 1px var(--accent-soft); }
   .head { display: flex; align-items: center; gap: 7px; }

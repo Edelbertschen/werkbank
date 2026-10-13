@@ -1,6 +1,6 @@
 <script lang="ts">
   import { L } from '../lib/i18n';
-  import { app, active, saveRecent } from '../lib/app.svelte';
+  import { app, active, saveRecent, savePrefs } from '../lib/app.svelte';
   import { openPaths, openDialog, newBlankDoc } from '../lib/actions';
   import { openTool } from '../lib/ui.svelte';
   import { tool } from '../lib/tools';
@@ -52,6 +52,13 @@
       { label: L("Aus der Liste entfernen"), icon: I.X, run: () => { app.recent = app.recent.filter(r => r.path !== path); saveRecent(); } },
     ]);
   }
+  const mod = navigator.platform.includes('Mac') ? '⌘' : L("Strg");
+  const intro: [any, string, string][] = [
+    [I.HardDrive, L("Alles bleibt auf diesem Rechner"), L("Umwandeln, Texterkennung und Komprimieren laufen lokal. Es wird nichts hochgeladen.")],
+    [I.MousePointer2, L("Direkt auf der Seite arbeiten"), L("Text, Bilder und Anmerkungen anklicken und ändern. Jede Änderung lässt sich mit {0}+Z zurücknehmen.", mod)],
+    [I.Command, L("Jedes Werkzeug mit {0}+K", mod), L("Die Befehlssuche findet alles, auch was in der Bandleiste ausgeblendet ist.")],
+  ];
+  function closeIntro() { app.prefs.introSeen = true; savePrefs(); }
   const dirOf = (p: string) => p.replace(/[\\/][^\\/]*$/, '').replace(/^\/(Users|home)\/[^/]+/, '~');
 </script>
 
@@ -65,6 +72,20 @@
       <p>{L("PDFs lesen, bearbeiten, umwandeln und schützen – alles auf diesem Rechner.")}</p>
       {#if doc}<button class="btn back" onclick={() => (app.backstage = false)}>{L("Zurück zu „{0}“", doc.title)}<I.ChevronRight size={14} /></button>{/if}
     </header>
+
+    {#if app.ready && !app.prefs.introSeen}
+      <section class="intro" aria-labelledby="intro-h">
+        <div class="ih">
+          <h2 id="intro-h">{L("Willkommen in der Werkbank")}</h2>
+          <button class="btn sm primary" onclick={closeIntro}>{L("Verstanden")}</button>
+        </div>
+        <ol>
+          {#each intro as [Icon, t, d], k (k)}
+            <li><span class="ii"><Icon size={17} strokeWidth={1.7} /></span><b>{t}</b><span>{d}</span></li>
+          {/each}
+        </ol>
+      </section>
+    {/if}
 
     <section class="bench">
       <button class="drop" class:hot={app.dropping} onclick={() => openDialog()}>
@@ -88,7 +109,13 @@
         {#if app.recent.length > 6}<input class="input" type="search" placeholder={L("Filtern")} bind:value={filter} />{/if}
       </div>
       {#if !recent.length}
-        <p class="empty">{app.recent.length ? L("Kein Dokument passt zum Filter.") : L("Noch nichts geöffnet. Was du hier öffnest, liegt beim nächsten Mal griffbereit.")}</p>
+        {#if app.recent.length}<p class="empty">{L("Kein Dokument passt zum Filter.")}</p>
+        {:else}
+          <div class="shelf">
+            <span class="ghost"></span><span class="ghost"></span><span class="ghost"></span>
+            <p>{L("Noch nichts geöffnet. Was du hier öffnest, liegt beim nächsten Mal griffbereit.")}</p>
+          </div>
+        {/if}
       {:else}
         <div class="recent">
           {#each recent.slice(0, 18) as r (r.path)}
@@ -147,6 +174,21 @@
   .starts button:hover { background: var(--hover); }
   .starts button:hover :global(svg) { color: var(--accent); }
 
+  /* Einführung: einmal, knapp, ohne Tour */
+  .intro { padding: 20px 22px 22px; border-radius: 16px; background: var(--surface); box-shadow: var(--shadow-1), inset 3px 0 0 var(--accent); animation: intro-in 0.35s var(--ease); }
+  @keyframes intro-in { from { opacity: 0; transform: translateY(6px); } }
+  .ih { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .ih h2 { margin: 0; font-size: 17px; letter-spacing: -0.015em; }
+  .intro ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .intro li { display: grid; grid-template-columns: 34px minmax(0, 1fr); column-gap: 12px; row-gap: 3px; align-items: start; }
+  .ii { grid-row: span 2; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+  .intro b { font-size: 13px; font-weight: 600; padding-top: 1px; }
+  .intro li > span:last-child { font-size: 12.5px; line-height: 1.5; color: var(--text-2); }
+  .shelf { display: flex; align-items: center; gap: 14px; }
+  .ghost { width: 54px; aspect-ratio: 0.74; border-radius: 3px; border: 1.5px dashed var(--line-strong); flex: none; }
+  .ghost:nth-child(2) { opacity: 0.7; } .ghost:nth-child(3) { opacity: 0.4; }
+  .shelf p { margin: 0 0 0 8px; color: var(--text-3); font-size: 13px; max-width: 42ch; line-height: 1.5; }
+
   .rhead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
   .rhead .input { width: 220px; }
   .empty { color: var(--text-3); margin: 0; font-size: 13px; }
@@ -164,5 +206,5 @@
   .ti { grid-row: span 2; width: 36px; height: 36px; border-radius: 10px; background: var(--surface); box-shadow: var(--shadow-1); color: var(--accent); display: grid; place-items: center; }
   .tl { font-weight: 600; font-size: 13px; }
   .td { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  @media (max-width: 900px) { .bench { grid-template-columns: 1fr; } .tasks { grid-template-columns: 1fr; } .inner { padding: 36px 24px; } }
+  @media (max-width: 900px) { .bench, .intro ol { grid-template-columns: 1fr; } .tasks { grid-template-columns: 1fr; } .inner { padding: 36px 24px; } }
 </style>

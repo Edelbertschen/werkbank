@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Empty from '../Empty.svelte';
   import { L } from '../../lib/i18n';
   import type { Doc } from '../../lib/doc.svelte';
   import { plLoad, plSave } from '../../lib/ops';
@@ -38,7 +39,7 @@
 <div class="bar"><button class="btn sm" onclick={add}><I.Plus size={13} />{L("Datei anhängen")}</button>
   {#if items.length > 1}<button class="btn sm" onclick={() => saveFiles(items.map(i => ({ name: i.name, data: i.data })), L("Anhänge.zip"))}><I.Download size={13} />{L("Alle speichern")}</button>{/if}</div>
 <div class="list scroll">
-  {#if !items.length}<p class="empty">{L("Keine eingebetteten Dateien. Anhänge eignen sich z. B. für Quelldaten, Excel-Tabellen oder E-Rechnungen (ZUGFeRD).")}</p>{/if}
+  {#if !items.length}<Empty icon={I.Paperclip} title={L("Keine Anhänge")} text={L("Hänge Quelldaten, Tabellen oder E-Rechnungen (ZUGFeRD) direkt an das PDF an.")}><button class="btn sm" onclick={add}><I.Plus size={13} />{L("Datei anhängen")}</button></Empty>{/if}
   {#each items as it (it.name)}
     <div class="row">
       <I.Paperclip size={14} />
@@ -52,7 +53,6 @@
 <style>
   .bar { display: flex; gap: 6px; padding: 0 12px 8px; flex-wrap: wrap; }
   .list { flex: 1; padding: 0 8px 12px; }
-  .empty { color: var(--text-3); font-size: 12px; padding: 4px 6px; line-height: 1.5; }
   .row { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 7px; color: var(--text-2); }
   .row:hover { background: var(--hover); }
   .info { flex: 1; min-width: 0; }

@@ -84,61 +84,94 @@
 <svelte:window onkeydown={key} />
 
 <div class="org">
-  <div class="bar">
-    <span class="info num">{sel.length ? L("{0} von {1} ausgewählt", sel.length, doc.numPages) : L("{0} Seiten", doc.numPages)}</span>
-    <div class="grp">
-      <button class="btn sm" onclick={() => (doc.selection = [...Array(doc.numPages).keys()])}>{L("Alle")}</button>
-      <button class="btn sm" onclick={() => (doc.selection = [...Array(doc.numPages).keys()].filter(i => i % 2 === 0))}>{L("Ungerade")}</button>
-      <button class="btn sm" onclick={() => (doc.selection = [...Array(doc.numPages).keys()].filter(i => i % 2 === 1))}>{L("Gerade")}</button>
-      <button class="btn sm" disabled={!sel.length} onclick={() => (doc.selection = [])}>{L("Keine")}</button>
+  <header class="bar">
+    <div class="title">
+      <h2>{L("Seiten organisieren")}</h2>
+      <span class="num">{L("{0} Seiten", doc.numPages)}</span>
     </div>
-    <span class="sep"></span>
-    <div class="grp">
-      <button class="btn sm icon" title={L("Nach links drehen")} aria-label={L("Nach links drehen")} disabled={!sel.length} onclick={() => runTool(tool('rotate-left'))}><I.RotateCcw size={14} /></button>
-      <button class="btn sm icon" title={L("Nach rechts drehen")} aria-label={L("Nach rechts drehen")} disabled={!sel.length} onclick={() => runTool(tool('rotate-right'))}><I.RotateCw size={14} /></button>
-      <button class="btn sm" disabled={!sel.length} onclick={() => runTool(tool('duplicate'), { pages: { mode: 'sel', range: '' }, times: 1 })}><I.Copy size={13} />{L("Duplizieren")}</button>
-      <button class="btn sm" disabled={!sel.length} onclick={() => runTool(tool('extract'), { pages: { mode: 'sel', range: '' }, each: false, remove: false })}><I.FileOutput size={13} />{L("Extrahieren")}</button>
-      <button class="btn sm" onclick={() => runTool(tool('insert-blank'), { where: 'after', count: 1, size: 'same' })}><I.FilePlus2 size={13} />{L("Leere Seite")}</button>
-      <button class="btn sm" onclick={() => openTool('insert-file')}><I.FileUp size={13} />{L("Einfügen")}</button>
-      <button class="btn sm danger" disabled={!sel.length || sel.length >= doc.numPages} onclick={() => runTool(tool('delete-pages'))}><I.Trash2 size={13} />{L("Löschen")}</button>
+    <div class="pick" role="group" aria-label={L("Auswählen")}>
+      <button onclick={() => (doc.selection = [...Array(doc.numPages).keys()])}>{L("Alle")}</button>
+      <button onclick={() => (doc.selection = [...Array(doc.numPages).keys()].filter(i => i % 2 === 0))}>{L("Ungerade")}</button>
+      <button onclick={() => (doc.selection = [...Array(doc.numPages).keys()].filter(i => i % 2 === 1))}>{L("Gerade")}</button>
     </div>
     <span class="grow"></span>
-    <label class="zoom" title={L("Vorschaugröße")}><I.ZoomOut size={13} /><input type="range" min="100" max="320" bind:value={size} aria-label={L("Vorschaugröße")} /><I.ZoomIn size={13} /></label>
+    <button class="btn sm ghost" onclick={() => runTool(tool('insert-blank'), { where: 'after', count: 1, size: 'same' })}><I.FilePlus2 size={14} />{L("Leere Seite")}</button>
+    <button class="btn sm ghost" onclick={() => openTool('insert-file')}><I.FileUp size={14} />{L("Einfügen")}</button>
+    <span class="sep"></span>
+    <label class="zoom" title={L("Vorschaugröße")}><I.ZoomOut size={14} /><input type="range" min="100" max="320" bind:value={size} aria-label={L("Vorschaugröße")} /><I.ZoomIn size={14} /></label>
     <button class="btn sm primary" onclick={() => (app.organize = false)}>{L("Fertig")}</button>
-  </div>
+  </header>
   <div class="grid scroll" bind:this={grid} data-drop-insert="grid" style:--size={size + 'px'} role="listbox" aria-multiselectable="true" aria-label={L("Seiten")}>
     {#each doc.pages as p, i (doc.rev + ':' + i)}
       <div class="cell" class:sel={sel.includes(i)} role="option" aria-selected={sel.includes(i)} tabindex="-1"
         onclick={e => select(i, e)} ondblclick={() => open(i)} oncontextmenu={e => ctxMenu(e, i)} onkeydown={() => {}}>
-        <div class="frame"><Thumb {doc} index={i} width={Math.max(size, 200)} /></div>
-        <div class="cap"><span class="num">{i + 1}</span>{#if p.rot}<span class="rot">{p.rot}°</span>{/if}<span class="paper">{paperName(p.w, p.h)}</span></div>
+        <div class="frame">
+          <Thumb {doc} index={i} width={Math.max(size, 200)} />
+          {#if sel.includes(i)}<span class="tick"><I.Check size={12} strokeWidth={3} /></span>{/if}
+        </div>
+        <div class="cap"><span class="num">{i + 1}</span>{#if p.rot}<span class="rot num">{p.rot}°</span>{/if}<span class="paper">{paperName(p.w, p.h)}</span></div>
       </div>
     {/each}
   </div>
-  <p class="hint">{L("Ziehen zum Umsortieren · {0}-Klick oder Umschalt-Klick wählt mehrere · Doppelklick öffnet · Entf löscht", navigator.platform.includes('Mac') ? '⌘' : L("Strg"))}</p>
+  <p class="hint">{L("Ziehen zum Umsortieren · {0}-Klick oder Umschalt-Klick wählt mehrere · Doppelklick öffnet · Entf löscht", navigator.platform.includes('Mac') ? '⌘' : L("Strg"))} · {L("PDFs von außen hineinziehen fügt ihre Seiten ein")}</p>
+
+  {#if sel.length}
+    <div class="selbar" role="toolbar" aria-label={L("Auswahl")}>
+      <span class="count num">{L("{0} ausgewählt", sel.length)}</span>
+      <span class="sep"></span>
+      <button class="ib" title={L("Nach links drehen")} aria-label={L("Nach links drehen")} onclick={() => runTool(tool('rotate-left'))}><I.RotateCcw size={15} /></button>
+      <button class="ib" title={L("Nach rechts drehen")} aria-label={L("Nach rechts drehen")} onclick={() => runTool(tool('rotate-right'))}><I.RotateCw size={15} /></button>
+      <button class="ib" title={L("An den Anfang")} aria-label={L("An den Anfang")} onclick={() => moveTo('start')}><I.ChevronUp size={15} /></button>
+      <button class="ib" title={L("Ans Ende")} aria-label={L("Ans Ende")} onclick={() => moveTo('end')}><I.ChevronDown size={15} /></button>
+      <span class="sep"></span>
+      <button class="tb" onclick={() => runTool(tool('duplicate'), { pages: { mode: 'sel', range: '' }, times: 1 })}><I.Copy size={14} />{L("Duplizieren")}</button>
+      <button class="tb" onclick={() => runTool(tool('extract'), { pages: { mode: 'sel', range: '' }, each: false, remove: false })}><I.FileOutput size={14} />{L("Extrahieren")}</button>
+      <button class="tb danger" disabled={sel.length >= doc.numPages} onclick={() => runTool(tool('delete-pages'))}><I.Trash2 size={14} />{L("Löschen")}</button>
+      <span class="sep"></span>
+      <button class="ib" title={L("Auswahl aufheben (Esc)")} aria-label={L("Auswahl aufheben")} onclick={() => (doc.selection = [])}><I.X size={15} /></button>
+    </div>
+  {/if}
 </div>
 
 <style>
   .org { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--canvas); }
-  .bar { display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: var(--bar); border-bottom: 0.5px solid var(--line); flex-wrap: wrap; }
-  .info { font-size: 12px; color: var(--text-2); min-width: 130px; }
-  .grp { display: flex; gap: 4px; flex-wrap: wrap; }
-  .sep { width: 0.5px; height: 18px; background: var(--line-strong); }
+  .bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px 10px 22px; background: var(--bar); border-bottom: 0.5px solid var(--line); flex-wrap: wrap; }
+  .title { display: flex; align-items: baseline; gap: 10px; margin-right: 14px; }
+  h2 { margin: 0; font: 600 15px/1.2 var(--font-display); letter-spacing: -0.01em; }
+  .title .num { font-size: 12px; color: var(--text-3); }
+  .pick { display: flex; gap: 2px; padding: 2px; border-radius: 8px; background: var(--hover); }
+  .pick button { border: 0; background: none; padding: 3px 10px; border-radius: 6px; font-size: 12px; color: var(--text-2); }
+  .pick button:hover { background: var(--surface); color: var(--text); box-shadow: var(--shadow-1); }
+  .sep { width: 0.5px; height: 18px; background: var(--line-strong); margin: 0 4px; }
   .grow { flex: 1; }
-  .zoom { display: flex; align-items: center; gap: 6px; color: var(--text-3); }
-  .zoom input { width: 100px; accent-color: var(--accent); }
-  .grid { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--size), 1fr)); gap: 26px 20px; padding: 26px 28px 40px; align-content: start; }
-  .cell { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px 8px 8px; border-radius: 10px; }
-  .cell:hover { background: rgba(127, 127, 127, 0.08); }
-  .frame { width: 100%; max-width: var(--size); outline: 2.5px solid transparent; outline-offset: 4px; border-radius: 3px; }
-  .cell.sel { background: var(--accent-softer); }
+  .zoom { display: flex; align-items: center; gap: 6px; color: var(--text-3); margin-right: 6px; }
+  .zoom input { width: 96px; accent-color: var(--accent); }
+
+  .grid { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--size), 1fr)); gap: 30px 22px; padding: 30px 32px 120px; align-content: start; }
+  .cell { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 6px; border-radius: 12px; cursor: default; }
+  .frame { position: relative; width: 100%; max-width: var(--size); border-radius: 3px; box-shadow: 0 0 0 0.5px rgba(14, 28, 30, 0.14), 0 2px 6px rgba(14, 28, 30, 0.08); outline: 2px solid transparent; outline-offset: 5px;
+    transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease), outline-color 0.12s; }
+  .cell:hover .frame { transform: translateY(-2px); box-shadow: 0 0 0 0.5px rgba(14, 28, 30, 0.16), 0 8px 20px rgba(14, 28, 30, 0.14); }
   .cell.sel .frame { outline-color: var(--accent); }
-  .cap { display: flex; gap: 6px; align-items: center; font-size: 11.5px; color: var(--text-2); }
-  .num { font-weight: 600; font-variant-numeric: tabular-nums; }
-  .cell.sel .num { color: var(--accent-text); }
-  .rot { font-size: 10px; padding: 0 4px; border-radius: 3px; background: var(--selected); }
+  .tick { position: absolute; top: -11px; left: -11px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--on-accent, #fff); display: grid; place-items: center; box-shadow: 0 0 0 2.5px var(--canvas); }
+  .cap { display: flex; gap: 7px; align-items: center; font-size: 11.5px; color: var(--text-2); }
+  .cap .num { font-weight: 600; min-width: 22px; text-align: center; padding: 1px 6px; border-radius: 999px; }
+  .cell.sel .cap .num { background: var(--accent); color: var(--on-accent, #fff); }
+  .rot { font-size: 10.5px; padding: 0 5px; border-radius: 4px; background: var(--selected); }
   .paper { color: var(--text-3); }
-  .hint { margin: 0; padding: 6px 14px; font-size: 11.5px; color: var(--text-3); background: var(--bar); border-top: 0.5px solid var(--line); }
+  .hint { margin: 0; padding: 7px 22px; font-size: 11.5px; color: var(--text-3); background: var(--bar); border-top: 0.5px solid var(--line); }
+
+  /* Auswahlleiste: schwebt über dem Raster, solange etwas ausgewählt ist */
+  .selbar { position: absolute; left: 50%; bottom: 52px; transform: translateX(-50%); display: flex; align-items: center; gap: 2px; padding: 5px 6px 5px 14px; border-radius: 14px;
+    background: var(--raised); box-shadow: var(--shadow-2), 0 0 0 0.5px var(--line-strong); animation: rise 0.2s var(--ease); white-space: nowrap; z-index: 4; }
+  @keyframes rise { from { opacity: 0; transform: translate(-50%, 8px); } }
+  .count { font-size: 12.5px; font-weight: 600; color: var(--accent-text); padding-right: 4px; }
+  .ib, .tb { border: 0; background: none; height: 30px; border-radius: 8px; color: var(--text-2); display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; }
+  .ib { width: 30px; justify-content: center; }
+  .tb { padding: 0 10px; }
+  .ib:hover, .tb:hover:not(:disabled) { background: var(--hover); color: var(--text); }
+  .tb.danger:hover:not(:disabled) { color: var(--danger, #d33); background: color-mix(in srgb, var(--danger, #d33) 10%, transparent); }
+  .tb:disabled { opacity: 0.4; }
   :global(.grid .ghost) { opacity: 0.25; }
   :global(.grid .sortable-fallback .frame) { box-shadow: var(--shadow-pop); }
 </style>

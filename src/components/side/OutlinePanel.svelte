@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Empty from '../Empty.svelte';
   import { L } from '../../lib/i18n';
   import type { Doc } from '../../lib/doc.svelte';
   import { viewer } from '../../lib/viewer.svelte';
@@ -113,7 +114,7 @@ out`, { files: { 'in.pdf': doc.bytes } }));
 </div>
 <div class="tree scroll">
   {#if loading}<p class="empty">{L("Lädt …")}</p>
-  {:else if !entries.length}<p class="empty">{L("Keine Lesezeichen. Lege eines für die aktuelle Seite an oder lass sie aus den Überschriften erzeugen.")}</p>
+  {:else if !entries.length}<Empty icon={I.Bookmark} title={L("Keine Lesezeichen")} text={L("Lege eines für die aktuelle Seite an oder lass sie aus den Überschriften erzeugen.")}><button class="btn sm" onclick={fromHeadings}><I.WandSparkles size={13} />{L("Automatisch")}</button></Empty>
   {:else}
     {#each visible as i (i)}
       {@const e = entries[i]}
