@@ -2,7 +2,8 @@
   import { L, intlLocale } from '../lib/i18n';
   import { onMount, tick } from 'svelte';
   import { app, active } from '../lib/app.svelte';
-  import { overlay, itemsOf, addItem, removeItem, type OItem } from '../lib/overlay.svelte';
+  import { overlay, itemsOf, addItem, removeItem, touch, type OItem } from '../lib/overlay.svelte';
+  import { pageObjects, type PageObject } from '../lib/pageobjects';
   import { dialog } from '../lib/dialogs.svelte';
   import * as I from '../lib/icons';
   import { groupLines, paragraphAt, classifyFont, FONT_STACK, type Box, type FontStyle } from '../lib/textedit';
@@ -15,6 +16,35 @@
   const page = $derived(doc?.pages[index]);
   const items = $derived(doc ? itemsOf(doc).filter(i => i.page === index) : []);
   let draft = $state<null | { kind: string; x0: number; y0: number; x1: number; y1: number }>(null);
+
+  // ---------------- Elemente verschieben: Inhalte des PDFs ----------------
+  const moving = $derived(app.mode === 'move');
+  let objs = $state<PageObject[]>([]);
+  $effect(() => {
+    if (!moving || !doc) { objs = []; return; }
+    const bytes = doc.bytes, pno = index;
+    pageObjects(bytes, pno).then(o => { if (doc?.bytes === bytes) objs = o; });
+  });
+  const same = (a: number, b: number) => Math.abs(a - b) < 1e-6;
+  // Bereits angefasste Inhalte werden als Element dargestellt, nicht mehr als Rahmen
+  const freeObjs = $derived(objs.filter(o => !items.some(i => i.kind === 'move' && same(i.ox, o.x) && same(i.oy, o.y) && same(i.ow, o.w))));
+
+  /** Ausschnitt der gerenderten Seite als Vorschau des angefassten Inhalts */
+  function snapshot(o: PageObject): string {
+    const cv = (host.closest('.page') as HTMLElement)?.querySelector('canvas') as HTMLCanvasElement | null;
+    if (!cv) return '';
+    const sx = o.x * cv.width, sy = o.y * cv.height, sw = Math.max(1, o.w * cv.width), sh = Math.max(1, o.h * cv.height);
+    const c = document.createElement('canvas'); c.width = Math.round(sw); c.height = Math.round(sh);
+    c.getContext('2d')!.drawImage(cv, sx, sy, sw, sh, 0, 0, c.width, c.height);
+    try { return c.toDataURL('image/png'); } catch { return ''; }
+  }
+  async function lift(e: PointerEvent, o: PageObject) {
+    if (!doc || e.button !== 0) return;
+    e.stopPropagation(); e.preventDefault();
+    const it = addItem(doc, { page: index, kind: 'move', sub: o.sub, x: o.x, y: o.y, w: o.w, h: o.h, ox: o.x, oy: o.y, ow: o.w, oh: o.h, xref: o.xref, fonts: o.fonts, snap: snapshot(o) } as any);
+    const live = itemsOf(doc).find(i => i.id === it.id)!;
+    startDrag(e, live, 'move', host);
+  }
 
   onMount(() => {
     const ro = new ResizeObserver(() => { if (page) k = host.clientWidth / page.w; });
@@ -181,14 +211,15 @@
   }
 
   // ---------------- Verschieben & Größe ----------------
-  function startDrag(e: PointerEvent, it: OItem, mode: 'move' | 'resize' | 'p1' | 'p2') {
+  function startDrag(e: PointerEvent, it: OItem, mode: 'move' | 'resize' | 'p1' | 'p2', capture?: HTMLElement) {
     if (e.button !== 0) return;
+    if (overlay.editing === it.id) return; // im Text wird markiert, nicht gezogen
     e.stopPropagation(); e.preventDefault();
     overlay.selected = it.id;
     const r = host.getBoundingClientRect(); const sx = e.clientX, sy = e.clientY;
     const o = JSON.parse(JSON.stringify(it));
-    const target = e.currentTarget as HTMLElement; target.setPointerCapture(e.pointerId);
-    const ratio = it.kind === 'image' ? (it.h * page!.h) / (it.w * page!.w) : 0;
+    const target = capture || (e.currentTarget as HTMLElement); target.setPointerCapture(e.pointerId);
+    const ratio = it.kind === 'image' || (it.kind === 'move' && it.sub === 'image') ? ((it as any).h * page!.h) / ((it as any).w * page!.w) : 0;
     const mv = (ev: PointerEvent) => {
       const dx = (ev.clientX - sx) / r.width, dy = (ev.clientY - sy) / r.height;
       const a: any = it;
@@ -203,7 +234,7 @@
         if ('h' in o) a.h = ratio ? (a.w * page!.w * ratio) / page!.h : Math.max(0.006, o.h + dy);
       }
     };
-    const up = () => { target.removeEventListener('pointermove', mv); target.removeEventListener('pointerup', up); };
+    const up = () => { target.removeEventListener('pointermove', mv); target.removeEventListener('pointerup', up); if (doc) touch(doc); };
     target.addEventListener('pointermove', mv); target.addEventListener('pointerup', up);
   }
 
@@ -245,6 +276,16 @@
 </script>
 
 <div class="ov" bind:this={host} onpointerdown={onDown} onpointermove={onMove} onpointerup={onUp} role="presentation">
+  {#if moving}
+    {#each freeObjs as o (o.sub + o.x + ':' + o.y)}
+      <div class="obj {o.sub}" style:left={o.x * 100 + '%'} style:top={o.y * 100 + '%'} style:width={o.w * 100 + '%'} style:height={o.h * 100 + '%'}
+        title={o.sub === 'image' ? L("Bild") : o.text} onpointerdown={e => lift(e, o)} role="presentation"></div>
+    {/each}
+  {/if}
+  {#each items.filter(i => i.kind === 'move') as it (it.id + ':cover')}
+    {@const m = it as any}
+    <div class="mvcover" style:left={m.ox * 100 + '%'} style:top={m.oy * 100 + '%'} style:width={m.ow * 100 + '%'} style:height={m.oh * 100 + '%'}></div>
+  {/each}
   {#each items as it (it.id)}
     {@const sel = overlay.selected === it.id}
     {#if it.kind === 'line' || it.kind === 'arrow'}
@@ -283,6 +324,8 @@
           <div class="fillbox round" style:border={`${Math.max(1, it.width * k)}px solid ${it.stroke}`} style:background={it.fill === 'transparent' ? 'none' : it.fill + '55'} style:opacity={it.opacity}></div>
         {:else if it.kind === 'image'}
           <img src={it.src} alt="" draggable="false" />
+        {:else if it.kind === 'move'}
+          {#if !it.remove && it.snap}<img src={it.snap} alt="" draggable="false" />{/if}
         {:else if it.kind === 'redact'}
           <div class="redactbox"><span>{L("Wird geschwärzt")}</span></div>
         {:else if it.kind === 'whiteout'}
@@ -293,11 +336,11 @@
           <div class="fieldbox" class:small={it.ftype === 'check' || it.ftype === 'radio'}><span>{it.ftype === 'check' || it.ftype === 'radio' ? FIELD_LABEL[it.ftype] : it.name}</span></div>
         {:else if it.kind === 'text' || it.kind === 'textedit'}
           {#if it.kind === 'textedit'}<div class="cover"></div>{/if}
-          <div class="tx" contenteditable="true" spellcheck="false" role="textbox" tabindex="0"
+          <div class="tx" contenteditable={!moving || overlay.editing === it.id ? 'true' : 'false'} spellcheck="false" role="textbox" tabindex="0"
             style:font-size={it.size * k + 'px'} style:color={it.color} style:font-weight={it.bold ? 700 : 400} style:font-style={(it as any).italic ? 'italic' : null} style:font-family={it.kind === 'textedit' ? ((it as any).css ? `"${(it as any).css}", ` : '') + FONT_STACK[((it as any).family || 'sans') as 'sans'] : null} style:line-height={it.kind === 'textedit' ? ((it as any).multi ? (it as any).lineHeight * k : box.h * page!.h * k) + 'px' : 1.2}
             class:multi={(it as any).multi}
-            onpointerdown={e => { e.stopPropagation(); overlay.selected = it.id; }}
-            onfocus={() => { overlay.selected = it.id; overlay.editing = it.id; }}
+            onpointerdown={e => { if (moving && overlay.editing !== it.id) return; e.stopPropagation(); overlay.selected = it.id; }}
+            onfocus={() => { overlay.selected = it.id; if (!moving) overlay.editing = it.id; }}
             oninput={e => { it.text = (e.target as HTMLElement).innerText.replace(/\n$/, ''); }}
             onblur={() => { overlay.editing = null; if (!it.text.trim() && it.kind === 'text') removeItem(doc!, it.id); }}
             use:initText={it.text}></div>
@@ -313,7 +356,7 @@
             {#if it.kind === 'link' || it.kind === 'field'}<button title={L("Bearbeiten")} aria-label={L("Bearbeiten")} onclick={() => edit(it)}><I.Settings size={12} /></button>{/if}
             <button class="del" title={L("Entfernen (Entf)")} aria-label={L("Entfernen")} onclick={() => removeItem(doc!, it.id)}><I.Trash2 size={12} /></button>
           </div>
-          {#if it.kind !== 'text' && it.kind !== 'textedit'}<div class="rs" onpointerdown={e => startDrag(e, it, 'resize')} role="presentation"></div>{/if}
+          {#if it.kind !== 'text' && it.kind !== 'textedit' && !(it.kind === 'move' && (it.sub === 'text' || it.remove))}<div class="rs" onpointerdown={e => startDrag(e, it, 'resize')} role="presentation"></div>{/if}
         {/if}
       </div>
     {/if}
@@ -329,6 +372,10 @@
 
 <style>
   .ov { position: absolute; inset: 0; }
+  .obj { position: absolute; pointer-events: auto; cursor: move; border-radius: 2px; outline: 1px dashed transparent; outline-offset: 1px; }
+  .obj:hover { outline-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, transparent); }
+  .mvcover { position: absolute; background: #fff; pointer-events: none; }
+  .item.move img { width: 100%; height: 100%; display: block; pointer-events: none; }
   .item, .note, .mk, .shape :global(.hit), .shape .hd { pointer-events: auto; }
   .item { position: absolute; box-sizing: border-box; cursor: move; }
   .item.sel { outline: 1.5px solid var(--accent); outline-offset: 2px; }

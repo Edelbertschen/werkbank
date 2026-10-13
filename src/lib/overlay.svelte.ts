@@ -19,7 +19,16 @@ export type OItem = Base & (
   | { kind: 'link'; x: number; y: number; w: number; h: number; url: string; toPage: number }
   | { kind: 'field'; ftype: 'text' | 'check' | 'radio' | 'choice' | 'signature'; x: number; y: number; w: number; h: number; name: string; options: string; multiline: boolean; group: string }
   | { kind: 'underline' | 'strike'; rects: [number, number, number, number][]; color: string }
+  // Inhalt des PDFs (Textblock oder Bild), der verschoben, skaliert oder gelöscht wird; o* = ursprüngliche Lage
+  | { kind: 'move'; sub: 'text' | 'image'; x: number; y: number; w: number; h: number; ox: number; oy: number; ow: number; oh: number; xref?: number; fonts?: string[]; snap: string; remove?: boolean }
 );
+
+/** Angefasst, aber nicht verändert – zählt nicht als Änderung */
+export function isNoop(it: OItem) {
+  if (it.kind !== 'move' || it.remove) return false;
+  const e = 1e-4;
+  return Math.abs(it.x - it.ox) < e && Math.abs(it.y - it.oy) < e && Math.abs(it.w - it.ow) < e && Math.abs(it.h - it.oh) < e;
+}
 
 export const overlay = $state({
   items: {} as Record<string, OItem[]>,
@@ -34,7 +43,9 @@ export const overlay = $state({
   },
 });
 
-function sync(doc: Doc) { doc.overlayCount = overlay.items[doc.id]?.length || 0; }
+function sync(doc: Doc) { doc.overlayCount = (overlay.items[doc.id] || []).filter(i => !isNoop(i)).length; }
+/** Nach Verschieben/Ändern eines Elements die Zahl offener Änderungen neu bestimmen */
+export const touch = sync;
 const EMPTY: OItem[] = [];
 /** Lesen ohne Zustandsänderung (sicher in Templates/$derived) */
 export function itemsOf(doc: Doc): OItem[] { return overlay.items[doc.id] || EMPTY; }
@@ -60,7 +71,7 @@ export function removeItem(doc: Doc, id: string) {
 export function clearOverlay(doc: Doc) { overlay.items[doc.id] = []; overlay.selected = null; sync(doc); }
 export function findItem(doc: Doc, id: string | null) { return id ? itemsOf(doc).find(x => x.id === id) || null : null; }
 
-const PY_KINDS = new Set(['rect', 'ellipse', 'line', 'arrow', 'note', 'redact', 'textedit', 'link', 'underline', 'strike']);
+const PY_KINDS = new Set(['rect', 'ellipse', 'line', 'arrow', 'note', 'redact', 'textedit', 'link', 'underline', 'strike', 'move']);
 
 const applying = new Map<string, Promise<void>>();
 /** Alle offenen Overlay-Elemente ins PDF schreiben (ein neuer Stand). Doppelte Aufrufe teilen sich einen Durchlauf. */
@@ -74,7 +85,7 @@ export function applyOverlay(doc: Doc): Promise<void> {
 async function applyOverlayNow(doc: Doc) {
   const all = [...itemsOf(doc)];
   // leere Textfelder (angeklickt, nichts geschrieben) ignorieren
-  const items = all.filter(i => !((i.kind === 'text' || i.kind === 'textedit') && !(i as any).text?.trim()));
+  const items = all.filter(i => !((i.kind === 'text' || i.kind === 'textedit') && !(i as any).text?.trim()) && !isNoop(i));
   if (!items.length) { overlay.items[doc.id] = []; sync(doc); return; }
   let bytes = doc.bytes;
   const contentItems = items.filter(i => !PY_KINDS.has(i.kind));
@@ -95,6 +106,8 @@ async function applyOverlayNow(doc: Doc) {
 }
 
 function labelOf(it: OItem) {
+  if (it.kind === 'move') return it.remove ? L("Element gelöscht") : L("Element verschoben");
+  if (it.kind === 'textedit') return L("Text geändert");
   return ({ rect: L("Rechteck"), ellipse: L("Ellipse"), line: L("Linie"), arrow: L("Pfeil"), note: L("Notiz"), image: L("Bild"), redact: L("Schwärzung"), whiteout: L("Abdeckung"), text: 'Text', textedit: L("Text geändert"), link: 'Link', field: L("Formularfeld"), underline: L("Unterstreichung"), strike: L("Durchstreichung") } as any)[it.kind] + L(" eingefügt");
 }
 
@@ -155,7 +168,7 @@ async function bakeContent(bytes: Uint8Array, items: OItem[]) {
 
 async function bakeWithMuPdf(bytes: Uint8Array, items: OItem[]) {
   const author = app.prefs.author || '';
-  const fontBytes: Record<string, Uint8Array> = items.some(i => i.kind === 'textedit')
+  const fontBytes: Record<string, Uint8Array> = items.some(i => i.kind === 'textedit' || i.kind === 'move')
     ? { 'sans.ttf': new Uint8Array(await (await fetch('/engines/pdfjs/standard_fonts/LiberationSans-Regular.ttf')).arrayBuffer()), 'sansb.ttf': new Uint8Array(await (await fetch('/engines/pdfjs/standard_fonts/LiberationSans-Bold.ttf')).arrayBuffer()) }
     : {};
   // Installierte Schriften mit dem Namen der Originalschrift mitgeben (Desktop-App)
@@ -167,7 +180,21 @@ async function bakeWithMuPdf(bytes: Uint8Array, items: OItem[]) {
     const b = await systemFont(i.fontName, i.bold, !!i.italic);
     if (b) { const n = `sys${Object.keys(sysFiles).length}.font`; sysFiles[n] = b; sysPath.set(i.id, '/w/' + n); }
   }
-  const data = items.map(i => ({ sysfont: sysPath.get(i.id), ...i, ...('stroke' in i ? { strokeRgb: hexToRgb01(i.stroke) } : {}), ...('fill' in i && i.fill && i.fill !== 'transparent' ? { fillRgb: hexToRgb01(i.fill) } : {}), ...('color' in i ? { colorRgb: hexToRgb01((i as any).color) } : {}) }));
+  // Verschobene Textblöcke: installierte Schriften je Schriftname
+  const sysMaps = new Map<string, Record<string, string>>();
+  for (const i of items) {
+    if (i.kind !== 'move' || i.sub !== 'text' || !i.fonts?.length) continue;
+    const { systemFont } = await import('./sysfonts');
+    const { classifyFont } = await import('./textedit');
+    const m: Record<string, string> = {};
+    for (const name of i.fonts) {
+      const st = classifyFont(name);
+      const b = await systemFont(name, st.bold, st.italic);
+      if (b) { const n = `sys${Object.keys(sysFiles).length}.font`; sysFiles[n] = b; m[name] = '/w/' + n; }
+    }
+    sysMaps.set(i.id, m);
+  }
+  const data = items.map(i => ({ sysfont: sysPath.get(i.id), sysfonts: sysMaps.get(i.id), snap: undefined, ...i, ...('stroke' in i ? { strokeRgb: hexToRgb01(i.stroke) } : {}), ...('fill' in i && i.fill && i.fill !== 'transparent' ? { fillRgb: hexToRgb01(i.fill) } : {}), ...('color' in i ? { colorRgb: hexToRgb01((i as any).color) } : {}) }));
   const r = await pyRun(`
 items = json.loads(ARGS['items'])
 author = ARGS['author']
@@ -255,6 +282,107 @@ def erase_text(page, r):
     if not hit:
         page.add_redact_annot(r, fill=False)
     page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_REDACT_LINE_ART_NONE)
+# --- Elemente verschieben ------------------------------------------------------
+def image_ctm(page, src, xref):
+    best = None
+    for info in page.get_image_info(xrefs=True):
+        if info['xref'] == xref:
+            r = pymupdf.Rect(info['bbox'])
+            d = abs(r.x0 - src.x0) + abs(r.y0 - src.y0) + abs(r.x1 - src.x1) + abs(r.y1 - src.y1)
+            if best is None or d < best[0]:
+                best = (d, pymupdf.Matrix(info['transform']))
+    return best[1] if best else None
+def rewrite_do(page, xref, repl):
+    """Den einen Zeichenbefehl des Bildes im Seiteninhalt ersetzen; False, wenn nicht eindeutig"""
+    names = [i[7] for i in page.get_images(full=True) if i[0] == xref]
+    if len(names) != 1:
+        return False
+    page.clean_contents()
+    cont = page.get_contents()
+    if len(cont) != 1:
+        return False
+    s = doc.xref_stream(cont[0])
+    pat = ('/%s Do' % names[0]).encode()
+    if s.count(pat) != 1:
+        return False
+    doc.update_stream(cont[0], s.replace(pat, repl(pat)))
+    return True
+def redact_image(page, src):
+    c = (src.tl + src.br) / 2
+    if sum(1 for i in page.get_image_info() if pymupdf.Rect(i['bbox']).contains(c)) > 1:
+        raise Exception('Dieses Bild liegt über einem anderen Bild und lässt sich nicht einzeln verschieben.')
+    page.add_redact_annot(pymupdf.Rect(c.x - 0.5, c.y - 0.5, c.x + 0.5, c.y + 0.5))
+    page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_REMOVE, graphics=pymupdf.PDF_REDACT_LINE_ART_NONE, text=pymupdf.PDF_REDACT_TEXT_NONE)
+def move_image(page, src, dst, xref, remove):
+    if remove:
+        if not rewrite_do(page, xref, lambda pat: b''):
+            redact_image(page, src)
+        return
+    T = image_ctm(page, src, xref)
+    if T is not None:
+        P = page.transformation_matrix
+        # PyMuPDF zählt im Bild-Einheitsquadrat y von oben, PDF von unten
+        CTM = pymupdf.Matrix(1, 0, 0, -1, 0, 1) * T * ~P
+        Mm = pymupdf.Matrix(1, 0, 0, 1, -src.x0, -src.y0) * pymupdf.Matrix(dst.width / src.width, 0, 0, dst.height / src.height, 0, 0) * pymupdf.Matrix(1, 0, 0, 1, dst.x0, dst.y0)
+        M = CTM * (P * Mm * ~P) * ~CTM
+        cm = ('q %.6f %.6f %.6f %.6f %.6f %.6f cm ' % (M.a, M.b, M.c, M.d, M.e, M.f)).encode()
+        if rewrite_do(page, xref, lambda pat: cm + pat + b' Q'):
+            return
+    redact_image(page, src)
+    page.insert_image(dst, xref=xref)
+def move_font(page, name, flags, text, sysfile):
+    for x in page.get_fonts():
+        if x[3].split('+')[-1] == name:
+            try:
+                buf = doc.extract_font(x[0])[3]
+                if buf:
+                    f = pymupdf.Font(fontbuffer=buf)
+                    if all(f.has_glyph(ord(c)) for c in text):
+                        return f
+            except Exception:
+                pass
+            break
+    if sysfile:
+        try:
+            f = pymupdf.Font(fontfile=sysfile)
+            if all(f.has_glyph(ord(c)) for c in text):
+                return f
+        except Exception:
+            pass
+    try:
+        return pymupdf.Font(BASE14[font_style(name, flags)])
+    except Exception:
+        return pymupdf.Font(fontfile='/w/sans.ttf')
+def move_text(page, src, dst, remove, sysfonts):
+    """Zeichen des Blocks entfernen und an derselben relativen Position neu setzen (Zeichen für Zeichen)"""
+    d = dst.tl - src.tl
+    groups = {}
+    for b in page.get_text('rawdict')['blocks']:
+        for l in b.get('lines', []):
+            for sp in l['spans']:
+                for ch in sp['chars']:
+                    q = pymupdf.Rect(ch['bbox'])
+                    if q.is_empty or not src.contains((q.tl + q.br) / 2) or not ch['c'].strip():
+                        continue
+                    if abs(l['dir'][1]) > 0.01:
+                        raise Exception('Gedrehter Text lässt sich noch nicht verschieben.')
+                    groups.setdefault((sp['font'], sp['flags'], sp['color']), []).append((pymupdf.Point(ch['origin']), ch['c'], sp['size']))
+    erase_text(page, src)
+    if remove:
+        return
+    for (font, flags, color), chars in groups.items():
+        F = move_font(page, font, flags, ''.join(c for _, c, _ in chars), sysfonts.get(font))
+        tw = pymupdf.TextWriter(page.rect)
+        for o, c, size in chars:
+            tw.append(o + d, c, font=F, fontsize=size)
+        tw.write_text(page, color=(((color >> 16) & 255) / 255, ((color >> 8) & 255) / 255, (color & 255) / 255))
+def move_element(page, it):
+    src = R(page, it['ox'], it['oy'], it['ow'], it['oh'])
+    dst = R(page, it['x'], it['y'], it['w'], it['h'])
+    if it['sub'] == 'image':
+        move_image(page, src, dst, it['xref'], it.get('remove'))
+    else:
+        move_text(page, src, dst, it.get('remove'), it.get('sysfonts') or {})
 def finish(annot, it):
     annot.set_info(title=author)
     annot.update()
@@ -314,6 +442,8 @@ for it in items:
         else:
             base = P(page, it['x'], it['y'] + it['h'] * 0.80)
             page.insert_text(base, it['text'], fontsize=it['size'], fontname=fname, fontfile=ff, color=it['colorRgb'], rotate=page.rotation)
+    elif k == 'move':
+        move_element(page, it)
 for pno in redact_pages:
     doc[pno].apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_PIXELS)
 save_out(doc)

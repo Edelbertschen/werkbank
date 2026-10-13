@@ -8,7 +8,7 @@
   import { TOOLS, tool } from '../lib/tools';
   import { matches } from '../lib/shortcuts';
   import { viewer } from '../lib/viewer.svelte';
-  import { overlay, removeItem } from '../lib/overlay.svelte';
+  import { overlay, removeItem, findItem, touch } from '../lib/overlay.svelte';
   import { openTool } from '../lib/ui.svelte';
   import TitleBar from './TitleBar.svelte';
   import Ribbon from './Ribbon.svelte';
@@ -68,7 +68,29 @@
       return;
     }
     // Ausgewähltes Overlay-Element löschen
-    if (!typing && (e.key === 'Delete' || e.key === 'Backspace') && overlay.selected && doc) { e.preventDefault(); removeItem(doc, overlay.selected); return; }
+    if (!typing && (e.key === 'Delete' || e.key === 'Backspace') && overlay.selected && doc) {
+      e.preventDefault();
+      const it = findItem(doc, overlay.selected);
+      // Inhalt des PDFs: als gelöscht vormerken (wird beim Übernehmen entfernt); eigene Elemente: verwerfen
+      if (it?.kind === 'move') { it.remove = true; touch(doc); } else removeItem(doc, overlay.selected);
+      return;
+    }
+    // Ausgewähltes Element mit den Pfeiltasten verschieben (1 pt, mit Umschalt 10 pt)
+    if (!typing && app.mode === 'move' && overlay.selected && doc && e.key.startsWith('Arrow') && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      const it = findItem(doc, overlay.selected) as any;
+      const pg = it && doc.pages[it.page];
+      if (it && pg) {
+        e.preventDefault();
+        const step = e.shiftKey ? 10 : 1;
+        const dx = (e.key === 'ArrowRight' ? step : e.key === 'ArrowLeft' ? -step : 0) / pg.w;
+        const dy = (e.key === 'ArrowDown' ? step : e.key === 'ArrowUp' ? -step : 0) / pg.h;
+        if ('x1' in it) { it.x1 += dx; it.x2 += dx; it.y1 += dy; it.y2 += dy; }
+        else if ('rects' in it) it.rects = it.rects.map((q: number[]) => [q[0] + dx, q[1] + dy, q[2], q[3]]);
+        else { it.x += dx; it.y += dy; }
+        touch(doc);
+        return;
+      }
+    }
     // Kürzel aus dem Werkzeugverzeichnis
     for (const t2 of TOOLS) {
       if (!t2.shortcut || !matches(e, t2.shortcut)) continue;

@@ -10,7 +10,7 @@ export type EditMode =
   | 'select' | 'hand'
   | 'pdfjs:freetext' | 'pdfjs:ink' | 'pdfjs:highlight' | 'pdfjs:stamp'
   | 'shape:rect' | 'shape:ellipse' | 'shape:line' | 'shape:arrow'
-  | 'note' | 'text:add' | 'text:edit' | 'image' | 'sign' | 'stamp'
+  | 'note' | 'text:add' | 'text:edit' | 'move' | 'image' | 'sign' | 'stamp'
   | 'redact' | 'whiteout' | 'link'
   | 'field:text' | 'field:check' | 'field:radio' | 'field:choice' | 'field:signature'
   | 'markup:underline' | 'markup:strike';

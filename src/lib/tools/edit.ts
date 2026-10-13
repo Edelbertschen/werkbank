@@ -24,6 +24,7 @@ export const REDACT_PRESETS: [string, string, string][] = [
 
 export const editTools: Tool[] = [
   // ---------------- Text & Inhalte ----------------
+  modeTool('move', L("Elemente verschieben"), I.Move, 'move', L("Textblöcke, Bilder und eigene Elemente anklicken, verschieben, Bilder an der Ecke skalieren; Entf löscht, Pfeiltasten schieben fein."), L("verschieben anordnen bewegen positionieren auswählen objekt")),
   modeTool('text-edit', L("Text bearbeiten"), I.Type, 'text:edit', L("Auf eine Textzeile klicken und sie ändern. Der alte Text wird entfernt, der neue in vergleichbarer Größe gesetzt."), L("ändern korrigieren tippfehler")),
   modeTool('text-add', L("Text hinzufügen"), I.TextCursor, 'text:add', L("Klicken und Text auf die Seite schreiben."), L("beschriften schreiben")),
   modeTool('image', L("Bild einfügen"), I.ImagePlus, 'image', L("Bild wählen und auf die Seite setzen, dann verschieben oder skalieren."), L("logo foto grafik")),

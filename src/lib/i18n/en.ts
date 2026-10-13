@@ -1366,6 +1366,14 @@ const en: Record<string, string> = {
  "﻿Feld;Wert\n": "﻿Field;Value\n",
  "﻿Seite;Art;Autor;Datum;Text\n": "﻿Page;Type;Author;Date;Text\n",
  "Hier einfügen": "Insert here",
- "Datei ließ sich nicht lesen: {0}": "Could not read file: {0}"
+ "Datei ließ sich nicht lesen: {0}": "Could not read file: {0}",
+ "Elemente verschieben": "Move objects",
+ "Element gelöscht": "Object deleted",
+ "Element verschoben": "Object moved",
+ "Textblöcke, Bilder und eigene Elemente anklicken, verschieben, Bilder an der Ecke skalieren; Entf löscht, Pfeiltasten schieben fein.": "Click text blocks, images and your own objects to move them; resize images at the corner. Delete removes, arrow keys nudge.",
+ "verschieben anordnen bewegen positionieren auswählen objekt": "move arrange position select object drag",
+ "Element anklicken und ziehen. Pfeiltasten schieben fein, Entf löscht, Doppelklick bearbeitet eigenen Text.": "Click an object and drag it. Arrow keys nudge, Delete removes, double-click edits your own text.",
+ "Dieses Bild liegt über einem anderen Bild und lässt sich nicht einzeln verschieben.": "This image lies on top of another image and can't be moved on its own.",
+ "Gedrehter Text lässt sich noch nicht verschieben.": "Rotated text can't be moved yet."
 };
 export default en;

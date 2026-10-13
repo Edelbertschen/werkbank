@@ -45,6 +45,7 @@ export async function setMode(m: EditMode) {
 
 export const MODE_HINT: Partial<Record<EditMode, string>> = {
   'text:edit': L("Auf eine Textzeile klicken, um sie zu ändern."),
+  move: L("Element anklicken und ziehen. Pfeiltasten schieben fein, Entf löscht, Doppelklick bearbeitet eigenen Text."),
   'text:add': L("Auf die Seite klicken und schreiben."),
   image: L("Auf die Seite klicken, um das Bild zu platzieren."),
   sign: L("Auf die Seite klicken, um die Unterschrift zu platzieren."),

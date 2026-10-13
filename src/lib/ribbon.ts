@@ -28,7 +28,7 @@ export const RIBBON: RibbonTabDef[] = [
   },
   {
     id: 'edit', label: L("Bearbeiten"), groups: [
-      { label: 'Text', items: ['text-edit', 'text-add'], large: ['text-edit', 'text-add'] },
+      { label: 'Text', items: ['move', 'text-edit', 'text-add'], large: ['move', 'text-edit', 'text-add'] },
       { label: L("Einfügen"), items: ['image', 'sign', 'stamp', 'link'], large: ['image', 'sign'] },
       { label: L("Abdecken"), items: ['redact', 'find-redact', 'whiteout'], large: ['redact'] },
       { label: L("Struktur"), items: ['toc', 'bookmarks-panel', 'attachments-panel', 'layers-panel'], large: [] },

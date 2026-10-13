@@ -14,6 +14,7 @@ export { default as Search } from '@lucide/svelte/icons/search';
 export { default as ZoomIn } from '@lucide/svelte/icons/zoom-in';
 export { default as ZoomOut } from '@lucide/svelte/icons/zoom-out';
 export { default as MoveHorizontal } from '@lucide/svelte/icons/move-horizontal';
+export { default as Move } from '@lucide/svelte/icons/move';
 export { default as Maximize } from '@lucide/svelte/icons/maximize';
 export { default as RotateCcw } from '@lucide/svelte/icons/rotate-ccw';
 export { default as RotateCw } from '@lucide/svelte/icons/rotate-cw';

@@ -8,7 +8,7 @@ Werkbank baut auf [BentoPDF](https://github.com/alam00000/bentopdf) auf und erg�
 
 - **Ansehen**: Tabs, Miniaturen, Lesezeichen, Suche mit Trefferliste, Einzel-/Doppelseite, Präsentation, Nachtmodus, Drucken
 - **Seiten**: organisieren per Ziehen, drehen, löschen, einfügen, ersetzen, zusammenführen, teilen (nach Seiten, Lesezeichen, Größe), zuschneiden, n-up, Broschüre, Seitenzahlen, Kopf-/Fußzeile, Bates, Wasserzeichen
-- **Bearbeiten**: vorhandenen Text ändern, Text und Bilder einfügen, Unterschrift (zeichnen/tippen/Bild), Stempel, Links, echtes Schwärzen (auch per Suchmuster: E-Mail, IBAN, Telefon …), Inhaltsverzeichnis
+- **Bearbeiten**: Elemente verschieben (Textblöcke, Bilder, eigene Elemente; Bilder skalieren, löschen), vorhandenen Text ändern, Text und Bilder einfügen, Unterschrift (zeichnen/tippen/Bild), Stempel, Links, echtes Schwärzen (auch per Suchmuster: E-Mail, IBAN, Telefon …), Inhaltsverzeichnis
 - **Kommentieren**: Textmarker, Unterstreichen, Durchstreichen, Notizen, Freihand, Formen; Kommentarliste, Export, Einbrennen
 - **Formulare**: Felder anlegen und automatisch erkennen, ausfüllen, Daten exportieren/importieren, abflachen
 - **Umwandeln**: Word/Excel/PowerPoint/Bilder/E-Mails/Markdown/HTML → PDF; PDF → Word, Excel, PowerPoint, Bilder, SVG, Text, Markdown, HTML, JSON, EPUB, CBZ, **PDF/A**

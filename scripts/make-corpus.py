@@ -107,6 +107,13 @@ doc = Document(); doc.add_heading('Testbericht Werkbank', 1); doc.add_paragraph(
 import openpyxl
 wb = openpyxl.Workbook(); ws = wb.active; ws.append(['Baumart', 'Fläche ha', 'Vorrat m³']); ws.append(['Fichte', 12.5, 3400]); ws.append(['Buche', 8.0, 2100]); wb.save(P('bestand.xlsx'))
 pymupdf.open(P('text.pdf'))[0].get_pixmap(dpi=60).save(P('foto.jpg'))
+# Seite mit Logo-Bild und Textblöcken (Elemente verschieben)
+d = pymupdf.open(); p = d.new_page(width=595, height=842)
+p.insert_text((72, 90), 'Briefkopf Forstbetrieb', fontsize=20, fontname='hebo')
+p.insert_text((72, 140), 'Dieser Absatz bleibt an seinem Platz.', fontsize=11, fontname='helv')
+p.insert_text((72, 700), 'Fußnote: verschiebbarer Text', fontsize=10, fontname='helv')
+p.insert_image(pymupdf.Rect(360, 200, 520, 320), filename=P('foto.jpg'))
+d.save(P('bild.pdf'), garbage=3, deflate=True)
 # Formular wie aus einer Textverarbeitung: eingebettete Teilschriften (Sans fett/normal, Serif, Mono) – braucht LibreOffice
 import shutil, subprocess, tempfile
 if shutil.which('soffice'):
