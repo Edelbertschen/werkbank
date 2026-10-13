@@ -90,8 +90,8 @@
   .item { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 8px 6px; border-radius: 10px; transition: background-color 0.12s; }
   .item:hover { background: var(--hover); }
   .frame { width: 100%; max-width: 150px; border-radius: 2px; outline: 2px solid transparent; outline-offset: 4px; transition: outline-color 0.15s; }
-  .item.cur .frame { outline-color: var(--accent); }
-  .item.sel { background: var(--accent-softer); }
+  /* Eine Markierung je Bedeutung: aktuelle Seite = Nummer in Petrol, Auswahl = Rahmen */
+  .frame { box-shadow: 0 0 0 0.5px rgba(14, 28, 30, 0.14), 0 1px 4px rgba(14, 28, 30, 0.08); }
   .item.sel .frame { outline-color: var(--accent); }
   .cap { display: flex; gap: 6px; align-items: center; font-size: 11px; color: var(--text-3); }
   .num { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-2); padding: 0 6px; border-radius: 6px; }

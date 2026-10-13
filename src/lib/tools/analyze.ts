@@ -6,16 +6,12 @@ import { py, pyRun } from '../engines';
 import { PY_TABLES } from './convert';
 import { baseName } from '../util';
 
-import InfoPanel from '../../components/panels/InfoPanel.svelte';
-import FontsPanel from '../../components/panels/FontsPanel.svelte';
-import BatchPanel from '../../components/panels/BatchPanel.svelte';
-import ComparePanel from '../../components/panels/ComparePanel.svelte';
 
 import { L } from '../i18n';
 export const analyzeTools: Tool[] = [
-  { id: 'compare', label: L("Dokumente vergleichen"), short: L("Vergleichen"), icon: I.GitCompare, desc: L("Zwei Fassungen nebeneinander, als Differenzbild oder als Textvergleich mit markierten Änderungen."), keys: L("unterschied diff version vergleich änderungen"), panel: ComparePanel },
-  { id: 'info', label: L("Eigenschaften"), short: L("Eigenschaften"), icon: I.Info, desc: L("Datei, PDF-Version, Seitenformate, Schutz, Formulare, Anhänge und Statistik."), keys: L("details version info statistik wörter"), panel: InfoPanel },
-  { id: 'fonts', label: L("Schriften"), icon: I.Type, desc: L("Alle verwendeten Schriften mit Typ und Einbettung – wichtig für Druck und PDF/A."), keys: L("fonts eingebettet"), panel: FontsPanel, engine: 'pymupdf' },
+  { id: 'compare', label: L("Dokumente vergleichen"), short: L("Vergleichen"), icon: I.GitCompare, desc: L("Zwei Fassungen nebeneinander, als Differenzbild oder als Textvergleich mit markierten Änderungen."), keys: L("unterschied diff version vergleich änderungen"), loadPanel: () => import('../../components/panels/ComparePanel.svelte') },
+  { id: 'info', label: L("Eigenschaften"), short: L("Eigenschaften"), icon: I.Info, desc: L("Datei, PDF-Version, Seitenformate, Schutz, Formulare, Anhänge und Statistik."), keys: L("details version info statistik wörter"), loadPanel: () => import('../../components/panels/InfoPanel.svelte') },
+  { id: 'fonts', label: L("Schriften"), icon: I.Type, desc: L("Alle verwendeten Schriften mit Typ und Einbettung – wichtig für Druck und PDF/A."), keys: L("fonts eingebettet"), loadPanel: () => import('../../components/panels/FontsPanel.svelte'), engine: 'pymupdf' },
   {
     id: 'extract-images', label: L("Bilder extrahieren"), short: L("Bilder"), icon: I.Images, engine: 'pymupdf', desc: L("Alle eingebetteten Bilder in Originalqualität speichern."), keys: L("fotos grafiken herausholen"),
     fields: [{ key: 'min', type: 'number', label: L("Kleinste Kantenlänge (Pixel)"), def: 48, min: 1, max: 2000, hint: L("Kleinere Bilder (Linien, Symbole) überspringen.") }, PAGES('all')], action: L("Extrahieren"),
@@ -66,5 +62,5 @@ out`, { files: { 'in.pdf': ctx.bytes }, vars: { pages: JSON.stringify(pagesOf(v.
       return { files };
     },
   },
-  { id: 'batch', label: L("Stapelverarbeitung"), short: L("Stapel"), icon: I.Workflow, noDoc: true, desc: L("Ein Werkzeug auf viele Dateien auf einmal anwenden – z. B. 200 Scans mit Texterkennung versehen und komprimieren."), keys: L("stapel batch viele dateien automatisch ordner"), panel: BatchPanel },
+  { id: 'batch', label: L("Stapelverarbeitung"), short: L("Stapel"), icon: I.Workflow, noDoc: true, desc: L("Ein Werkzeug auf viele Dateien auf einmal anwenden – z. B. 200 Scans mit Texterkennung versehen und komprimieren."), keys: L("stapel batch viele dateien automatisch ordner"), loadPanel: () => import('../../components/panels/BatchPanel.svelte') },
 ];

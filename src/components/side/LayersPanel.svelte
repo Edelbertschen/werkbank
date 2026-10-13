@@ -44,7 +44,7 @@
 
 <style>
   .list { flex: 1; padding: 0 8px 12px; }
-  .empty, .hint { color: var(--text-3); font-size: 12px; padding: 4px 6px; line-height: 1.5; margin: 0 0 4px; }
+  .hint { color: var(--text-3); font-size: 12px; padding: 4px 6px; line-height: 1.5; margin: 0 0 4px; }
   .row { width: 100%; display: flex; align-items: center; gap: 8px; border: 0; background: none; padding: 6px 8px; border-radius: 6px; text-align: left; color: var(--text-2); }
   .row:hover { background: var(--hover); }
   .row span { color: var(--text); }

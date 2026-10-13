@@ -1,7 +1,8 @@
 import { L } from '../i18n';
 // Ladezustand der Engines für die Statusleiste
 export type EngineName = 'pymupdf' | 'libreoffice' | 'ghostscript' | 'tesseract';
-export type EngineStatus = 'idle' | 'loading' | 'ready' | 'error';
+/** preloading: lädt still vor, ohne Anzeige; loading: etwas wartet darauf */
+export type EngineStatus = 'idle' | 'preloading' | 'loading' | 'ready' | 'error';
 
 const s = $state<Record<EngineName, EngineStatus>>({ pymupdf: 'idle', libreoffice: 'idle', ghostscript: 'idle', tesseract: 'idle' });
 

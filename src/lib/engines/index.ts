@@ -6,11 +6,14 @@ import { engineState } from './state.svelte';
 const pyClient = new WorkerClient(() => new Worker(new URL('./pymupdf.worker.ts', import.meta.url), { type: 'module' }), 'PyMuPDF');
 const toolsClient = new WorkerClient(() => new Worker(new URL('./tools.worker.ts', import.meta.url), { type: 'module' }), L("Werkzeuge"));
 
+export { engineState };
 let pyReady: Promise<void> | null = null;
-/** PyMuPDF vorbereiten (beim ersten Mal ca. 5–15 s) */
-export function warmPy(): Promise<void> {
+/** PyMuPDF vorbereiten (beim ersten Mal einige Sekunden). `silent`: Vorladen ohne Anzeige. */
+export function warmPy(silent = false): Promise<void> {
+  // Wartet jetzt etwas auf das stille Vorladen, wird es sichtbar
+  if (pyReady && !silent && engineState.get('pymupdf') === 'preloading') engineState.set('pymupdf', 'loading');
   return (pyReady ??= (async () => {
-    engineState.set('pymupdf', 'loading');
+    engineState.set('pymupdf', silent ? 'preloading' : 'loading');
     try { await pyClient.call('warm'); engineState.set('pymupdf', 'ready'); }
     catch (e) { pyReady = null; engineState.set('pymupdf', 'error'); throw e; }
   })());
@@ -181,10 +184,10 @@ export async function warmFor(engine: string | undefined, ocrLangs: string[] = [
 
 let idleStarted = false;
 /** PDF-Engine still im Hintergrund laden, wenn die App gerade nichts zu tun hat */
-export function preloadWhenIdle() {
+export function preloadWhenIdle(delay = 300) {
   if (idleStarted) return;
   idleStarted = true;
-  const go = () => { warmPy().catch(() => { idleStarted = false; }); };
+  const go = () => { warmPy(true).catch(() => { idleStarted = false; }); };
   const ric = (globalThis as any).requestIdleCallback as ((cb: () => void, o?: any) => void) | undefined;
-  setTimeout(() => (ric ? ric(go, { timeout: 5000 }) : go()), 2500);
+  setTimeout(() => (ric ? ric(go, { timeout: 2000 }) : go()), delay);
 }

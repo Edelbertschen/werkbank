@@ -10,7 +10,6 @@ import * as P from './platform';
 import { baseName, extOf, sleep, fmtSize } from './util';
 import { defaults } from './fields';
 import type { Tool, ToolCtx, ToolResult, OutFile } from './tools/types';
-import JSZip from 'jszip';
 
 import { L } from './i18n';
 // ---------------------------------------------------------------------------
@@ -213,7 +212,7 @@ export async function saveFiles(files: OutFile[], zipName?: string) {
     toast(L("{0} Dateien gespeichert", files.length), { kind: 'ok', action: { label: L("Ordner öffnen"), run: () => P.revealInFolder(P.joinPath(folder!, files[0].name)) } });
     return;
   }
-  const zip = new JSZip(); const used = new Set<string>();
+  const zip = new (await import('jszip')).default(); const used = new Set<string>();
   for (const f of files) { let n = f.name, k = 2; while (used.has(n)) n = f.name.replace(/(\.[^.]+)$/, ` (${k++})$1`); used.add(n); zip.file(n, f.data); }
   const blob = await zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
   await saveFiles([{ name: zipName || L("Werkbank-Export.zip"), data: blob }]);

@@ -51,6 +51,8 @@ export interface Tool {
   mode?: EditMode;
   /** eigener Inhalt im Aufgabenbereich */
   panel?: Component<any>;
+  /** Bereich erst beim Öffnen laden (hält den Start schlank) */
+  loadPanel?: () => Promise<{ default: Component<any> }>;
   /** Hinweis, welche Engine geladen wird */
   engine?: 'pymupdf' | 'libreoffice' | 'ghostscript' | 'tesseract';
   /** aktiver Zustand (für Umschalter) */

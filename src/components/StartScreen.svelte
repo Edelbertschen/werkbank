@@ -98,7 +98,7 @@
       </button>
       <nav class="starts" aria-label={L("Neu beginnen")}>
         {#each starts as [label, Icon, run] (label)}
-          <button onclick={run}><Icon size={16} strokeWidth={1.7} /><span>{label}</span></button>
+          <button onclick={run}><span class="si"><Icon size={16} strokeWidth={1.7} /></span><span>{label}</span></button>
         {/each}
       </nav>
     </section>
@@ -158,8 +158,8 @@
   h2 { margin: 0 0 14px; font: 600 15px/1.2 var(--font-display); letter-spacing: -0.01em; color: var(--text); }
 
   /* Die Werkbank: Ablagefläche zum Hineinziehen und daneben die Einstiege */
-  .bench { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 20px; align-items: stretch; }
-  .drop { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 18px; text-align: left; min-height: 128px; padding: 24px 26px; border-radius: 16px;
+  .bench { display: flex; flex-direction: column; gap: 14px; }
+  .drop { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 18px; text-align: left; min-height: 112px; padding: 22px 26px; border-radius: 16px;
     border: 1.5px dashed color-mix(in srgb, var(--accent) 45%, var(--line-strong)); background: color-mix(in srgb, var(--accent) 4%, var(--surface)); color: var(--text);
     transition: border-color 0.15s, background-color 0.15s, transform 0.15s var(--ease); }
   .drop:hover, .drop.hot { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); }
@@ -168,11 +168,12 @@
   .dt b { display: block; font: 600 19px/1.2 var(--font-display); letter-spacing: -0.015em; margin-bottom: 6px; }
   .dt small { font-size: 13px; color: var(--text-2); line-height: 1.45; }
   .open { pointer-events: none; height: 34px; padding: 0 16px; font-size: 13px; }
-  .starts { display: flex; flex-direction: column; gap: 2px; padding: 8px; border-radius: 16px; background: var(--surface); box-shadow: var(--shadow-1); }
-  .starts button { display: flex; align-items: center; gap: 11px; border: 0; background: none; border-radius: 9px; padding: 0 11px; height: 36px; font-weight: 500; color: var(--text); text-align: left; transition: background-color 0.12s; }
-  .starts button :global(svg) { color: var(--text-2); flex: none; }
-  .starts button:hover { background: var(--hover); }
-  .starts button:hover :global(svg) { color: var(--accent); }
+  .starts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+  .starts button { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; border: 0; border-radius: 12px; padding: 12px 12px 11px; background: var(--surface); box-shadow: var(--shadow-1), 0 0 0 0.5px var(--line);
+    font-weight: 500; font-size: 12.5px; line-height: 1.3; color: var(--text); text-align: left; transition: transform 0.15s var(--ease), box-shadow 0.15s; }
+  .si { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--hover); color: var(--text-2); transition: background-color 0.15s, color 0.15s; }
+  .starts button:hover { transform: translateY(-1px); box-shadow: var(--shadow-2), 0 0 0 0.5px var(--line-strong); }
+  .starts button:hover .si { background: var(--accent-soft); color: var(--accent); }
 
   /* Einführung: einmal, knapp, ohne Tour */
   .intro { padding: 20px 22px 22px; border-radius: 16px; background: var(--surface); box-shadow: var(--shadow-1), inset 3px 0 0 var(--accent); animation: intro-in 0.35s var(--ease); }
@@ -206,5 +207,5 @@
   .ti { grid-row: span 2; width: 36px; height: 36px; border-radius: 10px; background: var(--surface); box-shadow: var(--shadow-1); color: var(--accent); display: grid; place-items: center; }
   .tl { font-weight: 600; font-size: 13px; }
   .td { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  @media (max-width: 900px) { .bench, .intro ol { grid-template-columns: 1fr; } .tasks { grid-template-columns: 1fr; } .inner { padding: 36px 24px; } }
+  @media (max-width: 900px) { .intro ol { grid-template-columns: 1fr; } .starts { grid-template-columns: repeat(3, minmax(0, 1fr)); } .tasks { grid-template-columns: 1fr; } .inner { padding: 36px 24px; } }
 </style>

@@ -30,6 +30,8 @@
   onMount(async () => {
     await loadPersisted();
     app.ready = true;
+    // PDF-Engine gleich still vorbereiten – bis eine Datei gewählt ist, ist sie meist fertig
+    if (app.prefs.preloadEngines) import('../lib/engines').then(m => m.preloadWhenIdle());
     await onOpenFiles(paths => openPaths(paths));
     await onFileDrop((state, p) => {
       if (state === 'leave') { app.dropping = false; dropTarget = null; return; }

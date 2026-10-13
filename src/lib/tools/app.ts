@@ -6,7 +6,6 @@ import { openDialog, save, closeDoc, undo, redo, newBlankDoc } from '../actions'
 import { toggleFullscreen } from '../platform';
 import { viewer } from '../viewer.svelte';
 import { printDoc } from '../print';
-import SettingsPanel from '../../components/panels/SettingsPanel.svelte';
 import HistoryPanel from '../../components/panels/HistoryPanel.svelte';
 
 import { L } from '../i18n';
@@ -22,7 +21,7 @@ export const appTools: Tool[] = [
   { id: 'undo', label: L("Rückgängig"), icon: I.Undo2, direct: true, shortcut: 'Mod+Z', disabled: () => { const d = active(); return !d || (!d.canUndo && !d.pendingEdits); }, run: async () => { await undo(); } },
   { id: 'redo', label: L("Wiederholen"), icon: I.Redo2, direct: true, shortcut: 'Mod+Shift+Z', disabled: () => !active()?.canRedo, run: async () => { await redo(); } },
   { id: 'history', label: L("Verlauf"), icon: I.History, desc: L("Alle Bearbeitungsschritte dieses Dokuments – zu jedem Stand zurückspringen."), panel: HistoryPanel },
-  { id: 'settings', label: L("Einstellungen"), icon: I.Settings, noDoc: true, panel: SettingsPanel, desc: L("Name für Kommentare, Erscheinungsbild, Texterkennung") },
+  { id: 'settings', label: L("Einstellungen"), icon: I.Settings, noDoc: true, loadPanel: () => import('../../components/panels/SettingsPanel.svelte'), desc: L("Name für Kommentare, Erscheinungsbild, Texterkennung") },
   // Werkzeuge im Viewer
   { id: 'tool-select', label: L("Text auswählen"), short: L("Auswählen"), icon: I.MousePointer2, direct: true, shortcut: 'V', active: () => app.mode === 'select', run: async () => { app.mode = 'select'; } },
   { id: 'tool-hand', label: L("Hand"), icon: I.Hand, direct: true, shortcut: 'H', active: () => app.mode === 'hand', run: async () => { app.mode = 'hand'; } },

@@ -54,11 +54,13 @@
         <p class="note">{L("Öffne zuerst ein Dokument.")}</p>
       {:else if t.panel}
         {#key app.pane?.nonce}<t.panel />{/key}
+      {:else if t.loadPanel}
+        {#key app.pane?.nonce}{#await t.loadPanel() then m}<m.default />{/await}{/key}
       {:else if t.fields?.length}
         {#key paneKey}{#if valuesKey === paneKey}<Fields fields={t.fields} bind:values />{/if}{/key}
       {/if}
     </div>
-    {#if !t.panel && t.run && (doc || t.noDoc)}
+    {#if !t.panel && !t.loadPanel && t.run && (doc || t.noDoc)}
       <footer>
         {#if done}<span class="done"><I.Check size={13} strokeWidth={2.4} />{done}</span>{/if}
         <span class="grow"></span>

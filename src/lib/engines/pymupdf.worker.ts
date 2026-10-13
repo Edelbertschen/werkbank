@@ -3,14 +3,38 @@ import { PyMuPDF } from '@bentopdf/pymupdf-wasm';
 import { serve } from './rpc';
 
 import { L } from '../i18n';
-let instP: Promise<any> | null = null;
-const inst = () => (instP ??= (async () => {
-  const p = new (PyMuPDF as any)({ assetPath: '/engines/pymupdf/', ghostscriptUrl: '/engines/ghostscript/' });
-  await p.load();
-  const py = await p.getPyodide();
+import HELPERS from './pymupdf-helpers.py?raw';
+
+const BASE = '/engines/pymupdf/';
+// Kern: Pyodide + PyMuPDF. Reicht für alle eigenen Skripte (Einschreiben, Textbearbeitung, Seitenobjekte …).
+const CORE = ['pymupdf-1.26.3-cp313-none-pyodide_2025_0_wasm32.whl'];
+// Rest: nur für Wrapper-Aufrufe wie Word-Export, Markdown oder Begradigen (OpenCV, NumPy, pdf2docx …)
+const REST = [
+  'pymupdf4llm-0.0.27-py3-none-any.whl', 'fonttools-4.56.0-py3-none-any.whl', 'lxml-5.4.0-cp313-cp313-pyodide_2025_0_wasm32.whl',
+  'numpy-2.2.5-cp313-cp313-pyodide_2025_0_wasm32.whl', 'opencv_python-4.11.0.86-cp313-cp313-pyodide_2025_0_wasm32.whl',
+  'pdf2docx-0.5.8-py3-none-any.whl', 'python_docx-1.2.0-py3-none-any.whl', 'typing_extensions-4.12.2-py3-none-any.whl',
+];
+
+let coreP: Promise<any> | null = null;
+const core = () => (coreP ??= (async () => {
+  const { loadPyodide } = await import(/* @vite-ignore */ BASE + 'pyodide.js');
+  const py = await loadPyodide({ indexURL: BASE });
+  await Promise.all(CORE.map(w => py.loadPackage(BASE + w)));
+  py.runPython('import pymupdf\npymupdf.TOOLS.store_shrink(100)');
   try { py.FS.mkdir('/w'); } catch { /* vorhanden */ }
+  return py;
+})().catch(e => { coreP = null; throw e; }));
+
+let fullP: Promise<any> | null = null;
+/** Wrapper mit allen Paketen – im selben Interpreter, erst bei Bedarf */
+const inst = () => (fullP ??= (async () => {
+  const py = await core();
+  await Promise.all(REST.map(w => py.loadPackage(BASE + w)));
+  py.runPython(HELPERS);
+  const p = new (PyMuPDF as any)({ assetPath: BASE, ghostscriptUrl: '/engines/ghostscript/' });
+  p.pyodide = py; // Wrapper benutzt den vorhandenen Interpreter, statt einen zweiten zu starten
   return p;
-})().catch(e => { instP = null; throw e; }));
+})().catch(e => { fullP = null; throw e; }));
 
 async function out(v: any): Promise<any> {
   if (v instanceof Blob) return new Uint8Array(await v.arrayBuffer());
@@ -30,7 +54,7 @@ let chain: Promise<any> = Promise.resolve();
 const serial = <T>(fn: () => Promise<T>): Promise<T> => { const p = chain.then(fn, fn); chain = p.catch(() => {}); return p; };
 
 serve({
-  async warm() { await inst(); return true; },
+  async warm() { await core(); return true; },
   call: (payload) => serial(() => callImpl(payload)),
   run: (payload, progress) => serial(() => runImpl(payload, progress)),
 });
@@ -43,8 +67,7 @@ async function callImpl({ method, args }: any) {
 
 /** Eigenes Python-Skript: Eingabedateien liegen in /w, Ergebnisdateien werden zurückgegeben */
 async function runImpl({ code, files, outputs, vars }: any, progress: (p: number, m?: string) => void) {
-    const p = await inst();
-    const py = await p.getPyodide();
+    const py = await core();
     const written: string[] = [];
     for (const [n, b] of Object.entries(files || {})) { py.FS.writeFile('/w/' + n, b as Uint8Array); written.push(n); }
     py.globals.set('ARGS', py.toPy(vars || {}));

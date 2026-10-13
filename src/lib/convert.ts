@@ -1,6 +1,5 @@
 // Beliebige Dateien in PDF umwandeln
 import { PDFDocument } from 'pdf-lib';
-import MarkdownIt from 'markdown-it';
 import { libreConvert, py } from './engines';
 import { MM, extOf, baseName } from './util';
 import type { Progress } from './engines/rpc';
@@ -114,6 +113,7 @@ export async function htmlToPdf(html: string, pageSize: 'a4' | 'letter' | 'a3' |
   return py<Uint8Array>('htmlToPdf', html, { css: PRINT_CSS, pageSize, margins: margin });
 }
 export async function markdownToHtml(md: string) {
+  const { default: MarkdownIt } = await import('markdown-it');
   const it = new MarkdownIt({ html: false, linkify: true, typographer: true, breaks: false });
   return it.render(md);
 }

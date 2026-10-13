@@ -3,7 +3,6 @@ import * as I from '../icons';
 import type { Tool } from './types';
 import { outName } from './common';
 import { pyRun, qpdf } from '../engines';
-import { createSelfSigned } from '../sign';
 import { app } from '../app.svelte';
 import type { Protection } from '../doc.svelte';
 
@@ -20,9 +19,6 @@ export function qpdfEncryptArgs(p: Protection) {
 }
 export async function encryptBytes(bytes: Uint8Array, p: Protection) { return qpdf(qpdfEncryptArgs(p), bytes); }
 
-import SignPanel from '../../components/panels/SignPanel.svelte';
-import VerifyPanel from '../../components/panels/VerifyPanel.svelte';
-import MetaPanel from '../../components/panels/MetaPanel.svelte';
 
 import { L } from '../i18n';
 export const protectTools: Tool[] = [
@@ -51,8 +47,8 @@ export const protectTools: Tool[] = [
     disabled: () => !(app.docs.find(d => d.id === app.activeId)?.protection || app.docs.find(d => d.id === app.activeId)?.wasEncrypted),
     run: async (_v, ctx) => { ctx.doc!.protection = null; ctx.doc!.wasEncrypted = false; return { message: L("Beim nächsten Speichern wird das Dokument ohne Schutz geschrieben.") }; },
   },
-  { id: 'sign-digital', label: L("Digital signieren"), short: L("Signieren"), icon: I.BadgeCheck, desc: L("Rechtsgültig mit einem Zertifikat (.p12/.pfx) signieren – sichtbar oder unsichtbar, auf Wunsch mit Zeitstempel."), keys: L("signatur zertifikat pades qualifiziert p12 pfx"), panel: SignPanel },
-  { id: 'verify', label: L("Signaturen prüfen"), short: L("Prüfen"), icon: I.ShieldCheck, desc: L("Zeigt Unterzeichner, Zertifikat und ob das Dokument seit der Signatur verändert wurde."), keys: L("validieren gültig echtheit"), panel: VerifyPanel },
+  { id: 'sign-digital', label: L("Digital signieren"), short: L("Signieren"), icon: I.BadgeCheck, desc: L("Rechtsgültig mit einem Zertifikat (.p12/.pfx) signieren – sichtbar oder unsichtbar, auf Wunsch mit Zeitstempel."), keys: L("signatur zertifikat pades qualifiziert p12 pfx"), loadPanel: () => import('../../components/panels/SignPanel.svelte') },
+  { id: 'verify', label: L("Signaturen prüfen"), short: L("Prüfen"), icon: I.ShieldCheck, desc: L("Zeigt Unterzeichner, Zertifikat und ob das Dokument seit der Signatur verändert wurde."), keys: L("validieren gültig echtheit"), loadPanel: () => import('../../components/panels/VerifyPanel.svelte') },
   {
     id: 'make-cert', label: L("Eigenes Zertifikat erstellen"), short: L("Zertifikat"), icon: I.KeyRound, noDoc: true,
     desc: L("Selbstsigniertes Zertifikat für interne Freigaben. Für qualifizierte Signaturen brauchst du ein Zertifikat einer Vertrauensstelle."), keys: L("zertifikat erstellen selbstsigniert p12"),
@@ -66,6 +62,7 @@ export const protectTools: Tool[] = [
       if (!v.name) throw new Error(L("Bitte einen Namen angeben"));
       if ((v.pw || '').length < 6) throw new Error(L("Das Passwort sollte mindestens 6 Zeichen haben"));
       await new Promise(r => setTimeout(r, 30));
+      const { createSelfSigned } = await import('../sign');
       const p12 = createSelfSigned({ name: v.name, email: v.email, org: v.org, years: v.years, password: v.pw });
       return { files: [{ name: `${v.name.replace(/[^\p{L}\p{N} _-]/gu, '')}.p12`, data: p12, filters: [{ name: L("Zertifikat"), extensions: ['p12', 'pfx'] }] }], message: L("Zertifikat erstellt. Bewahre Datei und Passwort sicher auf.") };
     },
@@ -103,7 +100,7 @@ save_out(doc, garbage=4, deflate=True)`, { files: { 'in.pdf': ctx.bytes }, outpu
       return { bytes: r.files['out.pdf'], label: L("Dokument bereinigt") };
     },
   },
-  { id: 'metadata', label: L("Dokumenteigenschaften"), short: L("Eigenschaften"), icon: I.Tag, desc: L("Titel, Autor, Thema und Stichwörter ansehen und ändern."), keys: L("metadaten titel autor info eigenschaften"), panel: MetaPanel },
+  { id: 'metadata', label: L("Dokumenteigenschaften"), short: L("Eigenschaften"), icon: I.Tag, desc: L("Titel, Autor, Thema und Stichwörter ansehen und ändern."), keys: L("metadaten titel autor info eigenschaften"), loadPanel: () => import('../../components/panels/MetaPanel.svelte') },
   {
     id: 'strip-metadata', label: L("Metadaten entfernen"), short: L("Metadaten weg"), icon: I.EyeOff, direct: true, engine: 'pymupdf', desc: L("Autor, Programm, Datumsangaben und XMP-Daten löschen."), keys: L("anonym metadaten"),
     run: async (_v, ctx) => {

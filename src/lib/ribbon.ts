@@ -13,13 +13,13 @@ export const RIBBON: RibbonTabDef[] = [
       { label: L("Datei"), items: ['open', 'save', 'save-as', 'print', 'close'], large: ['open', 'save'] },
       { label: L("Werkzeug"), items: ['tool-select', 'tool-hand', 'find'], large: [] },
       { label: 'Zoom', items: [{ custom: 'zoom' }, 'zoom-width', 'zoom-page'], large: [] },
-      { label: L("Seiten"), items: ['organize', 'rotate-left', 'rotate-right', 'delete-pages', 'insert-file'], large: ['organize'] },
+      { label: L("Seiten"), items: ['organize', 'insert-file', 'rotate-left', 'rotate-right', 'delete-pages'], large: ['organize', 'insert-file'] },
       { label: L("Schnellzugriff"), items: ['text-edit', 'sign', 'highlight', 'compress', 'to-word', 'ocr'], large: ['text-edit', 'sign', 'compress'] },
     ],
   },
   {
     id: 'pages', label: L("Seiten"), groups: [
-      { label: L("Organisieren"), items: ['organize', 'insert-blank', 'insert-file', 'extract', 'replace-pages', 'duplicate', 'delete-range'], large: ['organize', 'insert-file', 'extract'] },
+      { label: L("Organisieren"), items: ['organize', 'insert-blank', 'insert-file', 'extract', 'replace-pages', 'duplicate', 'delete-range'], large: ['organize', 'insert-blank', 'insert-file', 'extract'] },
       { label: L("Drehen"), items: ['rotate-left', 'rotate-right', 'rotate'], large: [] },
       { label: L("Teilen und Verbinden"), items: ['merge', 'split', 'alternate', 'reverse', 'remove-blank'], large: ['merge', 'split'] },
       { label: L("Format"), items: ['crop', 'resize', 'divide', 'nup', 'booklet', 'one-page'], large: ['crop'] },
@@ -81,7 +81,7 @@ export const RIBBON: RibbonTabDef[] = [
   {
     id: 'analyze', label: L("Analysieren"), groups: [
       { label: L("Prüfen"), items: ['compare', 'info', 'fonts'], large: ['compare', 'info'] },
-      { label: L("Extrahieren"), items: ['extract-images', 'extract-tables', 'to-text', 'ai-prep'], large: ['extract-images', 'extract-tables', 'ai-prep'] },
+      { label: L("Extrahieren"), items: ['extract-images', 'extract-tables', 'to-text', 'ai-prep'], large: ['extract-images', 'extract-tables', 'to-text', 'ai-prep'] },
       { label: L("Automatisieren"), items: ['batch'], large: ['batch'] },
     ],
   },

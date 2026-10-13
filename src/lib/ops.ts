@@ -1,6 +1,5 @@
 // Gemeinsame PDF-Operationen auf Basis von pdf-lib
 import { PDFDocument, PDFName, PDFArray, degrees, rgb, StandardFonts, type PDFPage, type PDFFont, type PDFEmbeddedPage } from 'pdf-lib';
-import fontkit from '@pdf-lib/fontkit';
 import { openPdf, renderPage, canvasBlob } from './pdf';
 import { hexToRgb01, MM, sleep, PAPER } from './util';
 
@@ -9,7 +8,7 @@ export { PDFDocument, PDFName, PDFArray, degrees, rgb, StandardFonts };
 
 export async function plLoad(bytes: Uint8Array) {
   const d = await PDFDocument.load(bytes, { ignoreEncryption: true, updateMetadata: false });
-  d.registerFontkit(fontkit);
+  d.registerFontkit((await import('@pdf-lib/fontkit')).default);
   return d;
 }
 export const plSave = (d: PDFDocument) => d.save({ useObjectStreams: true });

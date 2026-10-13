@@ -7,7 +7,6 @@ import { imagesToPdf, anyToPdf, markdownToHtml, OFFICE_EXT, IMAGE_EXT } from '..
 import { renderPage, canvasBlob, pageTexts } from '../pdf';
 import { plLoad, plSave, PDFName, PDFArray } from '../ops';
 import { baseName, PAPER } from '../util';
-import JSZip from 'jszip';
 import { PDFDict } from 'pdf-lib';
 
 import { L } from '../i18n';
@@ -331,7 +330,7 @@ out`, { files: { 'in.pdf': ctx.bytes }, vars: { pages: JSON.stringify(pagesOf(v.
     id: 'to-cbz', label: L("Als Comic-Archiv (CBZ) exportieren"), short: 'CBZ', icon: I.Archive, desc: L("Seiten als Bilder in einem Comic-Archiv."), keys: L("cbz comic"),
     fields: [{ key: 'dpi', type: 'select', label: L("Auflösung"), opts: [['120', 'Normal'], ['180', L("Hoch")]], def: '120' }], action: L("Exportieren"),
     run: async (v, ctx) => {
-      const zip = new JSZip(); const n = ctx.doc!.numPages;
+      const zip = new (await import('jszip')).default(); const n = ctx.doc!.numPages;
       for (const r of await renderPages(ctx, [...Array(n).keys()], +v.dpi, 'image/jpeg', 0.88)) zip.file(`${pad(r.i, n)}.jpg`, r.blob);
       return { files: [{ name: outName(ctx, '', 'cbz'), data: await zip.generateAsync({ type: 'uint8array' }) }] };
     },
@@ -361,7 +360,7 @@ async function buildEpub(title: string, author: string, md: string) {
   const parts = html.split(/(?=<h[12][ >])/).filter(s => s.trim());
   const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
   const toXhtml = (s: string) => s.replace(/<br>/g, '<br/>').replace(/<hr>/g, '<hr/>').replace(/<img([^>]*?)(?<!\/)>/g, '<img$1/>');
-  const zip = new JSZip();
+  const zip = new (await import('jszip')).default();
   zip.file('mimetype', 'application/epub+zip', { compression: 'STORE' });
   zip.file('META-INF/container.xml', '<?xml version="1.0"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>');
   const chapters = parts.map((p, i) => ({ id: `c${i + 1}`, file: `c${i + 1}.xhtml`, title: (p.match(/<h[12][^>]*>(.*?)<\/h[12]>/)?.[1] || L("Abschnitt {0}", i + 1)).replace(/<[^>]+>/g, ''), body: p }));
