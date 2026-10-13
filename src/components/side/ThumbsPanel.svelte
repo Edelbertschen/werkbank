@@ -33,6 +33,8 @@
   onMount(() => {
     const s = Sortable.create(list, {
       animation: 140, ghostClass: 'ghost', chosenClass: 'chosen', delay: 120, delayOnTouchOnly: true, filter: '.nodrag',
+      // Maus statt nativer Drag-Sitzung: Die Desktop-Hülle hielte die native Sitzung für eine Datei von außen
+      forceFallback: true, fallbackTolerance: 4,
       onEnd: async ev => {
         if (ev.oldIndex == null || ev.newIndex == null || ev.oldIndex === ev.newIndex) return;
         const n = doc.numPages; const order = [...Array(n).keys()];
@@ -97,5 +99,6 @@
   .rot { font-size: 10px; padding: 0 4px; border-radius: 3px; background: var(--selected); }
   .paper { color: var(--text-3); }
   :global(.thumbs .ghost) { opacity: 0.3; }
+  :global(.thumbs .sortable-fallback .frame) { box-shadow: var(--shadow-pop); }
   :global(.thumbs .chosen .frame) { outline-color: var(--accent) !important; }
 </style>

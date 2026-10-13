@@ -182,11 +182,13 @@ export type DropState = 'enter' | 'leave' | 'drop';
 export async function onFileDrop(cb: (state: DropState, files?: { paths?: string[]; files?: File[] }) => void) {
   if (isTauri) {
     const { getCurrentWebview } = await import('@tauri-apps/api/webview');
+    // Nur Ziehvorgänge mit echten Dateipfaden zeigen das Drop-Ziel – internes Ziehen bleibt unberührt
+    let active = false;
     await getCurrentWebview().onDragDropEvent(e => {
       const p = e.payload as { type: string; paths?: string[] };
-      if (p.type === 'enter' || p.type === 'over') cb('enter');
-      else if (p.type === 'leave') cb('leave');
-      else if (p.type === 'drop') cb('drop', { paths: p.paths || [] });
+      if (p.type === 'enter') { active = !!p.paths?.length; if (active) cb('enter'); }
+      else if (p.type === 'leave') { if (active) cb('leave'); active = false; }
+      else if (p.type === 'drop') { const was = active; active = false; if (p.paths?.length) cb('drop', { paths: p.paths }); else if (was) cb('leave'); }
     });
     return;
   }
