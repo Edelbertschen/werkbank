@@ -58,7 +58,7 @@ export const RIBBON: RibbonTabDef[] = [
       { label: L("PDF erstellen"), items: ['create-office', 'create-images', 'create-any', 'create-markdown'], large: ['create-office', 'create-images'] },
       { label: 'Office', items: ['to-word', 'to-excel', 'to-pptx'], large: ['to-word', 'to-excel', 'to-pptx'] },
       { label: L("Bild und Web"), items: ['to-images', 'to-svg', 'to-html'], large: ['to-images'] },
-      { label: 'Text', items: ['to-text', 'to-markdown', 'to-json', 'to-epub', 'to-cbz'], large: [] },
+      { label: 'Text', items: ['to-text', 'to-markdown', 'to-dokuwiki', 'to-json', 'to-epub', 'to-cbz'], large: [] },
       { label: L("Standard"), items: ['to-pdfa'], large: ['to-pdfa'] },
     ],
   },
@@ -81,7 +81,7 @@ export const RIBBON: RibbonTabDef[] = [
   {
     id: 'analyze', label: L("Analysieren"), groups: [
       { label: L("Prüfen"), items: ['compare', 'info', 'fonts'], large: ['compare', 'info'] },
-      { label: L("Extrahieren"), items: ['extract-images', 'extract-tables', 'to-text', 'ai-prep'], large: ['extract-images', 'extract-tables', 'to-text', 'ai-prep'] },
+      { label: L("Extrahieren"), items: ['extract-images', 'extract-tables', 'to-text', 'to-dokuwiki', 'ai-prep'], large: ['extract-images', 'extract-tables', 'to-text', 'to-dokuwiki', 'ai-prep'] },
       { label: L("Automatisieren"), items: ['batch'], large: ['batch'] },
     ],
   },

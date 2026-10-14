@@ -1498,6 +1498,14 @@ const en: Record<string, string> = {
  "Datei ist beschädigt – wird repariert …": "File is damaged – repairing …",
  "Die Datei ist beschädigt und ließ sich nicht reparieren.": "The file is damaged and could not be repaired.",
  "Die Datei war beschädigt und wurde beim Öffnen repariert. Speichern legt die reparierte Fassung ab.": "The file was damaged and has been repaired on opening. Saving stores the repaired version.",
- "Die Datei ist zu stark beschädigt, um Änderungen einzuschreiben. Tipp: erst „Optimieren › Reparieren“.": "The file is too damaged to write changes into it. Tip: run “Optimize › Repair” first."
+ "Die Datei ist zu stark beschädigt, um Änderungen einzuschreiben. Tipp: erst „Optimieren › Reparieren“.": "The file is too damaged to write changes into it. Tip: run “Optimize › Repair” first.",
+ "Als DokuWiki exportieren": "Export as DokuWiki",
+ "Wiki-Seite in DokuWiki-Syntax mit Überschriften, Listen, Tabellen und Links – zum Einfügen in den Editor.": "Wiki page in DokuWiki syntax with headings, lists, tables and links – ready to paste into the editor.",
+ "dokuwiki wiki markup syntax export seite": "dokuwiki wiki markup syntax export page",
+ "Bilder mitnehmen": "Include images",
+ "Die Bilder kommen als eigene Dateien dazu – im Wiki über den Medienmanager hochladen.": "Images are added as separate files – upload them via the wiki's media manager.",
+ "Namensraum der Bilder": "Image namespace",
+ "z. B. projekte:wald (leer = aktueller)": "e.g. projects:forest (empty = current)",
+ "Seitenumbrüche als Trennlinie": "Page breaks as horizontal lines"
 };
 export default en;

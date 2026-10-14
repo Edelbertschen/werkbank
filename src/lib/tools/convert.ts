@@ -10,6 +10,7 @@ import { baseName, PAPER } from '../util';
 import { PDFDict } from 'pdf-lib';
 
 import { L } from '../i18n';
+import { markdownToDokuwiki } from '../dokuwiki';
 async function renderPages(ctx: ToolCtx, idx: number[], dpi: number, mime: string, q = 0.9) {
   const out: { i: number; blob: Blob; w: number; h: number }[] = [];
   for (const [k, i] of idx.entries()) {
@@ -304,6 +305,34 @@ out`, { files: { 'in.pdf': ctx.bytes }, vars: { pages: JSON.stringify(pagesOf(v.
       const md = await py<string>('pdfToMarkdown', ctx.bytes, { pageBreaks: !!v.breaks, includeImages: !!v.images, pages: pagesOf(v.pages, ctx) });
       if (!md.trim()) return { message: L("Kein Text gefunden.") };
       return { files: [{ name: outName(ctx, '', 'md'), data: new Blob([md], { type: 'text/markdown' }) }] };
+    },
+  },
+  {
+    id: 'to-dokuwiki', label: L("Als DokuWiki exportieren"), short: 'DokuWiki', icon: I.NotebookText, engine: 'pymupdf',
+    desc: L("Wiki-Seite in DokuWiki-Syntax mit Überschriften, Listen, Tabellen und Links – zum Einfügen in den Editor."), keys: L("dokuwiki wiki markup syntax export seite"),
+    fields: [
+      { key: 'images', type: 'check', label: L("Bilder mitnehmen"), def: false, hint: L("Die Bilder kommen als eigene Dateien dazu – im Wiki über den Medienmanager hochladen.") },
+      { key: 'ns', type: 'text', label: L("Namensraum der Bilder"), def: '', ph: L("z. B. projekte:wald (leer = aktueller)"), when: v => !!v.images },
+      { key: 'breaks', type: 'check', label: L("Seitenumbrüche als Trennlinie"), def: false },
+      PAGES('all'),
+    ],
+    action: L("Exportieren"),
+    run: async (v, ctx) => {
+      let md = await py<string>('pdfToMarkdown', ctx.bytes, { pageBreaks: !!v.breaks, includeImages: !!v.images, pages: pagesOf(v.pages, ctx) });
+      if (!md.trim()) return { message: L("Kein Text gefunden. Für gescannte Seiten zuerst „Texterkennung“ ausführen.") };
+      // Eingebettete Bilder als Mediendateien mit DokuWiki-tauglichen Namen (klein, ohne Sonderzeichen)
+      const media: OutFile[] = [];
+      const stem = baseName(ctx.doc?.name || 'dokument').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'dokument';
+      const ns = String(v.ns || '').trim().toLowerCase().replace(/[^a-z0-9:_-]+/g, '_').replace(/^:+|:+$/g, '');
+      md = md.replace(/!\[([^\]]*)\]\(\s*data:image\/(png|jpe?g|gif|webp);base64,([A-Za-z0-9+/=\s]+)\)/g, (_m, alt, ext, b64) => {
+        b64 = b64.replace(/\s+/g, '');
+        const name = `${stem}_bild${media.length + 1}.${ext === 'jpeg' ? 'jpg' : ext}`;
+        media.push({ name, data: Uint8Array.from(atob(b64), c => c.charCodeAt(0)) });
+        return `![${alt}](${ns ? `:${ns}:` : ''}${name})`;
+      });
+      const text = markdownToDokuwiki(md) + '\n';
+      const page: OutFile = { name: outName(ctx, '', 'txt'), data: new Blob([text], { type: 'text/plain;charset=utf-8' }) };
+      return media.length ? { files: [page, ...media], zipName: outName(ctx, 'DokuWiki', 'zip') } : { files: [page] };
     },
   },
   {
