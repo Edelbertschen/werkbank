@@ -7,4 +7,5 @@ import * as sign from './sign';
 import * as mcp from './mcp';
 import { app, active } from './app.svelte';
 import { openPdf } from './pdf';
-(window as any).__wb = { ...engines, ...tools, actions, overlay, sign, mcp, app, active, openPdf };
+import * as dialogs from './dialogs.svelte';
+(window as any).__wb = { ...engines, ...tools, actions, overlay, sign, mcp, app, active, openPdf, dialogs };

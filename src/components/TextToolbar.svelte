@@ -1,7 +1,20 @@
 <script lang="ts" module>
-  // Zuletzt markierter Bereich im Text eines Elements – bleibt erhalten, wenn Leiste, Farbwähler oder Auswahlliste den Fokus nehmen
-  let saved: Range | null = null;
+  // Zuletzt markierter Bereich im Text eines Elements – als Zeichenpositionen gemerkt, nicht als DOM-Bereich:
+  // so bleibt er gültig, wenn Leiste, Farbwähler oder Auswahlliste den Fokus nehmen oder das Textfeld neu aufgebaut wird
+  let saved: { id: string; start: number; end: number } | null = null;
   let listening = false;
+  const txOf = (n: Node | null) => ((n instanceof HTMLElement ? n : n?.parentElement)?.closest('.item .tx') as HTMLElement | null);
+  const idOf = (tx: HTMLElement) => (tx.closest('[data-id]') as HTMLElement | null)?.dataset.id || '';
+  function offset(tx: HTMLElement, node: Node, off: number): number {
+    const r = document.createRange(); r.selectNodeContents(tx); r.setEnd(node, off);
+    return r.toString().length;
+  }
+  function point(tx: HTMLElement, pos: number): [Node, number] {
+    const w = document.createTreeWalker(tx, NodeFilter.SHOW_TEXT);
+    let n: Node | null, last: Node | null = null;
+    while ((n = w.nextNode())) { const l = n.textContent!.length; if (pos <= l) return [n, pos]; pos -= l; last = n; }
+    return last ? [last, last.textContent!.length] : [tx, tx.childNodes.length];
+  }
   export function trackSelection() {
     if (listening) return;
     listening = true;
@@ -9,13 +22,17 @@
       const s = getSelection();
       if (!s || !s.rangeCount) return;
       const r = s.getRangeAt(0);
-      if ((r.commonAncestorContainer as HTMLElement).parentElement?.closest('.item .tx') || (r.commonAncestorContainer as HTMLElement).closest?.('.item .tx')) saved = r.cloneRange();
+      const tx = txOf(r.commonAncestorContainer);
+      if (!tx) return;
+      saved = { id: idOf(tx), start: offset(tx, r.startContainer, r.startOffset), end: offset(tx, r.endContainer, r.endOffset) };
     });
   }
   /** Nicht-leere Markierung innerhalb dieses Textfelds */
   export function selectionIn(el: HTMLElement | null): Range | null {
-    if (!el || !saved || saved.collapsed || !el.contains(saved.commonAncestorContainer)) return null;
-    return saved;
+    if (!el || !saved || saved.end <= saved.start || idOf(el) !== saved.id) return null;
+    const r = document.createRange();
+    r.setStart(...point(el, saved.start)); r.setEnd(...point(el, saved.end));
+    return r.collapsed ? null : r;
   }
 </script>
 

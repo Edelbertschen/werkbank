@@ -1,10 +1,12 @@
 <script lang="ts">
   import { app } from '../lib/app.svelte';
+  import { dialogs } from '../lib/dialogs.svelte';
   const b = $derived(app.busy);
   const pct = $derived(b && b.progress >= 0 ? Math.round(b.progress * 100) : -1);
 </script>
 
-{#if b}
+<!-- Wartet die Arbeit auf eine Rückfrage (Passwort, Bestätigung), tritt der Schleier zurück -->
+{#if b && !dialogs.list.length}
   <div class="veil" role="alertdialog" aria-busy="true" aria-label={b.label}>
     <div class="card">
       <div class="top"><span class="spin"></span><b>{b.label}</b>{#if pct >= 0}<span class="pct num">{pct} %</span>{/if}</div>

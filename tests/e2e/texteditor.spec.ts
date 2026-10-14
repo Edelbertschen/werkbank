@@ -265,3 +265,23 @@ test('auch beim Tippen im Auswahlmodus zeigt die Leiste, dass bearbeitet wird, u
   expect(await typingInPage(app)).toBe(false);
   await expect(app.page.locator('.modechip')).toHaveCount(0);
 });
+
+test('markiertes Wort bleibt Ziel der Formatierung, auch wenn das Textfeld zwischendurch neu aufgebaut wird', async ({ app }) => {
+  const { at } = await setup(app, 'bild.pdf');
+  await tool(app, 'Bearbeiten', 'Text hinzufügen');
+  await app.page.mouse.click(...at(80, 420));
+  await app.page.keyboard.type('Hallo schöne Welt');
+  const w = await app.page.locator('.item.text .tx').first().evaluate((el: HTMLElement) => {
+    const node = el.firstChild!; const r = document.createRange(); const i = node.textContent!.indexOf('Welt');
+    r.setStart(node, i); r.setEnd(node, i + 4); const b = r.getBoundingClientRect(); return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+  });
+  await app.page.mouse.dblclick(w.x, w.y);
+  // Neuaufbau (wie nach dem Festhalten eines Zwischenstands): alte Knoten sind weg, die Markierung im Browser auch
+  await app.page.locator('.item.text .tx').first().evaluate((el: HTMLElement) => { el.innerHTML = el.innerHTML; });
+  await bar(app).locator('input[aria-label="Textfarbe"]').evaluate((el: HTMLInputElement) => { el.value = '#cc0000'; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); });
+  await app.page.keyboard.press('Escape');
+  await expect.poll(() => pos(app), { timeout: 30_000 }).toBeGreaterThan(0);
+  const s = await spans(app);
+  expect(s.find(x => x[0] === 'Welt')?.[3]).toBe('#cc0000');
+  expect(s.find(x => x[0].startsWith('Hallo'))![3]).not.toBe('#cc0000');
+});
