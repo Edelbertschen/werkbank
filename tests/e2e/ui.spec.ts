@@ -78,3 +78,18 @@ test('Registerkarten per Rechtsklick ausblenden und in den Einstellungen zurück
   await app.page.getByText('Alle Registerkarten zeigen').click();
   await expect(app.page.getByRole('tab', { name: 'Formulare', exact: true })).toBeVisible();
 });
+
+test('Strich unter der aktiven Registerkarte liegt genau unter dem Wort', async ({ app }) => {
+  await app.open('text.pdf');
+  for (const name of ['Start', 'Analysieren', 'Ansicht']) {
+    await app.tab(name);
+    await app.page.waitForTimeout(400); // Gleitbewegung abwarten
+    const m = await app.page.evaluate(() => {
+      const tab = document.querySelector('.rtab.on')!; const r = document.createRange(); r.selectNodeContents(tab);
+      const t = r.getBoundingClientRect(), i = document.querySelector('.ribbon .ink')!.getBoundingClientRect();
+      return { dl: Math.abs(t.left - i.left), dr: Math.abs(t.right - i.right) };
+    });
+    expect(m.dl, name).toBeLessThan(1);
+    expect(m.dr, name).toBeLessThan(1);
+  }
+});

@@ -56,7 +56,11 @@
   function placeInk() {
     const el = tabrow?.querySelector<HTMLElement>('.rtab.on');
     if (!el || !tabrow) { ink = { ...ink, w: 0 }; return; }
-    ink = { x: el.offsetLeft + 10, w: el.offsetWidth - 20, ready: true };
+    // Genau unter dem Wort: Breite und Lage des Textes messen, nicht der Schaltfläche
+    const r = document.createRange();
+    r.selectNodeContents(el);
+    const t = r.getBoundingClientRect(), row = tabrow.getBoundingClientRect();
+    ink = { x: t.left - row.left, w: t.width, ready: true };
   }
   $effect(() => { tabDef.id; app.backstage; tabs.length; tick().then(placeInk); document.fonts?.ready.then(placeInk); });
   const iconOf = (g: { items: RibbonItem[] }) => { const id = g.items.map(idOf).find(x => x && hasTool(x)); return id ? tool(id).icon : I.ChevronDown; };
@@ -95,7 +99,7 @@
   }
 </script>
 
-<svelte:window onmousedown={e => { const el = e.target as HTMLElement; if (app.ribbonPeek && !el.closest('.ribbon')) app.ribbonPeek = false; if (popGroup !== null && !el.closest('.gpop, .fold')) popGroup = null; }}
+<svelte:window onresize={placeInk} onmousedown={e => { const el = e.target as HTMLElement; if (app.ribbonPeek && !el.closest('.ribbon')) app.ribbonPeek = false; if (popGroup !== null && !el.closest('.gpop, .fold')) popGroup = null; }}
   onkeydown={e => { if (e.key === 'Escape' && popGroup !== null) popGroup = null; }} />
 
 {#snippet groupBody(g: (typeof tabDef.groups)[number])}
@@ -165,7 +169,7 @@
   .rtab:hover { color: var(--text); }
   .rtab.on { color: var(--text); }
   /* Das eine markante Element: ein Petrol-Strich, der zum aktiven Reiter gleitet */
-  .ink { position: absolute; left: 12px; bottom: 1px; height: 2.5px; border-radius: 2px; background: var(--accent); pointer-events: none; opacity: 0; }
+  .ink { position: absolute; left: 0; bottom: 1px; height: 2.5px; border-radius: 2px; background: var(--accent); pointer-events: none; opacity: 0; }
   .ink.ready { opacity: 1; transition: transform 0.28s var(--ease), width 0.28s var(--ease); }
   .spacer { flex: 1; }
   .collapse { border: 0; background: none; width: 26px; height: 26px; border-radius: 7px; color: var(--text-3); display: grid; place-items: center; }
