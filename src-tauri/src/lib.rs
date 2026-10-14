@@ -8,6 +8,7 @@
 
 mod sysfont;
 mod theme;
+mod mcp;
 
 use std::{
     fs,
@@ -214,6 +215,24 @@ fn safe_name(name: &str) -> Result<&str, String> {
     } else {
         Err("ungültiger Name".into())
     }
+}
+
+/// KI-Assistenten (MCP) erlauben oder sperren – öffnet bzw. sperrt den lokalen Steuerkanal
+#[tauri::command]
+fn mcp_enable(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let dir = state_dir(&app)?;
+    let handle = app.clone();
+    mcp::set_enabled(enabled, dir, move |call| { let _ = handle.emit("mcp-call", call); })
+}
+
+/// Antwort der Oberfläche auf einen Werkzeugaufruf
+#[tauri::command]
+fn mcp_reply(id: u64, result: String) { mcp::reply(id, result); }
+
+/// Pfad des Programms (für die Einrichtung im KI-Assistenten)
+#[tauri::command]
+fn mcp_info() -> serde_json::Value {
+    serde_json::json!({ "exe": std::env::current_exe().map(|p| p.to_string_lossy().into_owned()).unwrap_or_default() })
 }
 
 #[tauri::command]
@@ -535,6 +554,12 @@ pub fn run() {
         std::env::set_var("JSC_useSharedArrayBuffer", "1");
     }
 
+    // `werkbank mcp`: MCP-Server über stdin/stdout für KI-Assistenten, ohne Fenster
+    if std::env::args().nth(1).as_deref() == Some("mcp") {
+        mcp::run_stdio(&mut mcp::AppBridge::new(), env!("CARGO_PKG_VERSION"));
+        return;
+    }
+
     let startup_files = file_args(&std::env::args().collect::<Vec<_>>(), std::env::current_dir().ok().as_deref());
 
     let app = tauri::Builder::default()
@@ -564,7 +589,10 @@ pub fn run() {
             office_info,
             office_convert,
             system_font,
-            system_fonts
+            system_fonts,
+            mcp_enable,
+            mcp_reply,
+            mcp_info
         ])
         .setup(|app| {
             let root = app
@@ -611,6 +639,9 @@ pub fn run() {
         .expect("Werkbank konnte nicht starten");
 
     app.run(|_app, _event| {
+        if let RunEvent::Exit = &_event {
+            if let Ok(dir) = state_dir(_app) { mcp::shutdown(dir); }
+        }
         #[cfg(target_os = "macos")]
         if let RunEvent::Opened { urls } = &_event {
             let files: Vec<String> = urls

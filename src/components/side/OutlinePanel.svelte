@@ -33,8 +33,23 @@
   }
   $effect(() => { doc.rev; load(); });
 
+  let q = $state('');
+  /** Suche: Treffer samt ihrer Eltern, unabhängig vom Auf- und Zuklappen */
+  const found = $derived.by(() => {
+    const t = q.trim().toLowerCase();
+    if (!t) return null;
+    const keep = new Set<number>();
+    entries.forEach((e, i) => {
+      if (!e.title.toLowerCase().includes(t)) return;
+      keep.add(i);
+      let lvl = e.level;
+      for (let j = i - 1; j >= 0 && lvl > 1; j--) if (entries[j].level < lvl) { keep.add(j); lvl = entries[j].level; }
+    });
+    return [...keep].sort((a, b) => a - b);
+  });
   // Sichtbarkeit: eingeklappte Eltern blenden Kinder aus
   const visible = $derived.by(() => {
+    if (found) return found;
     const out: number[] = []; let hideBelow = Infinity;
     entries.forEach((e, i) => {
       if (e.level > hideBelow) return;
@@ -112,7 +127,11 @@ out`, { files: { 'in.pdf': doc.bytes } }));
   <button class="btn sm" onclick={add} title={L("Lesezeichen für die aktuelle Seite")}><I.Plus size={13} />{L("Neu")}</button>
   <button class="btn sm" onclick={fromHeadings} title={L("Aus Überschriften erzeugen")}><I.WandSparkles size={13} />{L("Automatisch")}</button>
 </div>
+{#if entries.length > 1}
+  <div class="find"><I.Search size={13} strokeWidth={2} /><input class="input" type="search" placeholder={L("Lesezeichen durchsuchen")} bind:value={q} /></div>
+{/if}
 <div class="tree scroll">
+  {#if found && !found.length}<p class="none">{L("Kein Lesezeichen passt.")}</p>{/if}
   {#if loading}<p class="empty">{L("Lädt …")}</p>
   {:else if !entries.length}<Empty icon={I.Bookmark} title={L("Keine Lesezeichen")} text={L("Lege eines für die aktuelle Seite an oder lass sie aus den Überschriften erzeugen.")}><button class="btn sm" onclick={fromHeadings}><I.WandSparkles size={13} />{L("Automatisch")}</button></Empty>
   {:else}
@@ -137,6 +156,10 @@ out`, { files: { 'in.pdf': doc.bytes } }));
 
 <style>
   .bar { display: flex; gap: 6px; padding: 0 12px 8px; }
+  .find { position: relative; display: flex; align-items: center; padding: 0 12px 8px; }
+  .find :global(svg) { position: absolute; left: 21px; color: var(--text-3); }
+  .find .input { padding-left: 27px; }
+  .none { margin: 6px 8px; font-size: 12px; color: var(--text-3); }
   .tree { flex: 1; padding: 0 8px 12px; }
   .empty { color: var(--text-3); font-size: 12px; padding: 6px 6px; line-height: 1.5; }
   .row { display: flex; align-items: center; gap: 2px; height: 26px; border-radius: 6px; }

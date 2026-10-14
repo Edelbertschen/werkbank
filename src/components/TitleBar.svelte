@@ -1,7 +1,9 @@
 <script lang="ts">
   import { L } from '../lib/i18n';
   import { app } from '../lib/app.svelte';
-  import { activate, closeDoc } from '../lib/actions';
+  import { activate, closeDoc, closeOthers, reopenClosed } from '../lib/actions';
+  import { showMenu } from '../lib/menu.svelte';
+  import { revealInFolder, isTauri } from '../lib/platform';
   import { openTool } from '../lib/ui.svelte';
   import { tool } from '../lib/tools';
   import { os, toggleMaximize } from '../lib/platform';
@@ -13,6 +15,16 @@
 
   function onTabMouse(e: MouseEvent, d: any) {
     if (e.button === 1) { e.preventDefault(); closeDoc(d); }
+  }
+  function tabMenu(e: MouseEvent, d: any) {
+    showMenu(e, [
+      { label: L("Schließen"), icon: I.X, run: () => closeDoc(d) },
+      { label: L("Andere schließen"), icon: I.X, disabled: app.docs.length < 2, run: () => closeOthers(d) },
+      { label: L("Zuletzt geschlossenes wieder öffnen"), icon: I.RotateCcw, disabled: !app.closed.length, run: () => reopenClosed() },
+      { sep: true, label: '' },
+      { label: L("Im Ordner zeigen"), icon: I.FolderOpen, disabled: !isTauri || !d.path, run: () => revealInFolder(d.path) },
+      { label: L("Pfad kopieren"), icon: I.Copy, disabled: !d.path, run: () => navigator.clipboard?.writeText(d.path).catch(() => {}) },
+    ]);
   }
   function dbl(e: MouseEvent) { if ((e.target as HTMLElement).closest('button')) return; if (mac) toggleMaximize(); }
 </script>
@@ -32,7 +44,7 @@
   <div class="tabs" role="tablist" data-tauri-drag-region>
     {#each app.docs as d (d.id)}
       <div class="tab" class:active={d.id === app.activeId && !app.backstage} role="tab" tabindex="0" aria-selected={d.id === app.activeId}
-        title={d.path || d.name} onclick={() => activate(d)} onmousedown={e => onTabMouse(e, d)} onkeydown={e => e.key === 'Enter' && activate(d)}>
+        title={d.path || d.name} onclick={() => activate(d)} onmousedown={e => onTabMouse(e, d)} oncontextmenu={e => tabMenu(e, d)} onkeydown={e => e.key === 'Enter' && activate(d)}>
         {#if d.protection}<I.Lock size={11} strokeWidth={2} />{/if}
         <span class="name">{d.title}</span>
         {#if d.dirty}<span class="dot" title={L("Ungespeicherte Änderungen")}></span>{/if}

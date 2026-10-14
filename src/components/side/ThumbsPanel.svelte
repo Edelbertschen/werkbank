@@ -80,7 +80,7 @@
     <div class="item" class:cur={doc.current === i + 1} class:sel={doc.selection.includes(i)} role="option" aria-selected={doc.selection.includes(i)} tabindex="-1"
       onclick={e => select(i, e)} oncontextmenu={e => ctx(e, i)} ondblclick={() => { app.organize = false; viewer.goto(i + 1); }} onkeydown={() => {}}>
       <div class="frame"><Thumb {doc} index={i} width={150} /></div>
-      <div class="cap"><span class="num">{i + 1}</span>{#if p.rot}<span class="rot">{p.rot}°</span>{/if}<span class="paper">{paperName(p.w, p.h)}</span></div>
+      <div class="cap"><span class="num">{i + 1}</span>{#if doc.labelOf(i + 1)}<span class="label" title={L("Beschriftung im Dokument")}>{doc.labelOf(i + 1)}</span>{/if}{#if p.rot}<span class="rot">{p.rot}°</span>{/if}<span class="paper">{paperName(p.w, p.h)}</span></div>
     </div>
   {/each}
 </div>
@@ -98,6 +98,7 @@
   .item.cur .num { color: var(--on-accent); background: var(--accent); }
   .rot { font-size: 10px; padding: 0 4px; border-radius: 3px; background: var(--selected); }
   .paper { color: var(--text-3); }
+  .label { font-size: 10.5px; padding: 0 5px; border-radius: 4px; color: var(--text-2); box-shadow: inset 0 0 0 0.5px var(--line-strong); font-variant-numeric: tabular-nums; }
   :global(.thumbs .ghost) { opacity: 0.3; }
   :global(.thumbs .sortable-fallback .frame) { box-shadow: var(--shadow-pop); }
   :global(.thumbs .chosen .frame) { outline-color: var(--accent) !important; }

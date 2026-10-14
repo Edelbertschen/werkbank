@@ -26,6 +26,12 @@ export class Doc {
   path = $state<string | null>(null);
   /** Herkunft, falls aus einem anderen Format umgewandelt (z. B. "docx") */
   origin = $state<string | null>(null);
+  /** Seitenbeschriftungen des Dokuments (i, ii, 1 …), nur wenn sie von der Nummer abweichen */
+  labels = $state<string[] | null>(null);
+  /** Seitenbaum verweist mehrfach auf dieselbe Seite (wird beim Öffnen aufgelöst) */
+  dupPages = false;
+  /** Bytes beim Öffnen – Grundlage fürs Anhängen beim Speichern */
+  readonly openedBytes: Uint8Array;
   bytes = $state.raw<Uint8Array>(new Uint8Array());
   pdf = $state.raw<PDFDocumentProxy | null>(null);
   pages = $state.raw<PageInfo[]>([]);
@@ -73,6 +79,7 @@ export class Doc {
   protection = $state<Protection | null>(null);
 
   constructor(name: string, bytes: Uint8Array, path: string | null = null, origin: string | null = null) {
+    this.openedBytes = bytes;
     this.name = name;
     this.path = path;
     this.origin = origin;
@@ -92,12 +99,20 @@ export class Doc {
   async load(bytes: Uint8Array = this.history[this.pos].bytes) {
     const pdf = await openPdf(bytes, this.password);
     const pages: PageInfo[] = [];
+    const refs = new Set<string>();
+    let dup = false;
     for (let i = 1; i <= pdf.numPages; i++) {
       const p = await pdf.getPage(i);
+      const key = p.ref ? `${p.ref.num}/${p.ref.gen}` : '';
+      if (key && refs.has(key)) dup = true; else if (key) refs.add(key);
       const v = p.getViewport({ scale: 1 });
       pages.push({ w: v.width, h: v.height, rot: p.rotate });
     }
+    let labels: string[] | null = null;
+    try { labels = await pdf.getPageLabels(); } catch { /* keine */ }
     const old = this.pdf;
+    this.dupPages = dup;
+    this.labels = labels && labels.some((l, i) => l && l !== String(i + 1)) ? labels : null;
     this.bytes = bytes;
     this.pdf = pdf;
     this.pages = pages;
@@ -189,6 +204,31 @@ export class Doc {
     return bytes;
   }
 
+  /** Grunddokument seit dem Öffnen unverändert? Dann lassen sich Änderungen anhängen. */
+  get canAppend() {
+    return !this.origin && this.bytes === this.openedBytes && !(this.objects as OItem[]).some(o => o.kind === 'field');
+  }
+
+  /**
+   * Das PDF als Originalbytes plus angehängte Änderungen (inkrementelles Speichern).
+   * Digitale Signaturen bleiben so gültig. null, wenn das nicht geht (Grunddokument verändert).
+   */
+  async appended(): Promise<Uint8Array | null> {
+    if (!this.canAppend) return null;
+    const bytes = this.pendingEdits && this.pdf ? new Uint8Array(await this.pdf.saveDocument()) : this.bytes;
+    if (!startsWith(bytes, this.openedBytes)) return null;
+    const objs = $state.snapshot(this.objects) as OItem[];
+    if (!objs.length) return bytes;
+    const { bakeObjects } = await import('./overlay.svelte');
+    const out = await bakeObjects(bytes, objs, { append: true });
+    if (!startsWith(out, this.openedBytes)) return null;
+    // Gegenprobe: liest pdf.js das Ergebnis mit gleicher Seitenzahl? Sonst lieber neu schreiben
+    try { const p = await openPdf(out, this.password); const ok = p.numPages === this.numPages; p.destroy(); return ok ? out : null; } catch { return null; }
+  }
+
+  /** Beschriftung einer Seite (1-basiert), falls sie von der Nummer abweicht */
+  labelOf(n: number): string | null { const l = this.labels?.[n - 1]; return l && l !== String(n) ? l : null; }
+
   markSaved(path: string, name?: string) {
     this.path = path;
     if (name) this.name = name;
@@ -211,4 +251,10 @@ export class Doc {
   }
 
   destroy() { if (this.pdf) retire(this.pdf); this.history = []; this.thumbs.clear(); }
+}
+
+function startsWith(a: Uint8Array, prefix: Uint8Array) {
+  if (a.length < prefix.length) return false;
+  for (let i = 0; i < prefix.length; i++) if (a[i] !== prefix[i]) return false;
+  return true;
 }

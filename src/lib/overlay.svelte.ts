@@ -107,9 +107,27 @@ export function findItem(doc: Doc, id: string | null) { return id ? itemsOf(doc)
 const PY_KINDS = new Set(['rect', 'ellipse', 'line', 'arrow', 'note', 'redact', 'textedit', 'link', 'underline', 'strike', 'highlight', 'ink', 'comment', 'move']);
 
 /** Elemente ins PDF schreiben (reine Funktion: Bytes rein, Bytes raus) */
-export async function bakeObjects(bytes: Uint8Array, all: OItem[]): Promise<Uint8Array> {
+export async function bakeObjects(bytes: Uint8Array, all: OItem[], opts: { append?: boolean } = {}): Promise<Uint8Array> {
+  try { return await bakeObjectsOnce(bytes, all, opts); }
+  catch (e: any) {
+    // MuPDF liest manche beschädigte Dateien anders als pdf.js (z. B. ohne Seiten): neu aufgebaute Fassung versuchen
+    if (opts.append || !/not in document|Failed to open|FileDataError|cannot find page|no pages|FzError|index out of bounds|format error/i.test(String(e?.message || e))) throw e;
+    const alts: (() => Promise<Uint8Array>)[] = [
+      async () => (await import('./engines')).qpdf(['IN', 'OUT'], bytes, { lenient: true }),
+      async () => { const { plLoad, plSave } = await import('./ops'); return plSave(await plLoad(bytes)); },
+    ];
+    for (const alt of alts) {
+      try { return await bakeObjectsOnce(await alt(), all, opts); } catch { /* nächste Fassung */ }
+    }
+    throw new Error(L("Die Datei ist zu stark beschädigt, um Änderungen einzuschreiben. Tipp: erst „Optimieren › Reparieren“."));
+  }
+}
+
+async function bakeObjectsOnce(bytes: Uint8Array, all: OItem[], opts: { append?: boolean }): Promise<Uint8Array> {
   const items = all.filter(i => !isPending(i));
   if (!items.length) return bytes;
+  // Anhängen (inkrementell): alles über MuPDF, das die Änderungen hinter die Originalbytes schreibt
+  if (opts.append) return bakeWithMuPdf(bytes, items, true);
   // Text mit Formatierung oder Schriftwahl setzt MuPDF (HTML-Satz); schlichter Text bleibt bei pdf-lib
   const isRich = (i: OItem) => i.kind === 'text' && ((i as any).html != null || (i as any).fontChoice || (i as any).italic || (i as any).underline || ((i as any).align && (i as any).align !== 'left') || (i as any).lh);
   const contentItems = items.filter(i => !PY_KINDS.has(i.kind) && !isRich(i));
@@ -174,7 +192,7 @@ async function bakeContent(bytes: Uint8Array, items: OItem[]) {
   return plSave(pl);
 }
 
-async function bakeWithMuPdf(bytes: Uint8Array, items: OItem[]) {
+async function bakeWithMuPdf(bytes: Uint8Array, items: OItem[], append = false) {
   const author = app.prefs.author || '';
   const fontBytes: Record<string, Uint8Array> = items.some(i => i.kind === 'textedit' || i.kind === 'move' || i.kind === 'text')
     ? { 'sans.ttf': new Uint8Array(await (await fetch('/engines/pdfjs/standard_fonts/LiberationSans-Regular.ttf')).arrayBuffer()), 'sansb.ttf': new Uint8Array(await (await fetch('/engines/pdfjs/standard_fonts/LiberationSans-Bold.ttf')).arrayBuffer()) }
@@ -218,9 +236,18 @@ async function bakeWithMuPdf(bytes: Uint8Array, items: OItem[]) {
   }
   const data = items.map(i => ({ sysfonts: sysMaps.get(i.id), snap: undefined, origin: undefined, ...i, ...(rich.get(i.id) || {}), ...('stroke' in i ? { strokeRgb: hexToRgb01(i.stroke) } : {}), ...('fill' in i && i.fill && i.fill !== 'transparent' ? { fillRgb: hexToRgb01(i.fill) } : {}), ...('color' in i ? { colorRgb: hexToRgb01((i as any).color) } : {}) }));
   const r = await pyRun(`
+import shutil, base64
 items = json.loads(ARGS['items'])
 author = ARGS['author']
-doc = open_in()
+APPEND = ARGS.get('append')
+if APPEND:
+    # Kopie bearbeiten und nur die Änderungen anhängen – die Originalbytes bleiben unberührt
+    shutil.copyfile('/w/in.pdf', '/w/inc.pdf')
+    doc = pymupdf.open('/w/inc.pdf')
+    if doc.needs_pass:
+        doc.authenticate(ARGS.get('password', ''))
+else:
+    doc = open_in()
 redact_pages = set()
 def P(page, fx, fy):
     W, H = page.rect.width, page.rect.height
@@ -500,12 +527,20 @@ for it in items:
         rich_text(page, it, R(page, it['x'], it['y'], it['w'], max(it.get('h') or 0, 0.02)), '', 0)
     elif k == 'move':
         move_element(page, it)
+    elif k == 'whiteout':
+        page.draw_rect(R(page, it['x'], it['y'], it['w'], it['h']), color=None, fill=(1, 1, 1), overlay=True)
+    elif k == 'image':
+        page.insert_image(R(page, it['x'], it['y'], it['w'], it['h']), stream=base64.b64decode(it['src'].split(',', 1)[1]), rotate=-page.rotation % 360 if page.rotation else 0)
 for pno in redact_pages:
     doc[pno].apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_PIXELS)
-save_out(doc)
+if APPEND:
+    doc.saveIncr()
+    doc.close()
+else:
+    save_out(doc)
 len(items)
-`, { files: { 'in.pdf': bytes, ...fontBytes, ...sysFiles }, outputs: ['out.pdf'], vars: { items: JSON.stringify(data), author } });
-  const out = r.files['out.pdf'];
+`, { files: { 'in.pdf': bytes, ...fontBytes, ...sysFiles }, outputs: [append ? 'inc.pdf' : 'out.pdf'], vars: { items: JSON.stringify(data), author, append } });
+  const out = r.files[append ? 'inc.pdf' : 'out.pdf'];
   if (!out) { console.error('bake: keine Ausgabe', r.result); throw new Error(L("Änderungen konnten nicht geschrieben werden")); }
   return out;
 }

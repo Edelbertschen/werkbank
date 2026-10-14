@@ -42,6 +42,9 @@
     "allow-office-info",
     "allow-office-convert",
     "allow-system-font",
-    "allow-system-fonts"
+    "allow-system-fonts",
+    "allow-mcp-enable",
+    "allow-mcp-reply",
+    "allow-mcp-info"
   ]
 }

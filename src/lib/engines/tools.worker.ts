@@ -16,7 +16,11 @@ async function qpdfMod() {
     const src = await (await fetch('/engines/qpdf/qpdf.js')).text();
     const factory = new Function(src + '\n;return Module;')();
     const wasmBinary = await (await fetch('/engines/qpdf/qpdf.wasm')).arrayBuffer();
-    return factory({ wasmBinary, locateFile: (p: string) => '/engines/qpdf/' + p, print: (t: string) => qpdfLog.push(t), printErr: (t: string) => qpdfLog.push(t) });
+    // Das Modul bindet console.error beim Erzeugen fest – solange auf das Protokoll umlenken
+    const ce = console.error, cw = console.warn;
+    console.error = console.warn = (...a: unknown[]) => { qpdfLog.push(a.join(' ')); };
+    try { return await factory({ wasmBinary, locateFile: (p: string) => '/engines/qpdf/' + p, print: (t: string) => qpdfLog.push(t), printErr: (t: string) => qpdfLog.push(t) }); }
+    finally { console.error = ce; console.warn = cw; }
   })().catch(e => { qpdfP = null; throw e; }));
 }
 
@@ -36,13 +40,19 @@ serve({
     if (rc !== 0 && !Object.keys(files).length) throw new Error('Ghostscript: ' + (log.slice(-4).join(' ') || L("Fehler ") + rc));
     return { files, log: log.join('\n') };
   },
-  async qpdf({ args, input }) {
+  async qpdf({ args, input, lenient }) {
     const m = await qpdfMod();
     qpdfLog.length = 0;
     m.FS.writeFile('/in.pdf', input);
     try { m.FS.unlink('/out.pdf'); } catch { /* egal */ }
     let rc = 0;
+    // qpdf schreibt manche Meldungen direkt in die Konsole – die gehören ins Protokoll
+    const ce = console.error, cw = console.warn;
+    console.error = console.warn = (...a: unknown[]) => { qpdfLog.push(a.join(' ')); };
     try { rc = m.callMain(args.map((a: string) => (a === 'IN' ? '/in.pdf' : a === 'OUT' ? '/out.pdf' : a))); } catch (e: any) { rc = typeof e?.status === 'number' ? e.status : 2; }
+    finally { console.error = ce; console.warn = cw; }
+    // Reparieren: qpdf meldet Fehler (2), schreibt aber eine wiederhergestellte Fassung
+    if (lenient && rc === 2) { try { const out = m.FS.readFile('/out.pdf'); if (out.length) return out; } catch { /* keine Ausgabe */ } }
     if (rc !== 0 && rc !== 3) throw new Error(qpdfLog.join(' ').replace(/this\.program: \/in\.pdf: /g, '').slice(0, 300) || 'qpdf-Fehler ' + rc);
     return m.FS.readFile('/out.pdf');
   },

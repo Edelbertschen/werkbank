@@ -270,3 +270,26 @@ export async function onCloseRequested(cb: () => Promise<boolean>, isDirty?: () 
   const { getCurrentWindow } = await import('@tauri-apps/api/window');
   await getCurrentWindow().onCloseRequested(async ev => { const ok = await cb(); if (!ok) ev.preventDefault(); });
 }
+
+// ---------------------------------------------------------------------------
+// KI-Assistenten (MCP): Steuerkanal der Desktop-App
+// ---------------------------------------------------------------------------
+let mcpUnlisten: (() => void) | null = null;
+/** Steuerkanal öffnen bzw. schließen; Aufrufe gehen an `handle`, die Antwort zurück an die App */
+export async function mcpEnable(on: boolean, handle?: (tool: string, args: any) => Promise<unknown>) {
+  if (!isTauri) return false;
+  if (on && handle && !mcpUnlisten) {
+    mcpUnlisten = await listen<{ id: number; tool: string; args: any }>('mcp-call', async e => {
+      const { id, tool, args } = e.payload;
+      let result: unknown;
+      try { result = await handle(tool, args); } catch (err: any) { result = { isError: true, content: [{ type: 'text', text: String(err?.message || err) }] }; }
+      await invoke('mcp_reply', { id, result: JSON.stringify(result) });
+    });
+  }
+  if (!on && mcpUnlisten) { mcpUnlisten(); mcpUnlisten = null; }
+  await invoke('mcp_enable', { enabled: on });
+  return true;
+}
+export async function mcpInfo(): Promise<{ exe: string } | null> {
+  return isTauri ? invoke<{ exe: string }>('mcp_info') : null;
+}

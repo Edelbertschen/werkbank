@@ -17,6 +17,9 @@ const COMMANDS: &[&str] = &[
     "office_convert",
     "system_font",
     "system_fonts",
+    "mcp_enable",
+    "mcp_reply",
+    "mcp_info",
 ];
 
 fn main() {

@@ -109,5 +109,8 @@
  "Line",
  "Helvetica",
  "Times",
- "Courier"
+ "Courier",
+ "Esc",
+ "Mod+Shift+T",
+ "Mod+Shift+E"
 ]

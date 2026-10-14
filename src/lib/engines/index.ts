@@ -46,9 +46,18 @@ def open_in(name='in.pdf'):
         d.authenticate(ARGS.get('password', ''))
     return d
 def save_out(doc, name='out.pdf', **kw):
-    opts = dict(garbage=3, deflate=True)
+    opts = dict(garbage=2, deflate=True)  # 3+ sucht Dubletten: teuer und fasst gleiche Seiten zusammen
     opts.update(kw)
     doc.save('/w/' + name, **opts)
+    # MuPDF fasst ab garbage=3 auch inhaltsgleiche Seiten zu einem Objekt zusammen (z. B. leere Seiten).
+    # Der Seitenbaum zeigt dann mehrfach auf dieselbe Seite – das lehnen andere Programme ab.
+    if opts.get('garbage', 0) >= 3 and doc.page_count > 1:
+        chk = pymupdf.open('/w/' + name)
+        dup = len({p.xref for p in chk}) < chk.page_count
+        chk.close()
+        if dup:
+            opts['garbage'] = 2
+            doc.save('/w/' + name, **opts)
 `;
 
 import { L } from '../i18n';
@@ -58,8 +67,8 @@ export async function gs(args: string[], input: Record<string, Uint8Array>, outp
   catch (e) { engineState.set('ghostscript', 'ready'); throw e; }
 }
 
-export async function qpdf(args: string[], input: Uint8Array): Promise<Uint8Array> {
-  return toolsClient.call<Uint8Array>('qpdf', { args, input });
+export async function qpdf(args: string[], input: Uint8Array, opts: { lenient?: boolean } = {}): Promise<Uint8Array> {
+  return toolsClient.call<Uint8Array>('qpdf', { args, input, lenient: !!opts.lenient });
 }
 
 // ---------------------------------------------------------------------------

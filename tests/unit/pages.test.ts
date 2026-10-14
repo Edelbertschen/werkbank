@@ -46,12 +46,6 @@ describe('Seiten anordnen', () => {
     expect(info.length).toBe(3);
     expect(info[1]).toMatchObject({ w: 842, h: 595 });
   });
-  it('extrahiert Seiten als neues Dokument', async () => {
-    const doc = await loadDoc(await makePdf(4));
-    const r = await run('extract', doc, { pages: { mode: 'range', range: '2,4' } });
-    const out = r.doc?.bytes || r.docs?.[0]?.bytes || r.files?.[0]?.data;
-    expect(await texts(out as Uint8Array)).toEqual(['Seite 2', 'Seite 4']);
-  });
   it('mischt Vorder- und Rückseiten aus zwei Dokumenten', async () => {
     const doc = await loadDoc(await makePdf([{ text: 'V1' }, { text: 'V2' }]));
     const back = { id: 'x', name: 'r.pdf', bytes: await makePdf([{ text: 'R2' }, { text: 'R1' }]) };
@@ -66,20 +60,9 @@ describe('Seiten anordnen', () => {
 });
 
 describe('Teilen', () => {
-  it('teilt in Einzelseiten', async () => {
-    const doc = await loadDoc(await makePdf(3));
-    const r = await run('split', doc, { mode: 'each', out: 'files' });
-    const parts = (r.files || []).map(f => f.data as Uint8Array);
-    expect(parts.length).toBe(3);
-    expect(await texts(parts[2])).toEqual(['Seite 3']);
-  });
-  it('teilt nach Bereichen', async () => {
-    const doc = await loadDoc(await makePdf(5));
-    const r = await run('split', doc, { mode: 'ranges', ranges: '1-2; 3-5', out: 'files' });
-    const parts = (r.files || []).map(f => f.data as Uint8Array);
-    expect(await Promise.all(parts.map(texts))).toEqual([['Seite 1', 'Seite 2'], ['Seite 3', 'Seite 4', 'Seite 5']]);
-  });
 });
+
+// Extrahieren und Aufteilen laufen über PyMuPDF (Links, Felder, Ebenen bleiben): geprüft in tests/e2e/preserve.spec.ts
 
 describe('Kennzeichnen auf gedrehten Seiten', () => {
   // Seitenzahlen müssen in der Anzeige unten stehen – auch wenn die Seite intern gedreht ist.

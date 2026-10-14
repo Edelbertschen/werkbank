@@ -6,6 +6,7 @@ import { plLoad, plSave, PDFDocument, PDFArray, degrees, rotOf, dispSize, geom, 
 import { MM, PAPER, rangeLabel, parseRange, baseName, dataUrlToBytes } from '../util';
 import { renderPage } from '../pdf';
 import { pyRun } from '../engines';
+import { assemble, pick } from '../graft';
 import { app } from '../app.svelte';
 
 import { L, intlLocale } from '../i18n';
@@ -32,15 +33,12 @@ export async function movePages(ctx: ToolCtx, order: number[]) {
 }
 
 export async function insertDocs(ctx: ToolCtx, refs: DocRef[], at: number) {
-  const pl = await plLoad(ctx.bytes);
-  let pos = at, n = 0;
-  for (const r of refs) {
-    const src = await plLoad(await refBytes(r));
-    const cp = await pl.copyPages(src, src.getPageIndices());
-    for (const p of cp) pl.insertPage(pos++, p);
-    n += cp.length;
-  }
-  return { bytes: await plSave(pl), label: L("{0} Seite(n) eingefügt", n), current: at + 1, selection: [...Array(n).keys()].map(k => at + k) };
+  const before = ctx.doc?.numPages ?? (await plLoad(ctx.bytes)).getPageCount();
+  const parts = [{ bytes: ctx.bytes }];
+  for (const r of refs) parts.push({ bytes: await refBytes(r) });
+  const bytes = await assemble(parts, 'insert', at);
+  const n = (await plLoad(bytes)).getPageCount() - before;
+  return { bytes, label: L("{0} Seite(n) eingefügt", n), current: at + 1, selection: [...Array(n).keys()].map(k => at + k) };
 }
 
 export const pageTools: Tool[] = [
@@ -65,8 +63,7 @@ export const pageTools: Tool[] = [
       const idx = pagesOf(v.pages, ctx);
       const src = await plLoad(ctx.bytes);
       const groups = v.each ? idx.map(i => [i]) : [idx];
-      const outs: { bytes: Uint8Array; name: string; label?: string }[] = [];
-      for (const g of groups) { const o = await PDFDocument.create(); (await o.copyPages(src, g)).forEach(p => o.addPage(p)); outs.push({ bytes: await o.save(), name: outName(ctx, 'S. ' + rangeLabel(g)), label: L("Extrahiert") }); }
+      const outs = (await pick(ctx.bytes, groups, ctx.progress)).map((bytes, k) => ({ bytes, name: outName(ctx, 'S. ' + rangeLabel(groups[k])), label: L("Extrahiert") }));
       const r: any = v.each ? { files: outs.map(o => ({ name: o.name, data: o.bytes })) } : { doc: outs[0] };
       if (v.remove) {
         if (idx.length >= src.getPageCount()) throw new Error(L("Mindestens eine Seite muss bleiben"));
@@ -143,18 +140,9 @@ export const pageTools: Tool[] = [
     run: async (v, ctx) => {
       const refs: DocRef[] = v.docs || [];
       if (refs.length < 2) throw new Error(L("Mindestens zwei Dokumente wählen"));
-      const out = await PDFDocument.create(); const starts: [string, number][] = [];
-      for (const [k, r] of refs.entries()) {
-        ctx.progress(k / refs.length, r.name);
-        const s = await plLoad(await refBytes(r));
-        starts.push([baseName(r.name), out.getPageCount()]);
-        (await out.copyPages(s, s.getPageIndices())).forEach(p => out.addPage(p));
-      }
-      let bytes = await out.save({ useObjectStreams: true });
-      if (v.bookmarks) {
-        const r = await pyRun(`doc = open_in()\ntoc = [[1, t, p + 1] for t, p in json.loads(ARGS['s'])]\ndoc.set_toc(toc)\nsave_out(doc)`, { files: { 'in.pdf': bytes }, outputs: ['out.pdf'], vars: { s: JSON.stringify(starts) } }).catch(() => null);
-        if (r?.files['out.pdf']) bytes = r.files['out.pdf'];
-      }
+      const parts: { bytes: Uint8Array; title: string }[] = [];
+      for (const [k, r] of refs.entries()) { ctx.progress(k / refs.length, r.name); parts.push({ bytes: await refBytes(r), title: baseName(r.name) }); }
+      const bytes = await assemble(parts, v.bookmarks ? 'files' : 'concat');
       return { doc: { bytes, name: (v.name || L("Zusammengeführt")) + '.pdf', label: L("Aus {0} Dokumenten zusammengeführt", refs.length) } };
     },
   },
@@ -197,7 +185,7 @@ export const pageTools: Tool[] = [
       if (!parts.length) throw new Error(L("Keine Teile"));
       if (v.out === 'tabs' && parts.length > 40) throw new Error(L("{0} Teile sind zu viele für Tabs – bitte als Dateien speichern", parts.length));
       const outs: { bytes: Uint8Array; name: string }[] = [];
-      for (const [k, p] of parts.entries()) { ctx.progress(k / parts.length); const o = await PDFDocument.create(); (await o.copyPages(src, p.pages)).forEach(x => o.addPage(x)); outs.push({ name: p.name, bytes: await o.save({ useObjectStreams: true }) }); }
+      (await pick(ctx.bytes, parts.map(p => p.pages), ctx.progress)).forEach((bytes, k) => outs.push({ name: parts[k].name, bytes }));
       if (v.out === 'tabs') return { docs: outs.map(o => ({ bytes: o.bytes, name: o.name, label: L("Aufgeteilt") })) };
       return { files: outs.map(o => ({ name: o.name, data: o.bytes })), zipName: outName(ctx, 'aufgeteilt', 'zip') };
     },

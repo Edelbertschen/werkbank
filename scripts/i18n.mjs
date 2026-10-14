@@ -13,7 +13,7 @@ import { parse as parseSvelte } from 'svelte/compiler';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(root, 'src');
-const SKIP_FILES = [/src\/lib\/i18n\//, /src\/lib\/testhook\.ts$/, /src\/lib\/vendor\//, /\.d\.ts$/];
+const SKIP_FILES = [/src\/lib\/i18n\//, /src\/lib\/testhook\.ts$/, /src\/lib\/mcp\.ts$/ /* Meldungen an KI-Agenten: Englisch */, /src\/lib\/vendor\//, /\.d\.ts$/];
 
 // ---------------------------------------------------------------------------
 // Was ist ein Oberflächentext?

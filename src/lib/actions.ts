@@ -63,11 +63,20 @@ export async function openBytes(name: string, bytes: Uint8Array, path: string | 
     const doc = new Doc(isPdf ? name : baseName(name) + '.pdf', pdfBytes, isPdf ? path : null, isPdf ? null : extOf(name));
     if (!isPdf && path) doc.sourcePath = path;
     // Passwort?
-    let retry = false;
+    let retry = false, repaired = false;
     for (;;) {
       try { await doc.load(pdfBytes); break; }
       catch (e) {
-        if (!(e instanceof PasswordNeeded)) throw e;
+        if (!(e instanceof PasswordNeeded)) {
+          // Beschädigt: einmal mit qpdf und MuPDF reparieren, die beste Fassung nehmen
+          if (repaired || !isPdf) throw e;
+          repaired = true;
+          progress(-1, L("Datei ist beschädigt – wird repariert …"));
+          const fixed = await repairPdf(pdfBytes);
+          if (!fixed) throw new Error(L("Die Datei ist beschädigt und ließ sich nicht reparieren."));
+          pdfBytes = fixed; doc.history[0].bytes = pdfBytes;
+          continue;
+        }
         app.busy = null;
         const pw = await askPassword(name, retry || e.retry);
         if (pw == null) return null;
@@ -86,9 +95,14 @@ export async function openBytes(name: string, bytes: Uint8Array, path: string | 
     if (isPdf && !doc.wasEncrypted && await isEncrypted(pdfBytes)) {
       try { pdfBytes = await qpdf(['--decrypt', 'IN', 'OUT'], pdfBytes); doc.history[0].bytes = pdfBytes; await doc.load(pdfBytes); doc.wasEncrypted = true; } catch { /* bleibt so */ }
     }
+    // Dieselbe Seite mehrfach im Seitenbaum: für die Werkzeuge in eigenständige Seiten auflösen
+    if (doc.dupPages) {
+      try { pdfBytes = await qpdf(['IN', 'OUT'], pdfBytes); doc.history[0].bytes = pdfBytes; await doc.load(pdfBytes); } catch { /* bleibt so */ }
+    }
     app.docs.push(doc);
     if (opts.focus !== false) activate(doc);
     if (path && isPdf) recordRecent(doc);
+    if (repaired) toast(L("Die Datei war beschädigt und wurde beim Öffnen repariert. Speichern legt die reparierte Fassung ab."), { ms: 8000 });
     if (doc.wasEncrypted && doc.protection) toast(L("Passwort erkannt. Beim Speichern wird das Dokument wieder mit diesem Passwort geschützt."), { ms: 7000 });
     else if (doc.wasEncrypted) toast(L("Bearbeitungssperre aufgehoben. Beim Speichern entsteht eine Fassung ohne Einschränkungen – mit „Schützen › Passwort“ lässt sie sich neu setzen."), { ms: 9000 });
     if (!isPdf) toast(L("Aus {0} umgewandelt. Speichern legt eine neue PDF-Datei an.", extOf(name).toUpperCase()));
@@ -117,6 +131,22 @@ export async function insertDropped(payload: { paths?: string[]; files?: File[] 
   if (!src.length) return;
   const { tool } = await import('./tools');
   await runTool(tool('insert-file'), { src, where: 'at', at });
+}
+
+/** Beschädigtes PDF reparieren: qpdf und MuPDF versuchen, die Fassung mit den meisten Seiten gewinnt */
+export async function repairPdf(bytes: Uint8Array): Promise<Uint8Array | null> {
+  const cands: Uint8Array[] = [];
+  try { cands.push(await qpdf(['IN', 'OUT'], bytes, { lenient: true })); } catch { /* nächster Versuch */ }
+  try {
+    const { pyRun } = await import('./engines');
+    const r = await pyRun(`doc = open_in()\nsave_out(doc, garbage=3, deflate=True)`, { files: { 'in.pdf': bytes }, outputs: ['out.pdf'] });
+    if (r.files['out.pdf']) cands.push(r.files['out.pdf']);
+  } catch { /* nächster Versuch */ }
+  let best: { bytes: Uint8Array; pages: number } | null = null;
+  for (const c of cands) {
+    try { const p = await openPdf(c); await p.getPage(1); if (!best || p.numPages > best.pages) best = { bytes: c, pages: p.numPages }; p.destroy(); } catch { /* unbrauchbar */ }
+  }
+  return best?.bytes ?? null;
 }
 
 export async function openDialog() {
@@ -161,11 +191,38 @@ export function workBytes(doc: Doc): Promise<Uint8Array> {
   return doc.baked();
 }
 
+/**
+ * Bytes zum Speichern: Wenn das Grunddokument unverändert ist, werden die Änderungen nur angehängt
+ * (Originalbytes bleiben, Signaturen gültig); sonst wird die Datei vollständig neu geschrieben.
+ */
+export async function outputBytes(doc: Doc): Promise<Uint8Array> {
+  let bytes: Uint8Array | null = null;
+  if (!doc.protection) { try { bytes = await doc.appended(); } catch (e) { console.warn('Anhängen nicht möglich, schreibe neu', e); } }
+  bytes ??= await doc.baked();
+  if (doc.protection) { const { encryptBytes } = await import('./tools/protect'); bytes = await encryptBytes(bytes, doc.protection); }
+  return bytes;
+}
+
+/** Signiertes Dokument, das neu geschrieben werden müsste: vorher fragen. true = speichern. */
+export async function confirmSignedSave(doc: Doc): Promise<boolean> {
+  if (doc.canAppend && !doc.protection) return true;
+  const { countSignatures } = await import('./sign');
+  const n = countSignatures(doc.openedBytes);
+  if (!n) return true;
+  const r = await dialog({
+    title: L("Dokument ist digital signiert"), icon: 'warn',
+    message: n === 1 ? L("Diese Änderungen verändern das Dokument selbst (z. B. Seiten). Beim Speichern wird die Signatur ungültig.") : L("Diese Änderungen verändern das Dokument selbst (z. B. Seiten). Beim Speichern werden die {0} Signaturen ungültig.", n),
+    detail: L("Kommentare, Markierungen und Formulareingaben lassen die Signatur dagegen gültig."),
+    buttons: [{ label: L("Abbrechen"), value: 'cancel' }, { label: L("Trotzdem speichern"), value: 'save', danger: true }],
+  });
+  return r?.button === 'save';
+}
+
 export async function save(doc: Doc | null = active(), as = false): Promise<boolean> {
   if (!doc) return false;
   try {
-    let bytes = await withBusy(L("Wird gespeichert"), () => doc.baked());
-    if (doc.protection) { const { encryptBytes } = await import('./tools/protect'); bytes = await encryptBytes(bytes, doc.protection); }
+    if (!(await confirmSignedSave(doc))) return false;
+    const bytes = await withBusy(L("Wird gespeichert"), () => outputBytes(doc));
     if (!as && doc.path && P.isTauri) {
       await P.writePath(doc.path, bytes);
       doc.markSaved(doc.path);
@@ -241,6 +298,9 @@ export async function closeDoc(doc: Doc | null = active()): Promise<boolean> {
   }
   const i = app.docs.indexOf(doc);
   app.docs.splice(i, 1);
+  // Wieder öffnen: mit Pfad von der Platte, sonst der zuletzt gespeicherte bzw. geöffnete Stand
+  const keep = doc.path && P.isTauri ? null : (doc.history[doc.savedPos]?.bytes || doc.openedBytes);
+  app.closed = [...app.closed.filter(c => !(c.path && c.path === doc.path)), { name: doc.name, path: P.isTauri ? doc.path : null, bytes: keep }].slice(-8);
   clearRecovery(doc);
   doc.destroy();
   if (app.activeId === doc.id) {
@@ -249,6 +309,22 @@ export async function closeDoc(doc: Doc | null = active()): Promise<boolean> {
   }
   return true;
 }
+/** Zuletzt geschlossenes Dokument wieder öffnen (gespeicherter Stand, nicht verworfene Änderungen) */
+export async function reopenClosed() {
+  const c = app.closed.at(-1);
+  if (!c) return;
+  app.closed = app.closed.slice(0, -1);
+  try {
+    if (c.path) await openPaths([c.path]);
+    else if (c.bytes) await openBytes(c.name, c.bytes, null);
+  } catch (e: any) { toast(L("„{0}“ ließ sich nicht öffnen: {1}", c.name, e.message || e), { kind: 'error' }); }
+}
+/** Alle anderen Dokumente schließen (fragt bei ungespeicherten nach) */
+export async function closeOthers(keep: Doc) {
+  for (const d of [...app.docs]) if (d !== keep && !(await closeDoc(d))) return;
+  activate(keep);
+}
+
 export async function closeAll(): Promise<boolean> {
   for (const d of [...app.docs]) if (!(await closeDoc(d))) return false;
   return true;
@@ -271,6 +347,8 @@ export async function redo() {
 // ---------------------------------------------------------------------------
 // Werkzeuge ausführen
 // ---------------------------------------------------------------------------
+const STRUCTURAL = /is not a function|Cannot read properties of (undefined|null)|Expected instance of|Failed to parse|circular reference|Invalid object|Invalid Root|ascend|FzError|index out of bounds/i;
+
 export async function runTool(tool: Tool, values?: Record<string, any>): Promise<boolean> {
   const doc = active();
   if (!doc && !tool.noDoc) { toast(L("Öffne zuerst ein Dokument")); return false; }
@@ -285,7 +363,14 @@ export async function runTool(tool: Tool, values?: Record<string, any>): Promise
       // Ansichtsbefehle (run ohne ctx-Parameter: Zoom, Seitenleiste …) brauchen die Bytes nicht.
       const needsBytes = !!doc && (tool.run?.length ?? 0) >= 2;
       const ctx: ToolCtx = { doc, bytes: needsBytes ? await doc!.baked() : doc?.bytes || new Uint8Array(), current: (doc?.current || 1) - 1, selection: doc ? [...doc.selection] : [], progress };
-      return tool.run!(v, ctx);
+      try { return await tool.run!(v, ctx); }
+      catch (e: any) {
+        // Strukturfehler im PDF (z. B. kaputter Seitenbaum): einmal mit reparierter Fassung versuchen
+        if (!needsBytes || !STRUCTURAL.test(String(e?.message || e))) throw e;
+        const fixed = await repairPdf(ctx.bytes);
+        if (!fixed) throw e;
+        return tool.run!(v, { ...ctx, bytes: fixed });
+      }
     });
     if (!result) return true;
     await applyResult(result, tool);

@@ -1,0 +1,78 @@
+[
+  {
+    "name": "list_documents",
+    "description": "List the documents currently open in Werkbank (id, name, page count, path, unsaved changes). Use the id as `document` in other tools; without it, tools act on the active document.",
+    "inputSchema": { "type": "object", "properties": {} }
+  },
+  {
+    "name": "open_document",
+    "description": "Open a PDF (or Word, Excel, PowerPoint, image …, converted to PDF) from a path on this computer. It becomes the active document.",
+    "inputSchema": { "type": "object", "properties": { "path": { "type": "string", "description": "Absolute file path" } }, "required": ["path"] }
+  },
+  {
+    "name": "get_info",
+    "description": "Basic facts about a document: pages, page sizes, title/author, form fields, signatures, attachments, bookmarks.",
+    "inputSchema": { "type": "object", "properties": { "document": { "type": "string" } } }
+  },
+  {
+    "name": "get_text",
+    "description": "Extract text in reading order, page by page.",
+    "inputSchema": { "type": "object", "properties": { "document": { "type": "string" }, "pages": { "type": "string", "description": "Page range like \"1-3, 7\"; default all" } } }
+  },
+  {
+    "name": "find_text",
+    "description": "Find a phrase; returns page numbers and short context for each match.",
+    "inputSchema": { "type": "object", "properties": { "document": { "type": "string" }, "query": { "type": "string" } }, "required": ["query"] }
+  },
+  {
+    "name": "render_page",
+    "description": "Render one page as a PNG image to look at it.",
+    "inputSchema": { "type": "object", "properties": { "document": { "type": "string" }, "page": { "type": "integer", "minimum": 1 }, "scale": { "type": "number", "description": "1 = 72 dpi, default 1.5" } }, "required": ["page"] }
+  },
+  {
+    "name": "add_comment",
+    "description": "Add a comment. type highlight/underline/strike marks every occurrence of `find` (optionally only on `page`); type note places a sticky note with `text` on `page` (top left, or near the first match of `find`). Each call is one undoable step; nothing is saved until save_document.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "document": { "type": "string" },
+        "type": { "type": "string", "enum": ["highlight", "underline", "strike", "note"] },
+        "find": { "type": "string", "description": "Text to mark (highlight/underline/strike) or to place the note next to" },
+        "page": { "type": "integer", "minimum": 1 },
+        "text": { "type": "string", "description": "Note text, or a comment attached to the markup" },
+        "color": { "type": "string", "description": "Hex colour, e.g. #FFD60A" }
+      },
+      "required": ["type"]
+    }
+  },
+  {
+    "name": "list_form_fields",
+    "description": "List the form fields with name, type, current value and options.",
+    "inputSchema": { "type": "object", "properties": { "document": { "type": "string" } } }
+  },
+  {
+    "name": "fill_form",
+    "description": "Fill form fields by name. Checkboxes take true/false, choice fields one of their options.",
+    "inputSchema": { "type": "object", "properties": { "document": { "type": "string" }, "values": { "type": "object", "additionalProperties": true } }, "required": ["values"] }
+  },
+  {
+    "name": "list_tools",
+    "description": "List Werkbank's document tools that run_tool can execute (rotate, delete pages, compress, OCR, page numbers, watermark, redact by search, protect, convert …) with their parameters and defaults.",
+    "inputSchema": { "type": "object", "properties": { "query": { "type": "string", "description": "Optional filter word" } } }
+  },
+  {
+    "name": "run_tool",
+    "description": "Run a Werkbank tool from list_tools on a document. Parameters not given use their defaults. The change is one undoable step; nothing is saved until save_document.",
+    "inputSchema": { "type": "object", "properties": { "document": { "type": "string" }, "tool": { "type": "string" }, "values": { "type": "object", "additionalProperties": true } }, "required": ["tool"] }
+  },
+  {
+    "name": "undo",
+    "description": "Undo the last change of a document.",
+    "inputSchema": { "type": "object", "properties": { "document": { "type": "string" } } }
+  },
+  {
+    "name": "save_document",
+    "description": "Save the document to its file, or to `path` (Save As). Comments and form entries are appended so digital signatures stay valid where possible.",
+    "inputSchema": { "type": "object", "properties": { "document": { "type": "string" }, "path": { "type": "string" } } }
+  }
+]

@@ -5,7 +5,7 @@
   import { TOOLS } from '../../lib/tools';
   import { RIBBON, ESSENTIAL_HIDDEN } from '../../lib/ribbon';
   import { warmPy, warmLibreOffice, resetEngines } from '../../lib/engines';
-  import { openExternal, os, officeInfo, isTauri, stateSaveNow } from '../../lib/platform';
+  import { openExternal, os, officeInfo, isTauri, stateSaveNow, mcpInfo } from '../../lib/platform';
   import * as I from '../../lib/icons';
 
   const p = app.prefs;
@@ -28,6 +28,20 @@
   function clearRecent() { app.recent = []; saveRecent(); toast(L("Liste der zuletzt geöffneten Dateien geleert")); }
   function showIntro() { set('introSeen', false); app.pane = null; }
   const mac = navigator.platform.includes('Mac');
+
+  // KI-Assistenten (MCP)
+  let exe = $state('');
+  mcpInfo().then(i => (exe = i?.exe || ''));
+  const mcpConfig = $derived(JSON.stringify({ mcpServers: { werkbank: { command: exe || (mac ? '/Applications/Werkbank.app/Contents/MacOS/werkbank' : 'werkbank'), args: ['mcp'] } } }, null, 2));
+  let copied = $state(false);
+  async function setMcp(on: boolean) {
+    set('mcp', on);
+    const { applyMcpPref } = await import('../../lib/mcp');
+    try { await applyMcpPref(); } catch (e: any) { toast(L("KI-Steuerung ließ sich nicht umschalten: {0}", e.message || e), { kind: 'error' }); }
+  }
+  async function copyConfig() {
+    try { await navigator.clipboard.writeText(mcpConfig); copied = true; setTimeout(() => (copied = false), 1600); } catch { /* Auswahl bleibt möglich */ }
+  }
   function clearSignatures() { set('signatures', []); toast(L("Gespeicherte Unterschriften entfernt")); }
 
   let office = $state<{ available: boolean; path?: string } | null>(null);
@@ -148,6 +162,23 @@
   </section>
 
   <section>
+    <h3>{L("KI-Assistenten")}</h3>
+    <div class="group">
+      <label class="row"><span>{L("Steuerung durch KI-Assistenten erlauben (MCP)")}</span><input class="switch" type="checkbox" disabled={!isTauri} checked={p.mcp} onchange={e => setMcp(e.currentTarget.checked)} /></label>
+      {#if !isTauri}
+        <p class="row note">{L("Nur in der Desktop-App verfügbar.")}</p>
+      {:else if p.mcp}
+        <div class="row stack">
+          <span class="lbl">{L("In Claude Desktop oder einem anderen Assistenten eintragen")}</span>
+          <pre class="cfg">{mcpConfig}</pre>
+          <div class="btns"><button class="btn sm" onclick={copyConfig}>{#if copied}<I.Check size={13} />{L("Kopiert")}{:else}<I.Copy size={13} />{L("Kopieren")}{/if}</button></div>
+        </div>
+      {/if}
+    </div>
+    <p class="hint">{L("Der Assistent kann offene Dokumente lesen, kommentieren, Formulare ausfüllen und Werkzeuge ausführen. Jede Änderung lässt sich rückgängig machen; gespeichert wird nur, wenn er es ausdrücklich tut. Die Verbindung bleibt auf diesem Rechner.")}</p>
+  </section>
+
+  <section>
     <h3>{L("Daten")}</h3>
     <div class="group">
       <div class="row"><span>{L("Zuletzt geöffnet")} <em class="num">{app.recent.length}</em></span><button class="btn sm" disabled={!app.recent.length} onclick={clearRecent}>{L("Leeren")}</button></div>
@@ -218,6 +249,7 @@
   .lic { margin: 0; padding: 0 12px 12px; list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
   .lic li { display: flex; justify-content: space-between; gap: 8px; }
   .lic span { color: var(--text-3); }
+  .cfg { margin: 0; padding: 10px 12px; border-radius: 8px; background: var(--hover); font: 11px/1.5 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; color: var(--text); white-space: pre-wrap; word-break: break-all; user-select: text; }
   .link { border: 0; background: none; padding: 0; color: var(--accent-text); font-size: 12px; cursor: pointer; }
   .link:hover { text-decoration: underline; }
 </style>

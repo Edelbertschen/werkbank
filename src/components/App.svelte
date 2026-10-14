@@ -35,6 +35,8 @@
     hideSplash();
     // PDF-Engine gleich still vorbereiten – bis eine Datei gewählt ist, ist sie meist fertig
     if (app.prefs.preloadEngines) import('../lib/engines').then(m => m.preloadWhenIdle());
+    // KI-Assistenten nur, wenn ausdrücklich erlaubt
+    if (app.prefs.mcp && isTauri) import('../lib/mcp').then(m => m.applyMcpPref()).catch(e => console.warn('MCP', e));
     await onOpenFiles(paths => openPaths(paths));
     await onFileDrop((state, p) => {
       if (state === 'leave') { app.dropping = false; dropTarget = null; return; }
@@ -60,6 +62,7 @@
     if (e.key === 'Escape') {
       if (viewer.presenting) { viewer.endPresent(); return; }
       if (app.palette) { app.palette = false; return; }
+      if (app.reading && !typing && !overlay.selected) { app.reading = false; setTimeout(() => viewer.refit(), 60); return; }
       // Esc im Text eines Elements beendet die Eingabe (und hält sie als Stand fest)
       if (typing && t.closest('.ov-host')) { (t.closest('[contenteditable], textarea') as HTMLElement | null)?.blur(); return; }
       if (typing) return;
@@ -127,15 +130,15 @@
 
 <svelte:window onkeydown={onKey} />
 
-<div class="app" class:presenting={viewer.presenting} class:night={app.prefs.nightReading}>
-  {#if !viewer.presenting}
+<div class="app" class:presenting={viewer.presenting} class:night={app.prefs.nightReading} class:reading={app.reading && doc}>
+  {#if !viewer.presenting && !(app.reading && doc)}
     <TitleBar />
     <!-- Ohne Dokument hat die Bandleiste nichts zu tun: die Startseite bietet die Einstiege -->
     {#if doc}<Ribbon />{:else}<div class="ribbon-gap"></div>{/if}
   {/if}
   <div class="work">
-    {#if doc && !viewer.presenting}<Rail />{/if}
-    {#if doc && app.sidebar && !viewer.presenting}<Sidebar {doc} />{/if}
+    {#if doc && !viewer.presenting && !app.reading}<Rail />{/if}
+    {#if doc && app.sidebar && !viewer.presenting && !app.reading}<Sidebar {doc} />{/if}
     <main class="center">
       <div class="viewer-area" class:hidden={!doc || app.backstage || app.organize}>
         <ViewerHost />
@@ -143,9 +146,15 @@
       {#if doc && app.organize && !app.backstage}<Organize {doc} />{/if}
       {#if !doc || app.backstage}<StartScreen />{/if}
     </main>
-    {#if app.pane && !viewer.presenting}<TaskPane />{/if}
+    {#if app.pane && !viewer.presenting && !(app.reading && doc)}<TaskPane />{/if}
   </div>
-  {#if !viewer.presenting}<StatusBar />{/if}
+  {#if !viewer.presenting && !(app.reading && doc)}<StatusBar />{/if}
+  {#if app.reading && doc}
+    <div class="readchip" data-tauri-drag-region>
+      <span class="num">{doc.labelOf(doc.current) || doc.current} / {doc.numPages}</span>
+      <button onclick={() => { app.reading = false; setTimeout(() => viewer.refit(), 60); }}>{L("Lesemodus beenden")}<kbd>Esc</kbd></button>
+    </div>
+  {/if}
 </div>
 
 {#if dropTarget}
@@ -168,6 +177,15 @@
   .app.presenting { grid-template-rows: minmax(0, 1fr); background: #000; }
   /* Arbeitsbereich: Seitenleiste, Dokumentfläche und Aufgabenbereich liegen als Blätter auf dem Fensterchrom */
   .ribbon-gap { height: 4px; }
+  /* Lesemodus: nur die Seiten, oben ein dezenter Hinweis zum Beenden */
+  .app.reading .work { padding: 0; gap: 0; }
+  .app.reading :global(.center) { border-radius: 0; }
+  .readchip { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 50; display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 4px 0 14px; border-radius: 999px;
+    background: color-mix(in srgb, var(--raised) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--shadow-2), 0 0 0 0.5px var(--line-strong);
+    font-size: 12px; color: var(--text-2); opacity: 0.35; transition: opacity 0.2s; }
+  .readchip:hover { opacity: 1; }
+  .readchip button { display: flex; align-items: center; gap: 7px; height: 24px; padding: 0 6px 0 10px; border: 0; border-radius: 999px; background: var(--hover); color: var(--text); font-size: 12px; }
+  .readchip kbd { font: 500 10.5px var(--font); color: var(--text-3); padding: 0 5px; border-radius: 4px; background: var(--surface); }
   .work { display: flex; gap: 8px; padding: 0 8px 0 0; min-height: 0; min-width: 0; }
   .center { flex: 1; position: relative; min-width: 0; min-height: 0; background: var(--canvas); border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 0 0.5px var(--line); }
   .work:not(:has(:global(.rail))) { padding-left: 8px; }

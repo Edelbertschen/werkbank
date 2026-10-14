@@ -25,7 +25,7 @@
         <!-- svelte-ignore a11y_autofocus -->
         <input class="pg num" bind:value={pageInput} autofocus onblur={commitPage} onkeydown={e => { if (e.key === 'Enter') commitPage(); if (e.key === 'Escape') editing = false; }} aria-label={L("Seite")} />
       {:else}
-        <button class="pgb num" onclick={() => { pageInput = String(doc.current); editing = true; }} title={L("Zu Seite springen")}>{L("Seite {0} von {1}", doc.current, doc.numPages)}</button>
+        <button class="pgb num" onclick={() => { pageInput = String(doc.current); editing = true; }} title={L("Zu Seite springen")}>{#if doc.labelOf(doc.current)}{L("Seite {0} ({1} von {2})", doc.labelOf(doc.current)!, doc.current, doc.numPages)}{:else}{L("Seite {0} von {1}", doc.current, doc.numPages)}{/if}</button>
       {/if}
       <button class="nb" aria-label={L("Nächste Seite")} disabled={doc.current >= doc.numPages} onclick={() => viewer.next()}><I.ChevronRight size={13} /></button>
       {#if pinfo}<span class="dim num">{paperName(pinfo.w, pinfo.h) || ''} {mm(pinfo.w)} × {mm(pinfo.h)} mm</span>{/if}
@@ -33,7 +33,8 @@
     </div>
   {/if}
   <div class="mid">
-    {#if loading.length}<span class="eng"><span class="spin"></span>{L("{0} wird geladen …", loading.join(', '))}</span>
+    {#if app.mcpBusy}<span class="eng ai"><span class="spin"></span>{L("KI-Assistent arbeitet …")}</span>
+    {:else if loading.length}<span class="eng"><span class="spin"></span>{L("{0} wird geladen …", loading.join(', '))}</span>
     {:else if doc}
       <span class="dim num">{fmtSize(doc.bytes.length)}</span>
       {#if doc.protection}<span class="badge"><I.Lock size={11} />{L("Geschützt beim Speichern")}</span>{/if}

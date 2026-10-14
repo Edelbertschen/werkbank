@@ -65,7 +65,22 @@ npm run test:e2e   # Oberfläche und Engines im echten Chromium gegen den Produk
 
 Der Korpus schwieriger PDFs in `tests/fixtures` (verschlüsselt, beschädigt, gedreht, gemischte Formate, Formulare, Scan, Unicode …) entsteht mit `scripts/make-corpus.py`. Der Workflow `.github/workflows/test.yml` führt alles bei jedem Push aus.
 
+**Härtetest:** `npm run sweep -- <ordner-mit-pdfs>` schickt jede Datei durch die App (öffnen, Element hinzufügen, anhängend speichern, Seite drehen, neu speichern) und prüft jede Ausgabe mit `qpdf --check`. Als Korpus eignen sich die rund 1.000 Testdateien von pdf.js (`test/pdfs`). Voraussetzung: `npm run build:test` und `npx vite preview --port 4173`.
+
 Pakete für alle Systeme baut der Workflow `.github/workflows/release.yml` (Tag `v*` pushen oder manuell starten). Ergebnis: `.dmg` (macOS, Universal), `.msi`/`.exe` (Windows), `.deb`/`.rpm`/`.AppImage` (Linux).
+
+## KI-Assistenten (MCP)
+
+Werkbank lässt sich von KI-Assistenten wie Claude Desktop steuern: Dokumente lesen, durchsuchen, kommentieren (z. B. „markiere jede Stelle mit ‚Kündigung‘“), Formulare ausfüllen, Werkzeuge ausführen, speichern. Jede Änderung ist ein eigener Schritt im Verlauf und lässt sich rückgängig machen; gespeichert wird nur auf ausdrücklichen Aufruf.
+
+1. In Werkbank unter **Einstellungen › KI-Assistenten** die Steuerung erlauben (standardmäßig aus).
+2. Den dort angezeigten Eintrag in die Konfiguration des Assistenten übernehmen, z. B. für Claude Desktop:
+
+```json
+{ "mcpServers": { "werkbank": { "command": "/Applications/Werkbank.app/Contents/MacOS/werkbank", "args": ["mcp"] } } }
+```
+
+`werkbank mcp` spricht MCP über stdin/stdout und reicht jeden Aufruf an die laufende Werkbank weiter (startet sie bei Bedarf). Die Verbindung läuft nur über 127.0.0.1 mit einem Zufallstoken aus einer nur für den Nutzer lesbaren Datei. Die Werkzeuge stehen in `src/lib/mcp-tools.json`.
 
 ## Lizenz
 

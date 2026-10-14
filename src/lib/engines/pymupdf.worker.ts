@@ -20,7 +20,8 @@ const core = () => (coreP ??= (async () => {
   const { loadPyodide } = await import(/* @vite-ignore */ BASE + 'pyodide.js');
   const py = await loadPyodide({ indexURL: BASE });
   await Promise.all(CORE.map(w => py.loadPackage(BASE + w)));
-  py.runPython('import pymupdf\npymupdf.TOOLS.store_shrink(100)');
+  // MuPDF-Meldungen nicht ausgeben: bei beschädigten Dateien sind es Zehntausende, jede bremst über die Konsole
+  py.runPython('import pymupdf\npymupdf.TOOLS.store_shrink(100)\npymupdf.TOOLS.mupdf_display_errors(False)\npymupdf.TOOLS.mupdf_display_warnings(False)');
   try { py.FS.mkdir('/w'); } catch { /* vorhanden */ }
   return py;
 })().catch(e => { coreP = null; throw e; }));

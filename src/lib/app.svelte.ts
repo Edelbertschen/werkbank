@@ -37,6 +37,8 @@ export interface Prefs {
   hiddenTabs: RibbonTab[];
   /** Einführung beim ersten Start gesehen */
   introSeen: boolean;
+  /** KI-Assistenten (MCP) dürfen Werkbank steuern */
+  mcp: boolean;
 }
 
 const defaultPrefs: Prefs = {
@@ -57,6 +59,7 @@ const defaultPrefs: Prefs = {
   lang: 'system',
   hiddenTabs: [],
   introSeen: false,
+  mcp: false,
 };
 
 export const app = $state({
@@ -67,6 +70,12 @@ export const app = $state({
   sidebar: 'pages' as SidebarPanel | null,
   pane: null as null | { tool: string; nonce: number; values?: Record<string, any> },
   organize: false,
+  /** Lesemodus: nur die Seiten */
+  reading: false,
+  /** Laufende Aufrufe eines KI-Assistenten */
+  mcpBusy: 0,
+  /** Zuletzt geschlossene Dokumente (neueste zuletzt) */
+  closed: [] as { name: string; path: string | null; bytes: Uint8Array | null }[],
   backstage: false,
   mode: 'select' as EditMode,
   /** Vorbereitetes Bild für Stempel/Unterschrift/Bild-Modus */

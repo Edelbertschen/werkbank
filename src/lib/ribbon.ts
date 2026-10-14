@@ -89,7 +89,7 @@ export const RIBBON: RibbonTabDef[] = [
     id: 'view', label: L("Ansicht"), groups: [
       { label: L("Seitenansicht"), items: ['view-continuous', 'view-single', 'view-spread', 'view-spread-cover', 'view-horizontal', 'view-wrapped'], large: [] },
       { label: 'Zoom', items: [{ custom: 'zoom' }, 'zoom-width', 'zoom-page', 'zoom-100'], large: [] },
-      { label: L("Anzeige"), items: ['rotate-view', 'night', 'organize'], large: [] },
+      { label: L("Anzeige"), items: ['read-mode', 'rotate-view', 'night', 'organize'], large: ['read-mode'] },
       { label: L("Fenster"), items: ['sidebar', 'history', 'fullscreen', 'present'], large: ['present'] },
       { label: L("Erscheinungsbild"), items: ['theme-system', 'theme-light', 'theme-dark', 'settings'], large: [] },
     ],

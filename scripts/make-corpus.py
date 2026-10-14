@@ -128,6 +128,36 @@ q = p.search_for('Herbst')[0]; a = p.add_highlight_annot(q); a.set_colors(stroke
 a = p.add_ink_annot([[(100, 450), (150, 500), (200, 450)]]); a.set_colors(stroke=(0.5, 0, 0.5)); a.set_border(width=3); meta(a, 'Ben')
 a = p.add_text_annot((520, 90), 'Bitte gegenlesen', icon='Note'); meta(a, 'Anna Förster', 'Bitte gegenlesen')
 d.save(P('kommentare.pdf'), garbage=3, deflate=True)
+# 14 Alles, was beim Zusammenführen, Extrahieren und Teilen erhalten bleiben muss:
+#    interne Links, benanntes Sprungziel, Webadresse, Formularfelder, Ebene, Anhang, Lesezeichen
+d = text_pages(pymupdf.open(), 4, title='Reich')
+p1 = d[0]
+p1.insert_link({'kind': pymupdf.LINK_GOTO, 'from': pymupdf.Rect(72, 600, 300, 620), 'page': 2, 'to': pymupdf.Point(72, 90)})
+p1.insert_link({'kind': pymupdf.LINK_URI, 'from': pymupdf.Rect(72, 630, 300, 650), 'uri': 'https://example.com/werkbank'})
+p1.insert_text((72, 615), 'Zu Seite 3', fontsize=11); p1.insert_text((72, 645), 'Webseite', fontsize=11); p1.insert_text((72, 675), 'Zum Ziel', fontsize=11)
+# benanntes Ziel „ziel“ auf Seite 4, Link darauf über eine GoTo-Aktion mit Namen
+p4 = d[3].xref
+names = d.get_new_xref(); d.update_object(names, f'<< /Names [(ziel) [{p4} 0 R /XYZ 72 750 0]] >>')
+d.xref_set_key(d.pdf_catalog(), 'Names', f'<< /Dests {names} 0 R >>')
+annot = d.get_new_xref()
+d.update_object(annot, f'<< /Type /Annot /Subtype /Link /Rect [72 160 300 180] /Border [0 0 0] /A << /S /GoTo /D (ziel) >> >>')
+d.xref_set_key(p1.xref, 'Annots', d.xref_get_key(p1.xref, 'Annots')[1].replace(']', f' {annot} 0 R]'))
+# Formular auf Seite 2
+p2 = d[1]
+w = pymupdf.Widget(); w.field_type = pymupdf.PDF_WIDGET_TYPE_TEXT; w.field_name = 'Name'; w.rect = pymupdf.Rect(72, 600, 300, 622); w.field_value = 'Erika'; p2.add_widget(w)
+w = pymupdf.Widget(); w.field_type = pymupdf.PDF_WIDGET_TYPE_CHECKBOX; w.field_name = 'Zustimmung'; w.rect = pymupdf.Rect(72, 640, 90, 658); w.field_value = True; p2.add_widget(w)
+# Ebene auf Seite 3 (nur in der Ebene sichtbar)
+oc = d.add_ocg('Ebene Massstab', on=True)
+d[2].insert_text((72, 620), 'Nur in der Ebene', fontsize=14, oc=oc)
+# Anhang und Lesezeichen
+d.embfile_add('daten.csv', b'art;menge\nFichte;12\n', filename='daten.csv', desc='Quelldaten')
+d.set_toc([[1, 'Links', 1], [1, 'Formular', 2], [1, 'Ebene', 3], [1, 'Ziel', 4]])
+save(d, 'reich.pdf')
+
+# 15 Root-Verweis ins Leere und falsche Querverweis-Position (abgebrochenes Schreiben): pdf.js lehnt ab, Reparatur rettet
+_b = open(P('text.pdf'), 'rb').read().replace(b'/Root 1 0 R', b'/Root 99 0 R').replace(b'startxref\n6076', b'startxref\n9999')
+open(P('kaputt-root.pdf'), 'wb').write(_b)
+
 # Formular wie aus einer Textverarbeitung: eingebettete Teilschriften (Sans fett/normal, Serif, Mono) – braucht LibreOffice
 import shutil, subprocess, tempfile
 if shutil.which('soffice'):
