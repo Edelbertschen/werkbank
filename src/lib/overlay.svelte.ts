@@ -37,6 +37,23 @@ export const overlay = $state({
   editing: null as string | null,
 });
 
+/** Tippen in einem Element der Seite beenden (Eingabe wird beim Verlassen festgehalten). true, wenn getippt wurde. */
+export function stopTyping(): boolean {
+  const a = document.activeElement as HTMLElement | null;
+  if (!a || !a.closest('.ov-host') || !(a.isContentEditable || a.tagName === 'TEXTAREA')) return false;
+  a.blur();
+  getSelection()?.removeAllRanges();
+  return true;
+}
+/** „Fertig“: Tippen beenden, Markierung aufheben, zurück zum Auswählen */
+export function endEditing() {
+  stopTyping();
+  overlay.editing = null;
+  overlay.selected = null;
+  app.mode = 'select';
+}
+
+
 /** Lesen ohne Zustandsänderung (sicher in Templates/$derived) */
 export function itemsOf(doc: Doc): OItem[] { return doc.objects; }
 

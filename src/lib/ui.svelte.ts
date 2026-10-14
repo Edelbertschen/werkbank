@@ -12,6 +12,7 @@ import { pickFiles } from './platform';
 import { bytesToDataUrl } from './util';
 
 import { L } from './i18n';
+import { stopTyping } from './overlay.svelte';
 let nonce = 0;
 
 /** Werkzeug über Bandleiste, Palette oder Kürzel auslösen */
@@ -29,6 +30,7 @@ const PLACE_MODES: EditMode[] = ['sign', 'stamp', 'image'];
 
 let hintToast = 0;
 export async function setMode(m: EditMode) {
+  stopTyping(); // ein anderes Werkzeug beendet das Tippen – kein Cursor blinkt weiter
   if (m !== 'select' && m !== 'hand') {
     if (viewer.inst?.pagesRotation) { toast(L("Bitte zuerst die Ansichtsdrehung zurücksetzen (Ansicht › Ansicht drehen).")); return; }
     app.organize = false;

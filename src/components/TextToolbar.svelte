@@ -22,7 +22,7 @@
 <script lang="ts">
   import { L } from '../lib/i18n';
   import type { Doc } from '../lib/doc.svelte';
-  import { commitItem, removeItem, type OItem } from '../lib/overlay.svelte';
+  import { commitItem, removeItem, endEditing, type OItem } from '../lib/overlay.svelte';
   import { previewFamily, systemFamilies } from '../lib/sysfonts';
   import { BUILTIN, BUILTIN_STACK, escapeHtml } from '../lib/richtext';
   import * as I from '../lib/icons';
@@ -95,10 +95,22 @@
     t.html = escapeHtml(t.text || ''); t.bold = false; t.italic = false; t.underline = false; t.htmlRev = (t.htmlRev || 0) + 1; done();
   }
   function del() { removeItem(doc, it.id); }
+  // Leiste innerhalb der Seite halten: ragt sie rechts hinaus, rückt sie nach links (die Seite schneidet sonst ab)
+  let bar = $state<HTMLElement | null>(null);
+  let shift = $state(0);
+  $effect(() => {
+    void t.x; void t.w; void t.size; void families.length;
+    if (!bar) return;
+    const page = bar.closest('.page, .ov-host') as HTMLElement | null;
+    if (!page) return;
+    const pr = page.getBoundingClientRect(), br = bar.getBoundingClientRect();
+    const right = br.right - shift, left = br.left - shift;
+    shift = Math.min(0, Math.max(pr.left + 4 - left, pr.right - 4 - right));
+  });
   const on = (cmd: string, flag: boolean) => { const el = editor(); return selectionIn(el) ? document.queryCommandState(cmd) : flag; };
 </script>
 
-<div class="ttb" role="toolbar" aria-label={L("Text formatieren")} tabindex="-1" onpointerdown={e => e.stopPropagation()}>
+<div class="ttb" bind:this={bar} style:translate={shift ? `${shift}px 0` : null} role="toolbar" aria-label={L("Text formatieren")} tabindex="-1" onpointerdown={e => e.stopPropagation()}>
   <div class="font">
     <select class="select mini" aria-label={L("Schriftart")} value={current} onchange={e => setFont((e.target as HTMLSelectElement).value)}>
       {#if isEdit}<optgroup label={L("Im Dokument")}><option value="">{origName}</option></optgroup>{/if}
@@ -128,14 +140,18 @@
   <span class="sep"></span>
   <button title={L("Formatierung entfernen")} aria-label={L("Formatierung entfernen")} onpointerdown={keep} onclick={clearFormat}><I.RemoveFormatting size={13} /></button>
   <button class="del" title={L("Entfernen (Entf)")} aria-label={L("Entfernen")} onpointerdown={keep} onclick={del}><I.Trash2 size={12} /></button>
+  <span class="sep"></span>
+  <button class="done" title={L("Bearbeitung beenden (Esc)")} aria-label={L("Fertig")} onpointerdown={keep} onclick={endEditing}><I.Check size={13} strokeWidth={2.4} /><span>{L("Fertig")}</span></button>
 </div>
 
 <style>
-  .ttb { position: absolute; bottom: calc(100% + 8px); left: -2px; display: flex; align-items: center; gap: 1px; padding: 3px; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow-pop); z-index: 4; white-space: nowrap; pointer-events: auto; cursor: default; }
+  .ttb { position: absolute; bottom: calc(100% + 8px); left: -2px; width: max-content; display: flex; align-items: center; gap: 1px; padding: 3px; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow-pop); z-index: 4; white-space: nowrap; pointer-events: auto; cursor: default; }
   .ttb button { border: 0; background: none; height: 24px; min-width: 24px; padding: 0 5px; border-radius: 5px; font-size: 11.5px; color: var(--text); display: grid; place-items: center; }
   .ttb button:hover { background: var(--hover); }
   .ttb button.on { background: var(--accent-soft); color: var(--accent-text); }
   .ttb .del:hover { color: var(--danger, #d33); }
+  .ttb .done { display: inline-flex; gap: 4px; padding: 0 9px 0 7px; margin-left: 1px; background: var(--accent); color: var(--on-accent); font-weight: 600; }
+  .ttb .done:hover { background: var(--accent); filter: brightness(1.08); }
   .ttb .sep { width: 1px; height: 16px; background: var(--line); margin: 0 3px; }
   .ttb .font { display: flex; align-items: center; gap: 4px; }
   .ttb select.mini { height: 24px; font-size: 11.5px; max-width: 170px; }

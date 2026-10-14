@@ -9,6 +9,7 @@
   import StyleControls from './StyleControls.svelte';
   import * as I from '../lib/icons';
   import { tick } from 'svelte';
+  import { overlay, endEditing, stopTyping } from '../lib/overlay.svelte';
   import { tool, hasTool } from '../lib/tools';
 
   const doc = $derived(active());
@@ -117,16 +118,16 @@
   </div>
 {/snippet}
 
-<div class="ribbon" class:collapsed class:peek={app.ribbonPeek}>
+<div class="ribbon" class:collapsed class:peek={app.ribbonPeek} onpointerdowncapture={() => stopTyping()}>
   <div class="tabrow" role="tablist" bind:this={tabrow}>
     <span class="ink" class:ready={ink.ready} style:transform={`translateX(${ink.x}px)`} style:width={ink.w + 'px'}></span>
     {#each tabs as t (t.id)}
       <button role="tab" class="rtab" class:on={tabDef.id === t.id && !app.backstage} aria-selected={tabDef.id === t.id} onclick={() => pickTab(t.id)} ondblclick={toggleCollapse} oncontextmenu={e => tabMenu(e, t.id, t.label)}>{t.label}</button>
     {/each}
     <span class="spacer"></span>
-    {#if doc && (app.mode !== 'select' && app.mode !== 'hand')}
-      <span class="modechip"><span class="pulse"></span>{({ move: L("Elemente verschieben"), 'text:edit': L("Text bearbeiten"), 'text:add': L("Text hinzufügen"), image: L("Bild platzieren"), sign: L("Unterschrift platzieren"), stamp: L("Stempel setzen"), redact: L("Schwärzen"), whiteout: L("Abdecken"), link: 'Link', note: L("Notiz"), 'shape:rect': L("Rechteck"), 'shape:ellipse': L("Ellipse"), 'shape:line': L("Linie"), 'shape:arrow': L("Pfeil"), 'comment:text': L("Textkommentar"), ink: L("Freihand"), 'markup:highlight': L("Textmarker"), 'markup:underline': L("Unterstreichen"), 'markup:strike': L("Durchstreichen"), 'field:text': L("Textfeld"), 'field:check': L("Kontrollkästchen"), 'field:radio': L("Optionsfeld"), 'field:choice': L("Auswahlliste"), 'field:signature': L("Unterschriftsfeld") } as Record<string, string>)[app.mode] || app.mode}
-        <button onclick={() => (app.mode = 'select')} aria-label={L("Modus beenden")} title={L("Beenden (Esc)")}><I.X size={11} strokeWidth={2.2} /></button></span>
+    {#if doc && ((app.mode !== 'select' && app.mode !== 'hand') || overlay.editing)}
+      <span class="modechip"><span class="pulse"></span>{overlay.editing && (app.mode === 'select' || app.mode === 'hand' || app.mode === 'move') ? L("Text bearbeiten") : ({ move: L("Elemente verschieben"), 'text:edit': L("Text bearbeiten"), 'text:add': L("Text hinzufügen"), image: L("Bild platzieren"), sign: L("Unterschrift platzieren"), stamp: L("Stempel setzen"), redact: L("Schwärzen"), whiteout: L("Abdecken"), link: 'Link', note: L("Notiz"), 'shape:rect': L("Rechteck"), 'shape:ellipse': L("Ellipse"), 'shape:line': L("Linie"), 'shape:arrow': L("Pfeil"), 'comment:text': L("Textkommentar"), ink: L("Freihand"), 'markup:highlight': L("Textmarker"), 'markup:underline': L("Unterstreichen"), 'markup:strike': L("Durchstreichen"), 'field:text': L("Textfeld"), 'field:check': L("Kontrollkästchen"), 'field:radio': L("Optionsfeld"), 'field:choice': L("Auswahlliste"), 'field:signature': L("Unterschriftsfeld") } as Record<string, string>)[app.mode] || app.mode}
+        <button onclick={endEditing} title={L("Beenden und zurück zum Auswählen (Esc)")}><I.Check size={12} strokeWidth={2.6} />{L("Fertig")}</button></span>
     {/if}
     <button class="collapse" onclick={toggleCollapse} title={app.prefs.ribbonCollapsed ? L("Bandleiste anheften") : L("Bandleiste ausblenden")} aria-label={L("Bandleiste ein- oder ausblenden")}>
       {#if app.prefs.ribbonCollapsed}<I.ChevronDown size={14} />{:else}<I.ChevronUp size={14} />{/if}
@@ -174,9 +175,9 @@
   .spacer { flex: 1; }
   .collapse { border: 0; background: none; width: 26px; height: 26px; border-radius: 7px; color: var(--text-3); display: grid; place-items: center; }
   .collapse:hover { background: var(--hover); color: var(--text); }
-  .modechip { display: inline-flex; align-items: center; gap: 7px; height: 24px; padding: 0 4px 0 10px; border-radius: 12px; background: var(--accent); color: var(--on-accent); font-size: 11.5px; font-weight: 600; margin-right: 6px; box-shadow: 0 1px 3px rgba(11, 110, 123, 0.3); animation: pop-in 0.18s var(--ease); }
-  .modechip button { border: 0; background: none; color: inherit; width: 18px; height: 18px; border-radius: 9px; display: grid; place-items: center; }
-  .modechip button:hover { background: rgba(255, 255, 255, 0.2); }
+  .modechip { display: inline-flex; align-items: center; gap: 7px; height: 24px; padding: 0 3px 0 10px; border-radius: 12px; background: var(--accent); color: var(--on-accent); font-size: 11.5px; font-weight: 600; margin-right: 6px; box-shadow: 0 1px 3px rgba(11, 110, 123, 0.3); animation: pop-in 0.18s var(--ease); }
+  .modechip button { border: 0; background: rgba(255, 255, 255, 0.18); color: inherit; height: 18px; padding: 0 8px 0 6px; border-radius: 9px; display: inline-flex; align-items: center; gap: 3px; font: inherit; font-size: 11px; }
+  .modechip button:hover { background: rgba(255, 255, 255, 0.32); }
   .pulse { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulse 1.6s ease-in-out infinite; }
   @keyframes pulse { 50% { opacity: 0.35; } }
   /* Werkzeug-Ablage: als Fläche vom Fensterchrom abgesetzt */

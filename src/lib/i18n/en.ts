@@ -179,6 +179,8 @@ const en: Record<string, string> = {
  "Bearbeitet": "Edited",
  "Bearbeitungssperre aufgehoben. Beim Speichern entsteht eine Fassung ohne Einschränkungen – mit „Schützen › Passwort“ lässt sie sich neu setzen.": "Editing restriction removed. Saving creates a version without restrictions – use “Protect › Password” to set it again.",
  "Beenden (Esc)": "Exit (Esc)",
+ "Beenden und zurück zum Auswählen (Esc)": "Finish and return to selecting (Esc)",
+ "Bearbeitung beenden (Esc)": "Finish editing (Esc)",
  "Befehl oder Werkzeug suchen": "Search for a command or tool",
  "Befehl suchen": "Search commands",
  "Beginnen mit": "Start at",

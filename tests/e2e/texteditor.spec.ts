@@ -206,3 +206,62 @@ test('Esc beendet den Bearbeitungsmodus sofort, die Eingabe bleibt erhalten', as
   await app.page.keyboard.press('Escape');
   await expect(app.page.locator('.modechip')).toHaveCount(0);
 });
+
+/** Klick wie in WebKit (macOS): Schaltflächen nehmen dort keinen Fokus, das Textfeld behielte ihn */
+const clickNoFocus = (app: any, sel: string) => app.page.evaluate((s: string) => {
+  const el = document.querySelector(s) as HTMLElement;
+  el.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
+  el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+  el.click();
+}, sel);
+const typingInPage = (app: any) => app.page.evaluate(() => !!(document.activeElement as HTMLElement)?.closest?.('.ov-host [contenteditable="true"]'));
+
+test('sichtbares „Fertig“ an der Textleiste beendet die Bearbeitung: kein Cursor mehr, Auswahl aufgehoben', async ({ app }) => {
+  const { at } = await setup(app, 'bild.pdf');
+  await tool(app, 'Bearbeiten', 'Text hinzufügen');
+  await app.page.mouse.click(...at(80, 420));
+  await app.page.keyboard.type('Fertig getippt');
+  const done = bar(app).getByRole('button', { name: 'Fertig' });
+  await expect(done).toBeVisible();
+  await expect(done).toHaveText(/Fertig/);
+  await clickNoFocus(app, '.ttb button.done');
+  expect(await typingInPage(app)).toBe(false);
+  await expect(bar(app)).toHaveCount(0);
+  await expect(app.page.locator('.modechip')).toHaveCount(0);
+  expect(await app.page.evaluate(() => (window as any).__wb.app.mode)).toBe('select');
+  await expect.poll(() => pos(app), { timeout: 30_000 }).toBe(1);
+  expect((await spans(app)).some(x => x[0] === 'Fertig getippt')).toBe(true);
+});
+
+test('anderes Werkzeug wählen beendet das Tippen; der Modus-Hinweis zeigt „Fertig“ als Schaltfläche', async ({ app }) => {
+  const { at } = await setup(app, 'bild.pdf');
+  await tool(app, 'Bearbeiten', 'Text hinzufügen');
+  await expect(app.page.locator('.modechip button')).toHaveText(/Fertig/);
+  await app.page.mouse.click(...at(80, 420));
+  await app.page.keyboard.type('Weiter');
+  expect(await typingInPage(app)).toBe(true);
+  await clickNoFocus(app, '.ribbon button[aria-label="Text bearbeiten"]');
+  expect(await typingInPage(app)).toBe(false);
+  expect(await app.page.evaluate(() => (window as any).__wb.app.mode)).toBe('text:edit');
+  await expect.poll(() => pos(app), { timeout: 30_000 }).toBe(1);
+  // „Fertig“ im Modus-Hinweis führt zurück zum Auswählen
+  await clickNoFocus(app, '.modechip button');
+  await expect(app.page.locator('.modechip')).toHaveCount(0);
+  expect(await app.page.evaluate(() => (window as any).__wb.app.mode)).toBe('select');
+});
+
+test('auch beim Tippen im Auswahlmodus zeigt die Leiste, dass bearbeitet wird, und bietet „Fertig“', async ({ app }) => {
+  const { at } = await setup(app, 'bild.pdf');
+  await tool(app, 'Bearbeiten', 'Text hinzufügen');
+  await app.page.mouse.click(...at(80, 420));
+  await app.page.keyboard.type('Erst');
+  await app.page.keyboard.press('Escape');
+  await expect(app.page.locator('.modechip')).toHaveCount(0);
+  // erneut ins markierte Textfeld klicken: man tippt wieder
+  await app.page.locator('.ov-host .item .tx').first().click();
+  expect(await typingInPage(app)).toBe(true);
+  await expect(app.page.locator('.modechip')).toContainText('Text bearbeiten');
+  await clickNoFocus(app, '.modechip button');
+  expect(await typingInPage(app)).toBe(false);
+  await expect(app.page.locator('.modechip')).toHaveCount(0);
+});

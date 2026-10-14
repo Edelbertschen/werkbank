@@ -289,6 +289,18 @@ function hexToBytes(hex: string): Uint8Array {
     bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
   }
 
+  // Länge aus dem DER-Kopf (SEQUENCE) nehmen: endet die Signatur zufällig auf 0x00,
+  // würde das bloße Abschneiden der Nullen des Platzhalters sie verstümmeln (≈ jede 256. Signatur)
+  if (bytes[0] === 0x30 && bytes.length > 2) {
+    const b1 = bytes[1];
+    let len = -1, head = 2;
+    if (b1 < 0x80) len = b1;
+    else if ((b1 & 0x7f) >= 1 && (b1 & 0x7f) <= 4 && bytes.length > 2 + (b1 & 0x7f)) {
+      head += b1 & 0x7f; len = 0;
+      for (let i = 2; i < head; i++) len = len * 256 + bytes[i];
+    }
+    if (len >= 0 && head + len <= bytes.length) return bytes.slice(0, head + len);
+  }
   let actualLength = bytes.length;
   while (actualLength > 0 && bytes[actualLength - 1] === 0) {
     actualLength--;
