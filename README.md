@@ -77,7 +77,7 @@ Werkbank lässt sich von KI-Assistenten wie Claude Desktop steuern: Dokumente le
 2. Den dort angezeigten Eintrag in die Konfiguration des Assistenten übernehmen, z. B. für Claude Desktop:
 
 ```json
-{ "mcpServers": { "werkbank": { "command": "/Applications/Werkbank.app/Contents/MacOS/werkbank", "args": ["mcp"] } } }
+{ "mcpServers": { "werkbank": { "command": "/Applications/Werkbank.app/Contents/MacOS/Werkbank", "args": ["mcp"] } } }
 ```
 
 `werkbank mcp` spricht MCP über stdin/stdout und reicht jeden Aufruf an die laufende Werkbank weiter (startet sie bei Bedarf). Die Verbindung läuft nur über 127.0.0.1 mit einem Zufallstoken aus einer nur für den Nutzer lesbaren Datei. Die Werkzeuge stehen in `src/lib/mcp-tools.json`.

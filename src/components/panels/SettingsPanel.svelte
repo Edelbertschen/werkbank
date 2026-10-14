@@ -32,7 +32,7 @@
   // KI-Assistenten (MCP)
   let exe = $state('');
   mcpInfo().then(i => (exe = i?.exe || ''));
-  const mcpConfig = $derived(JSON.stringify({ mcpServers: { werkbank: { command: exe || (mac ? '/Applications/Werkbank.app/Contents/MacOS/werkbank' : 'werkbank'), args: ['mcp'] } } }, null, 2));
+  const mcpConfig = $derived(JSON.stringify({ mcpServers: { werkbank: { command: exe || (mac ? '/Applications/Werkbank.app/Contents/MacOS/Werkbank' : 'werkbank'), args: ['mcp'] } } }, null, 2));
   let copied = $state(false);
   async function setMcp(on: boolean) {
     set('mcp', on);
