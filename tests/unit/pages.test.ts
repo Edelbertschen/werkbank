@@ -59,9 +59,6 @@ describe('Seiten anordnen', () => {
   });
 });
 
-describe('Teilen', () => {
-});
-
 // Extrahieren und Aufteilen laufen über PyMuPDF (Links, Felder, Ebenen bleiben): geprüft in tests/e2e/preserve.spec.ts
 
 describe('Kennzeichnen auf gedrehten Seiten', () => {
