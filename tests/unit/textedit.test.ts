@@ -38,6 +38,19 @@ describe('Zeilen und Absätze erkennen', () => {
     expect(p.lines.some(l => l.text.startsWith('Kapitel'))).toBe(false);
     expect(p.lines.some(l => l.text.startsWith('Tabelle'))).toBe(false);
   });
+  it('Tabellenspalte: kurze Zelleninhalte untereinander sind keine Absatzzeilen', () => {
+    // Anzahl-Spalte wie in einer Geräteliste: Zeilenabstand eng genug für einen Absatz, aber jede Zelle ist eigenständig
+    const col = ['1', '1', '1', '3', '2', '5'].map((t, k) => span(t, 320, 400 + k * 22, 7, 14));
+    const lines = groupLines([...col, span('Vertex V', 60, 400, 50), span('Vertex V Laser Geo', 60, 422, 110)]);
+    const i = lines.findIndex(l => l.text === '3');
+    const p = paragraphAt(lines, i);
+    expect(p.lines.map(l => l.text)).toEqual(['3']);
+    expect(p.box.top).toBe(466);
+  });
+  it('umbrochener Text in einer schmalen Zelle bleibt ein Absatz', () => {
+    const lines = groupLines([span('Vertex IV (einer permanent', 60, 300, 170), span('im Einsatz)', 60, 317, 70)]);
+    expect(paragraphAt(lines, 1).lines.map(l => l.text)).toEqual(['Vertex IV (einer permanent', 'im Einsatz)']);
+  });
   it('liefert für eine Einzelzeile genau diese Zeile', () => {
     const lines = groupLines(page);
     const p = paragraphAt(lines, lines.findIndex(l => l.text.startsWith('Kapitel')));

@@ -44,7 +44,9 @@ export function paragraphAt(lines: Line[], i: number): Paragraph {
   const base = lines[i];
   const similar = (a: Line, b: Line) => Math.abs(a.height - b.height) <= Math.max(a.height, b.height) * 0.2;
   const aligned = (a: Line, b: Line) => Math.abs(a.left - b.left) <= Math.max(a.height, b.height) * 2.5 && a.left < b.right && b.left < a.right;
-  const close = (upper: Line, lower: Line) => lower.top - upper.bottom >= -upper.height * 0.3 && lower.top - upper.bottom <= upper.height * 0.9;
+  // Nur umbrochene Zeilen setzen sich fort: kurze Inhalte untereinander (Tabellenzellen, Zahlenspalten) bleiben einzeln
+  const wrapped = (l: Line) => l.right - l.left >= l.height * 8;
+  const close = (upper: Line, lower: Line) => wrapped(upper) && lower.top - upper.bottom >= -upper.height * 0.3 && lower.top - upper.bottom <= upper.height * 0.9;
   const below = (l: Line) => lines.filter(x => x !== l && x.top > l.top + l.height * 0.5 && aligned(l, x) && similar(l, x)).sort((a, b) => a.top - b.top)[0];
   const above = (l: Line) => lines.filter(x => x !== l && x.top < l.top - l.height * 0.5 && aligned(l, x) && similar(l, x)).sort((a, b) => b.top - a.top)[0];
   const out = [base];

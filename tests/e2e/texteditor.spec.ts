@@ -136,3 +136,73 @@ test('Kursiv per Strg+I; Einfügen bringt nur den reinen Text mit', async ({ app
   expect(ein[3]).not.toBe('#00ff00');
   expect(ein[2]).toBeLessThan(20);
 });
+
+test('Text in einer Tabellenzelle bearbeiten: nur diese Zelle, Nachbarzellen bleiben an ihrem Platz', async ({ app }) => {
+  await app.open('text.pdf');
+  await app.page.evaluate(async () => {
+    const W = (window as any).__wb;
+    const r = await W.pyRun(`
+d = pymupdf.open()
+p = d.new_page()
+rows = [('Vertex IV', '2'), ('Vertex V', '1'), ('Vertex V Laser Geo', '1'), ('Kluppe', '1'), ('Massband', '3'), ('Smartphone', '2'), ('GNSS-Empfaenger', '5')]
+y = 100
+for name, n in rows:
+    p.draw_rect(pymupdf.Rect(60, y, 300, y + 17), color=(0.6, 0.6, 0.6), width=0.5)
+    p.draw_rect(pymupdf.Rect(300, y, 360, y + 17), color=(0.6, 0.6, 0.6), width=0.5)
+    p.insert_text((64, y + 12), name, fontsize=9.2)
+    p.insert_text((304, y + 12), n, fontsize=9.2)
+    y += 17
+d.save('/w/out.pdf')`, { outputs: ['out.pdf'] });
+    await W.actions.openBytes('tabelle.pdf', r.files['out.pdf'], null);
+  });
+  await app.idle();
+  await app.runTool('zoom-page'); await app.page.waitForTimeout(500);
+  const b = (await app.page.locator('.page[data-page-number="1"]').boundingBox())!;
+  const k = b.width / 595, at = (x: number, y: number) => [b.x + x * k, b.y + y * k] as [number, number];
+  await tool(app, 'Bearbeiten', 'Text bearbeiten');
+  await app.page.mouse.click(...at(306, 100 + 4 * 17 + 9)); // Zelle „3“
+  await expect(app.page.locator('.item.textedit')).toHaveCount(1);
+  const it = await app.page.evaluate(() => { const W = (window as any).__wb; return JSON.parse(JSON.stringify(W.overlay.itemsOf(W.active())[0])); });
+  expect(it.text).toBe('3');
+  expect(it.h * 842).toBeLessThan(17); // eine Zeile, nicht die ganze Spalte
+  await app.page.keyboard.press('Control+a');
+  await app.page.keyboard.type('4');
+  await app.page.keyboard.press('Escape');
+  await expect.poll(() => pos(app), { timeout: 30_000 }).toBe(1);
+  // Zahlen von oben nach unten: [Text, x, y]
+  const nums: [string, number, number][] = await app.page.evaluate(async () => {
+    const W = (window as any).__wb;
+    const r = await W.pyRun(`
+import json
+out = []
+for b in open_in()[0].get_text('dict')['blocks']:
+    for l in b.get('lines', []):
+        for s in l['spans']:
+            t = s['text'].strip()
+            if t.isdigit(): out.append([t, round(s['bbox'][0]), round(s['bbox'][1])])
+json.dumps(sorted(out, key=lambda o: o[2]))`, { files: { 'in.pdf': await W.active().baked() } });
+    return JSON.parse(r.result);
+  });
+  expect(nums.map(x => x[0])).toEqual(['2', '1', '1', '1', '4', '2', '5']);
+  for (const x of nums) expect(Math.abs(x[1] - 304)).toBeLessThanOrEqual(2); // alle bleiben in ihrer Spalte
+  const ys = nums.map(x => x[2]);
+  for (let k = 1; k < ys.length; k++) expect(Math.abs(ys[k] - ys[k - 1] - 17)).toBeLessThanOrEqual(2); // und in ihrer Zeile
+});
+
+test('Esc beendet den Bearbeitungsmodus sofort, die Eingabe bleibt erhalten', async ({ app }) => {
+  const { at } = await setup(app, 'bild.pdf');
+  await tool(app, 'Bearbeiten', 'Text hinzufügen');
+  await expect(app.page.locator('.modechip')).toBeVisible();
+  await app.page.mouse.click(...at(80, 420));
+  await app.page.keyboard.type('Bleibt');
+  await app.page.keyboard.press('Escape');
+  await expect(app.page.locator('.modechip')).toHaveCount(0);
+  expect(await app.page.evaluate(() => (window as any).__wb.app.mode)).toBe('select');
+  await expect.poll(() => pos(app), { timeout: 30_000 }).toBe(1);
+  expect((await spans(app)).some(x => x[0] === 'Bleibt')).toBe(true);
+  // auch ohne Eingabe: ein Esc genügt
+  await tool(app, 'Bearbeiten', 'Text bearbeiten');
+  await expect(app.page.locator('.modechip')).toBeVisible();
+  await app.page.keyboard.press('Escape');
+  await expect(app.page.locator('.modechip')).toHaveCount(0);
+});

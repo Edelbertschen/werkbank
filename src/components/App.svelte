@@ -64,10 +64,12 @@
       if (app.palette) { app.palette = false; return; }
       if (app.reading && !typing && !overlay.selected) { app.reading = false; setTimeout(() => viewer.refit(), 60); return; }
       // Esc im Text eines Elements beendet die Eingabe (und hält sie als Stand fest)
-      if (typing && t.closest('.ov-host')) { (t.closest('[contenteditable], textarea') as HTMLElement | null)?.blur(); return; }
+      // Esc beendet den Bearbeitungsmodus immer sofort: Eingabe festhalten, zurück zum Auswählen.
+      // Das gerade bearbeitete Element bleibt markiert (Formatieren); ein weiteres Esc hebt die Markierung auf.
+      if (typing && t.closest('.ov-host')) { (t.closest('[contenteditable], textarea') as HTMLElement | null)?.blur(); app.mode = 'select'; return; }
       if (typing) return;
-      if (overlay.selected) { overlay.selected = null; return; }
       if (app.mode !== 'select') { app.mode = 'select'; return; }
+      if (overlay.selected) { overlay.selected = null; return; }
       if (app.organize) { if (doc?.selection.length) doc.selection = []; else app.organize = false; return; }
       if (app.pane) { app.pane = null; return; }
       return;
