@@ -1,7 +1,7 @@
 {
   "name": "werkbank",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Werkbank – PDF-Werkzeugkasten für den Desktop",
   "license": "AGPL-3.0-only",
   "type": "module",
