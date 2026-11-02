@@ -122,7 +122,7 @@
 
 <style>
   .sp { display: flex; flex-direction: column; gap: 12px; }
-  h2 { margin: 0; font: 600 15px var(--font-display); }
+  h2 { margin: 0; font: 620 15px var(--font-brand); }
   .padwrap { position: relative; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--line-strong); }
   .pad { width: 100%; height: 170px; display: block; touch-action: none; cursor: crosshair; }
   .line { position: absolute; left: 24px; right: 24px; bottom: 40px; border-bottom: 1px dashed #c8ccd4; pointer-events: none; }

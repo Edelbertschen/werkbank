@@ -1,10 +1,10 @@
 <script lang="ts">
   // Willkommensfenster beim ersten Start: Sprache und Erscheinungsbild wählen, drei Hinweise, los.
+  // Gestaltung wie der Startbildschirm: Werkbank-Fläche mit Lineal, Überschrift in der Auszeichnungsschrift.
   import { L, getLocale } from '../lib/i18n';
   import { app, savePrefs, applyTheme } from '../lib/app.svelte';
   import { stateSaveNow } from '../lib/platform';
   import { onMount } from 'svelte';
-  import wordmark from '../wordmark.svg?raw';
   import * as I from '../lib/icons';
 
   const p = app.prefs;
@@ -12,10 +12,10 @@
   let switching = $state(false);
   let go: HTMLButtonElement;
 
-  const points: [any, string, string][] = [
-    [I.HardDrive, L("Alles bleibt auf diesem Rechner"), L("Umwandeln, Texterkennung und Komprimieren laufen lokal. Es wird nichts hochgeladen.")],
-    [I.MousePointer2, L("Direkt auf der Seite arbeiten"), L("Text, Bilder und Anmerkungen anklicken und ändern. Jede Änderung lässt sich mit {0}+Z zurücknehmen.", mod)],
-    [I.Command, L("Jedes Werkzeug mit {0}+K", mod), L("Die Befehlssuche findet alles, auch was in der Bandleiste ausgeblendet ist.")],
+  const points: [string, string][] = [
+    [L("Alles bleibt auf diesem Rechner"), L("Umwandeln, Texterkennung und Komprimieren laufen lokal. Es wird nichts hochgeladen.")],
+    [L("Direkt auf der Seite arbeiten"), L("Text, Bilder und Anmerkungen anklicken und ändern. Jede Änderung lässt sich mit {0}+Z zurücknehmen.", mod)],
+    [L("Jedes Werkzeug mit {0}+K", mod), L("Die Befehlssuche findet alles, auch was in der Bandleiste ausgeblendet ist.")],
   ];
   const themes: ['system' | 'light' | 'dark', string][] = [['system', L("Wie System")], ['light', L("Hell")], ['dark', L("Dunkel")]];
 
@@ -39,22 +39,16 @@
 
 <div class="welcome">
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="wl-h">
-    <aside class="hero" aria-hidden="true">
-      <div class="mat"></div>
-      <div class="brand">
-        <img src="/icon.png" alt="" />
-        <div class="wm">{@html wordmark}</div>
-        <p>{L("PDFs lesen, bearbeiten, umwandeln und schützen – alles auf diesem Rechner.")}</p>
-      </div>
-      <div class="ruler"><span class="num">0</span><span class="num">10</span><span class="num">20</span><span class="num">30</span><span class="num">40</span><span class="num">50</span></div>
-    </aside>
-
-    <section class="main">
-      <header>
+    <header class="bench">
+      <span class="ruler" aria-hidden="true"></span>
+      <div class="bench-body">
+        <div class="brand"><img src="/icon.png" alt="" /><span>Werkbank</span></div>
         <h2 id="wl-h">{L("Willkommen in der Werkbank")}</h2>
         <p class="lead">{L("Zwei Dinge vorab – beides lässt sich später in den Einstellungen ändern.")}</p>
-      </header>
+      </div>
+    </header>
 
+    <section class="main">
       <div class="field">
         <span class="lbl">{L("Sprache")}{getLocale() === 'de' ? ' · Language' : ''}</span>
         <div class="seg lang" class:busy={switching}>
@@ -76,11 +70,11 @@
         </div>
       </div>
 
-      <ul class="points">
-        {#each points as [Icon, t, d], k (k)}
-          <li><span class="pi"><Icon size={15} strokeWidth={1.8} /></span><span><b>{t}</b><small>{d}</small></span></li>
+      <ol class="points">
+        {#each points as [t, d], k (k)}
+          <li><span class="pn num" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span><span><b>{t}</b><small>{d}</small></span></li>
         {/each}
-      </ul>
+      </ol>
 
       <footer>
         <span class="kbd">↵</span>
@@ -95,37 +89,25 @@
     background: color-mix(in srgb, var(--win) 55%, transparent); backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1);
     animation: wl-fade 0.4s 0.12s var(--ease) both; }
   @keyframes wl-fade { from { opacity: 0; } }
-  .sheet { display: grid; grid-template-columns: 300px minmax(0, 1fr); width: min(860px, 100%); min-height: 540px; border-radius: 20px; overflow: hidden;
+  .sheet { display: flex; flex-direction: column; width: min(620px, 100%); max-height: calc(100vh - 48px); border-radius: 20px; overflow: hidden auto;
     background: var(--surface); box-shadow: 0 40px 90px -20px rgba(6, 28, 32, 0.45), 0 0 0 0.5px var(--line-strong); animation: wl-rise 0.55s 0.16s var(--ease) both; }
   @keyframes wl-rise { from { opacity: 0; transform: translateY(14px) scale(0.975); } }
 
-  /* Linke Seite: Schneidematte in Petrol – Raster wie auf der Werkbank */
-  .hero { position: relative; display: flex; flex-direction: column; justify-content: center; padding: 40px 34px 64px; color: #EAF6F7; overflow: hidden;
-    background: radial-gradient(120% 80% at 20% 0%, #1A8C9B 0%, #0B6E7B 42%, #07444C 100%); }
-  .mat { position: absolute; inset: 0; opacity: 0.55;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
-      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-    background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px; background-position: -1px -1px;
-    mask-image: radial-gradient(130% 100% at 30% 30%, #000 30%, transparent 85%); -webkit-mask-image: radial-gradient(130% 100% at 30% 30%, #000 30%, transparent 85%); }
-  .brand { position: relative; display: flex; flex-direction: column; gap: 18px; }
-  .brand img { width: 64px; height: 64px; filter: drop-shadow(0 10px 22px rgba(0, 20, 24, 0.4)); }
-  .wm { color: #fff; line-height: 0; }
-  .wm :global(svg) { height: 30px; width: auto; }
-  .brand p { margin: 0; font-size: 13.5px; line-height: 1.55; color: rgba(234, 246, 247, 0.78); max-width: 24ch; }
-  .ruler { position: absolute; left: 0; right: 0; bottom: 0; height: 34px; display: flex; justify-content: space-between; padding: 0 0 0 0; border-top: 1px solid rgba(255, 255, 255, 0.14);
+  /* Oben: die Werkbank-Fläche mit Lineal – wie auf dem Startbildschirm */
+  .bench { background: color-mix(in srgb, var(--text) 6%, var(--bar)); }
+  .ruler { display: block; height: 14px;
     background:
-      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.5) 0 1px, transparent 1px 50px) top left / 100% 12px no-repeat,
-      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0 1px, transparent 1px 10px) top left / 100% 6px no-repeat; }
-  .ruler span { font-size: 9.5px; color: rgba(234, 246, 247, 0.55); padding-top: 15px; width: 50px; text-indent: 4px; }
-  .ruler span:first-child { text-indent: 5px; }
+      repeating-linear-gradient(90deg, var(--line-strong) 0 1px, transparent 1px 12px) top / 100% 6px no-repeat,
+      repeating-linear-gradient(90deg, color-mix(in srgb, var(--text) 30%, transparent) 0 1px, transparent 1px 60px) top / 100% 12px no-repeat; }
+  .bench-body { padding: 22px 40px 28px; display: flex; flex-direction: column; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; font: 650 14px var(--font-brand); letter-spacing: -0.01em; color: var(--text-2); }
+  .brand img { width: 24px; height: 24px; }
+  h2 { margin: 0; font: 620 38px/1.04 var(--font-brand); letter-spacing: -0.03em; color: var(--text); text-wrap: balance; }
+  .lead { margin: 0; font-size: 14px; color: var(--text-2); line-height: 1.5; max-width: 48ch; }
 
-  /* Rechte Seite */
-  .main { display: flex; flex-direction: column; gap: 22px; padding: 38px 40px 28px; min-width: 0; }
-  h2 { margin: 0 0 6px; font: 650 24px/1.15 var(--font-display); letter-spacing: -0.025em; color: var(--text); text-wrap: balance; }
-  .lead { margin: 0; font-size: 13px; color: var(--text-2); line-height: 1.5; }
+  .main { display: flex; flex-direction: column; gap: 22px; padding: 28px 40px 26px; min-width: 0; }
   .field { display: flex; flex-direction: column; gap: 9px; }
-  .lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); }
+  .lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); }
   .seg.lang { align-self: flex-start; }
   .seg.busy { opacity: 0.55; pointer-events: none; }
 
@@ -147,16 +129,16 @@
   .tn { display: inline-flex; align-items: center; gap: 5px; padding-left: 2px; }
   .th[aria-pressed='true'] .tn { color: var(--accent-text); font-weight: 600; }
 
-  .points { list-style: none; margin: 2px 0 0; padding: 16px 0 0; border-top: 0.5px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
-  .points li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start; }
-  .pi { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
-  .points b { display: block; font-size: 12.75px; font-weight: 600; color: var(--text); margin: 1px 0 1px; }
-  .points small { display: block; font-size: 12px; line-height: 1.45; color: var(--text-2); }
+  .points { list-style: none; margin: 0; padding: 18px 0 0; border-top: 0.5px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+  .points li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+  .pn { font: 500 11.5px var(--mono); color: var(--accent-text); }
+  .points b { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 1px; }
+  .points small { display: block; font-size: 12.25px; line-height: 1.45; color: var(--text-2); }
 
   footer { margin-top: auto; display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding-top: 6px; }
   .kbd { font-size: 11px; color: var(--text-3); padding: 2px 6px; border-radius: 5px; box-shadow: inset 0 0 0 0.5px var(--line-strong); }
   .go { height: 38px; padding: 0 18px 0 20px; font-size: 13.5px; gap: 8px; border-radius: 10px; }
 
-  @media (max-width: 760px) { .sheet { grid-template-columns: 1fr; } .hero { display: none; } }
+  @media (max-width: 560px) { .bench-body, .main { padding-left: 24px; padding-right: 24px; } h2 { font-size: 30px; } }
   @media (prefers-reduced-motion: reduce) { .welcome, .sheet { animation: none; } }
 </style>

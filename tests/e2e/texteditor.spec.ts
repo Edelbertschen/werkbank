@@ -118,8 +118,8 @@ test('Kursiv per Strg+I; Einfügen bringt nur den reinen Text mit', async ({ app
   await tool(app, 'Bearbeiten', 'Text hinzufügen');
   await app.page.mouse.click(...at(80, 420));
   await app.page.keyboard.type('Schräg');
-  await app.page.keyboard.press('Control+a');
-  await app.page.keyboard.press('Control+i');
+  await app.page.keyboard.press('ControlOrMeta+a');
+  await app.page.keyboard.press('ControlOrMeta+i');
   await app.page.keyboard.press('End');
   await app.page.locator('.item.text .tx').first().evaluate((el: HTMLElement) => {
     const dt = new DataTransfer();
@@ -165,7 +165,7 @@ d.save('/w/out.pdf')`, { outputs: ['out.pdf'] });
   const it = await app.page.evaluate(() => { const W = (window as any).__wb; return JSON.parse(JSON.stringify(W.overlay.itemsOf(W.active())[0])); });
   expect(it.text).toBe('3');
   expect(it.h * 842).toBeLessThan(17); // eine Zeile, nicht die ganze Spalte
-  await app.page.keyboard.press('Control+a');
+  await app.page.keyboard.press('ControlOrMeta+a');
   await app.page.keyboard.type('4');
   await app.page.keyboard.press('Escape');
   await expect.poll(() => pos(app), { timeout: 30_000 }).toBe(1);

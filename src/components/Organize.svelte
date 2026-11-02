@@ -137,7 +137,7 @@
   .org { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--canvas); }
   .bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px 10px 22px; background: var(--bar); border-bottom: 0.5px solid var(--line); flex-wrap: wrap; }
   .title { display: flex; align-items: baseline; gap: 10px; margin-right: 14px; }
-  h2 { margin: 0; font: 600 15px/1.2 var(--font-display); letter-spacing: -0.01em; }
+  h2 { margin: 0; font: 620 15px/1.2 var(--font-brand); letter-spacing: -0.01em; }
   .title .num { font-size: 12px; color: var(--text-3); }
   .pick { display: flex; gap: 2px; padding: 2px; border-radius: 8px; background: var(--hover); }
   .pick button { border: 0; background: none; padding: 3px 10px; border-radius: 6px; font-size: 12px; color: var(--text-2); }

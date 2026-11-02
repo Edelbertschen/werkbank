@@ -243,7 +243,7 @@
   .about { display: flex; align-items: center; gap: 12px; padding: 14px 12px 4px; }
   .about img { width: 40px; height: 40px; }
   .about div { display: flex; flex-direction: column; gap: 1px; }
-  .about b { font: 600 14px/1.2 var(--font-display); letter-spacing: -0.01em; }
+  .about b { font: 620 14px/1.2 var(--font-brand); letter-spacing: -0.01em; }
   .about span { font-size: 11.5px; color: var(--text-3); }
   .about + .row { border-top: 0; }
   .lic { margin: 0; padding: 0 12px 12px; list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 12px; }

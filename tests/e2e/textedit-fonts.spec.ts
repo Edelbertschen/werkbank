@@ -54,7 +54,7 @@ async function editAt(app: any, fy: number, newText: string, preview?: { family:
     expect(st.family).toMatch(preview.family);
     expect(st.weight).toBe(preview.weight);
   }
-  await page.keyboard.press('Control+a');
+  await page.keyboard.press('ControlOrMeta+a');
   await page.keyboard.type(newText);
   await page.keyboard.press('Escape');
   await expect.poll(() => page.evaluate(() => (window as any).__wb.active().pos), { timeout: 60_000 }).toBe(1);
@@ -100,7 +100,7 @@ test('sofort nach dem Klick tippen geht auch bei langsamem Rechner nicht verlore
   const cdp = await app.page.context().newCDPSession(app.page);
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 6 });
   await app.page.mouse.click(box.x + box.width * 0.2, box.y + box.height * 222 / 842);
-  await app.page.keyboard.press('Control+a');
+  await app.page.keyboard.press('ControlOrMeta+a');
   await app.page.keyboard.type('Aktenzeichen: KL-8a/2027');
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
   await expect(app.page.locator('.item.textedit .tx').first()).toHaveText('Aktenzeichen: KL-8a/2027');

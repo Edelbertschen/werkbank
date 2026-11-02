@@ -105,7 +105,7 @@
           <div class="recent">
             {#each recent.slice(0, 18) as r (r.path)}
               <button class="rf" onclick={() => openRecent(r.path)} oncontextmenu={e => ctx(e, r.path)} title={r.path}>
-                <span class="tile"><span class="paper">{#if r.thumb}<img src={r.thumb} alt="" />{:else}<I.FileText size={24} />{/if}</span></span>
+                <span class="tile"><span class="paper">{#if r.thumb}<img src={r.thumb} alt="" />{:else}<span class="lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>{/if}</span></span>
                 <span class="rn">{r.name}</span>
                 <span class="rm num">{folderOf(r.path)} · {fmtAgo(r.at)}{r.pages ? ` · ${r.pages} S.` : ''}{r.size ? ` · ${fmtSize(r.size)}` : ''}</span>
               </button>
@@ -175,6 +175,11 @@
   .paper { width: 64%; flex: none; aspect-ratio: 0.74; height: max-content; background: var(--surface); box-shadow: var(--shadow-page); display: grid; place-items: center; overflow: hidden; color: var(--text-3);
     transition: transform 0.2s var(--ease); }
   .paper img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  /* Ohne Vorschaubild: angedeutetes Blatt mit Textzeilen */
+  .lines { align-self: stretch; justify-self: stretch; display: flex; flex-direction: column; gap: 6px; padding: 16% 13%; }
+  .lines i { display: block; height: 3px; border-radius: 1px; background: var(--line-strong); }
+  .lines i:first-child { width: 48%; height: 5px; margin-bottom: 8px; background: color-mix(in srgb, var(--text) 28%, transparent); }
+  .lines i:nth-child(3n) { width: 86%; } .lines i:nth-child(4n) { width: 72%; } .lines i:last-child { width: 54%; }
   .rf:hover .tile { background: color-mix(in srgb, var(--text) 9%, var(--bar)); }
   .rf:hover .paper { transform: translateY(-4px); }
   .rf:focus-visible { outline: none; }

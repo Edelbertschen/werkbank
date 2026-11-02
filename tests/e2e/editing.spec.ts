@@ -18,7 +18,7 @@ test('Text ändern, schwärzen, Text und Rechteck einfügen, übernehmen', async
   const span = page.locator('.page[data-page-number="1"] .textLayer span', { hasText: 'Kapitel 1' }).first();
   const sb = (await span.boundingBox())!;
   await page.mouse.click(sb.x + 10, sb.y + sb.height / 2);
-  await page.keyboard.press('Control+a');
+  await page.keyboard.press('ControlOrMeta+a');
   await page.keyboard.type('Kapitel Eins: Geändert');
   await page.keyboard.press('Escape');
 
@@ -57,7 +57,7 @@ test('Freihand und Textmarker werden beim Speichern übernommen', async ({ app }
   await page.mouse.move(sp.x + 2, sp.y + sp.height / 2); await page.mouse.down(); await page.mouse.move(sp.x + sp.width * 0.6, sp.y + sp.height / 2, { steps: 10 }); await page.mouse.up();
   await page.keyboard.press('Escape');
   const dl = page.waitForEvent('download');
-  await page.keyboard.press('Control+s');
+  await page.keyboard.press('ControlOrMeta+s');
   const file = (await (await dl).path())!;
   const raw = (await import('node:fs')).readFileSync(file).toString('latin1');
   expect(raw).toMatch(/\/Subtype\s*\/Ink/);
@@ -87,9 +87,9 @@ test('Rückgängig und Wiederholen per Tastatur', async ({ app }) => {
   await app.open('text.pdf');
   await app.runTool('rotate-right');
   await app.page.locator('.vc').click({ position: { x: 5, y: 5 } });
-  await app.page.keyboard.press('Control+z'); await app.idle();
+  await app.page.keyboard.press('ControlOrMeta+z'); await app.idle();
   expect((await app.docInfo())!.dirty).toBe(false);
-  await app.page.keyboard.press('Control+Shift+z'); await app.idle();
+  await app.page.keyboard.press('ControlOrMeta+Shift+z'); await app.idle();
   expect((await app.docInfo())!.history.length).toBe(2);
 });
 
@@ -105,7 +105,7 @@ test('Absatz bearbeiten: neuer Text bricht innerhalb der Spalte um', async ({ ap
   const editor = page.locator('.item.textedit .tx.multi');
   await expect(editor).toBeVisible();
   await expect(editor).toContainText('Werkbank ist eine PDF-Anwendung');
-  await page.keyboard.press('Control+a');
+  await page.keyboard.press('ControlOrMeta+a');
   const neu = 'Der Forstbetrieb plant im kommenden Jahr eine vollständige Inventur aller Bestände, einschließlich der neu erworbenen Flächen im Nordschwarzwald und der Versuchsflächen am Kaiserstuhl.';
   await page.keyboard.type(neu);
   await page.keyboard.press('Escape');

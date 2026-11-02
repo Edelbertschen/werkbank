@@ -85,7 +85,7 @@ export class App {
   async ribbon(label: string) {
     const b = this.page.locator(`.ribbon button[aria-label="${label}"]`).first();
     if (await b.isVisible()) { await b.click(); return; }
-    await this.page.keyboard.press('Control+k');
+    await this.page.keyboard.press('ControlOrMeta+k');
     await this.page.keyboard.type(label);
     await this.page.keyboard.press('Enter');
   }

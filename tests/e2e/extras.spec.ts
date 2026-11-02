@@ -13,7 +13,7 @@ test('Rechtsklick auf einen Tab: andere schließen, zuletzt geschlossenes wieder
   await tab('text').click({ button: 'right' });
   await expect(app.page.locator('.ctxmenu').getByRole('menuitem', { name: 'Zuletzt geschlossenes wieder öffnen' })).toBeEnabled();
   await app.page.keyboard.press('Escape');
-  await app.page.keyboard.press('Control+Shift+t');
+  await app.page.keyboard.press('ControlOrMeta+Shift+t');
   await expect(app.page.locator('.titlebar .tab')).toHaveCount(2);
   await expect(tab('outline')).toBeVisible();
 });

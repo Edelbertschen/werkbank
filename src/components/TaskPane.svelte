@@ -76,7 +76,7 @@
   .grip { position: absolute; left: -3px; top: 0; bottom: 0; width: 6px; cursor: col-resize; z-index: 3; }
   header { display: flex; align-items: center; gap: 11px; padding: 16px 12px 8px 18px; }
   .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); flex: none; }
-  h2 { margin: 0; flex: 1; font: 600 16px/1.2 var(--font-display); letter-spacing: -0.015em; }
+  h2 { margin: 0; flex: 1; font: 620 16px/1.2 var(--font-brand); letter-spacing: -0.015em; }
   .x { width: 24px; height: 24px; border: 0; background: none; border-radius: 6px; color: var(--text-3); display: grid; place-items: center; }
   .x:hover { background: var(--hover); color: var(--text); }
   .body { flex: 1; min-height: 0; padding: 4px 18px 22px; }

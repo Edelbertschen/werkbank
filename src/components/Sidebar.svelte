@@ -46,7 +46,7 @@
 <style>
   .sidebar { flex: none; display: flex; flex-direction: column; background: var(--bar); border-radius: 12px; box-shadow: var(--shadow-1); position: relative; min-height: 0; }
   header { display: flex; align-items: center; height: 42px; padding: 0 8px 0 16px; flex: none; }
-  h2 { margin: 0; flex: 1; font: 600 13px/1 var(--font-display); letter-spacing: -0.005em; color: var(--text); }
+  h2 { margin: 0; flex: 1; font: 620 13px/1 var(--font-brand); letter-spacing: -0.005em; color: var(--text); }
   .x { width: 24px; height: 24px; border: 0; background: none; border-radius: 6px; color: var(--text-3); display: grid; place-items: center; }
   .x:hover { background: var(--hover); color: var(--text); }
   .content { flex: 1; min-height: 0; display: flex; flex-direction: column; }

@@ -119,7 +119,7 @@
 <style>
   .cv { display: flex; flex-direction: column; height: min(84vh, 900px); margin: -20px -20px -16px; }
   header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 0.5px solid var(--line); }
-  h2 { margin: 0; font: 600 15px var(--font-display); }
+  h2 { margin: 0; font: 620 15px var(--font-brand); }
   .grow { flex: 1; }
   .pg { font-size: 12px; color: var(--text-2); min-width: 100px; text-align: center; }
   .main { flex: 1; display: flex; min-height: 0; }

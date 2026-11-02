@@ -38,7 +38,7 @@ test('Seitenleiste: PDF zwischen Seite 1 und 2 ablegen', async ({ app }) => {
 
 test('Organisieren: PDF vor der ersten Seite ablegen', async ({ app }) => {
   await app.open('outline.pdf');
-  await app.page.keyboard.press('Control+Shift+o');
+  await app.page.keyboard.press('ControlOrMeta+Shift+o');
   const cells = app.page.locator('.org .cell');
   await expect(cells).toHaveCount(5);
   const b = (await cells.nth(0).boundingBox())!;

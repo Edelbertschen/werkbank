@@ -196,7 +196,7 @@
   .presenting .center { background: #000; border-radius: 0; }
   .presenting .work { padding: 0; gap: 0; }
   .drop-veil { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: color-mix(in srgb, var(--win) 60%, transparent); backdrop-filter: blur(6px) saturate(1.2); animation: fade-in 0.14s; pointer-events: none; }
-  .drop-card { border: 1.5px dashed var(--accent); border-radius: 18px; padding: 36px 56px; background: var(--surface); font: 600 19px var(--font-display); letter-spacing: -0.015em; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: var(--shadow-pop); animation: pop-in 0.18s var(--ease); }
+  .drop-card { border: 1.5px dashed var(--accent); border-radius: 18px; padding: 36px 56px; background: var(--surface); font: 620 19px var(--font-brand); letter-spacing: -0.015em; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: var(--shadow-pop); animation: pop-in 0.18s var(--ease); }
   .insert-line { position: fixed; z-index: 80; pointer-events: none; height: 3px; margin-top: -1.5px; border-radius: 2px; background: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent); }
   .insert-line.v { width: 3px; height: auto; margin: 0 0 0 -1.5px; }
   .insert-line span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; padding: 3px 9px; border-radius: 999px; background: var(--accent); color: #fff; font: 600 11.5px var(--font); box-shadow: var(--shadow-pop); }

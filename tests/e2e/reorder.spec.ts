@@ -31,7 +31,7 @@ test('Seitenleiste: Seite 1 hinter Seite 3 ziehen', async ({ app }) => {
 
 test('Organisieren: Seite 4 an den Anfang ziehen', async ({ app }) => {
   await app.open('outline.pdf');
-  await app.page.keyboard.press('Control+Shift+o');
+  await app.page.keyboard.press('ControlOrMeta+Shift+o');
   const cells = app.page.locator('.org .cell');
   await expect(cells).toHaveCount(5);
   const a = (await cells.nth(3).boundingBox())!, b = (await cells.nth(0).boundingBox())!;

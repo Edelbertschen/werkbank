@@ -60,7 +60,7 @@ test('Rückgängig nach dem Verschieben stellt die Anmerkung an alter Stelle wie
   const { at, k } = await enterMove(app);
   await drag(app.page, at(350, 202), 0, 200 * k);
   await expect.poll(() => history(app.page), { timeout: 30_000 }).toEqual(['Geöffnet', 'Element verschoben']);
-  await app.page.keyboard.press('Control+z');
+  await app.page.keyboard.press('ControlOrMeta+z');
   await expect.poll(() => history(app.page)).toEqual(['Geöffnet']);
   expect(await annots(app.page)).toEqual(before);
 });

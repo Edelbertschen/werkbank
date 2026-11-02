@@ -39,7 +39,7 @@ test('startet auf Englisch, wenn das System Englisch spricht', async ({ page }) 
   const text = await page.evaluate(async () => { const d = (window as any).__wb.active(); const p = await d.pdf.getPage(1); return (await p.getTextContent()).items.map((i: any) => i.str).join(' '); });
   expect(text).toContain('1');
   // Befehlssuche auf Englisch
-  await page.keyboard.press('Control+k');
+  await page.keyboard.press('ControlOrMeta+k');
   await page.keyboard.type('make smaller');
   await expect(page.locator('.palette, [role=dialog]').getByText('Compress').first()).toBeVisible();
   await page.screenshot({ path: 'test-results/english.png' });

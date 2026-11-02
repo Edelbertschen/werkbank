@@ -39,10 +39,10 @@ test('Rechteck ist sofort ein Stand: kein Übernehmen, Rückgängig und Wiederho
   expect((await baked(app.page)).annots).toEqual(['Square']);
 
   await app.page.keyboard.press('Escape'); await app.page.keyboard.press('Escape');
-  await app.page.keyboard.press('Control+z');
+  await app.page.keyboard.press('ControlOrMeta+z');
   await expect.poll(() => objects(app.page)).toEqual([]);
   expect((await baked(app.page)).annots).toEqual([]);
-  await app.page.keyboard.press('Control+Shift+z');
+  await app.page.keyboard.press('ControlOrMeta+Shift+z');
   await expect.poll(() => objects(app.page)).toEqual(['rect']);
 });
 
@@ -62,7 +62,7 @@ test('Text schreiben und verschieben: zwei Stände, Rückgängig setzt die Posit
   await app.page.mouse.move(tx.x + tx.width / 2, tx.y - 120, { steps: 8 }); await app.page.mouse.up();
   await expect.poll(() => history(app.page)).toEqual(['Geöffnet', 'Text eingefügt', 'Element verschoben']);
   const y1 = await W(app.page, 'return W.overlay.itemsOf(d)[0].y');
-  await app.page.keyboard.press('Control+z');
+  await app.page.keyboard.press('ControlOrMeta+z');
   await expect.poll(() => W(app.page, 'return W.overlay.itemsOf(d)[0].y')).toBeGreaterThan(y1 + 0.05);
 });
 
@@ -75,7 +75,7 @@ test('Werkzeug auf der Seite schreibt die Elemente ein; Rückgängig holt sie al
   expect(await history(app.page)).toEqual(['Geöffnet', 'Rechteck eingefügt', 'Seite 1 gedreht']);
   expect(await objects(app.page)).toEqual([]);
   expect((await baked(app.page)).annots).toEqual(['Square']);
-  await app.page.keyboard.press('Control+z');
+  await app.page.keyboard.press('ControlOrMeta+z');
   await expect.poll(() => objects(app.page)).toEqual(['rect']);
 });
 
@@ -125,6 +125,6 @@ test('Miniatur in der Seitenleiste zeigt neue Elemente nach kurzer Zeit', async 
   await expect.poll(() => img.getAttribute('src'), { timeout: 20_000 }).not.toBe(before);
   // Rückgängig: wieder wie vorher
   await app.page.keyboard.press('Escape'); await app.page.keyboard.press('Escape');
-  await app.page.keyboard.press('Control+z');
+  await app.page.keyboard.press('ControlOrMeta+z');
   await expect.poll(() => img.getAttribute('src'), { timeout: 20_000 }).toBe(before);
 });

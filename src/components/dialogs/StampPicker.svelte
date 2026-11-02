@@ -59,7 +59,7 @@
 
 <style>
   .st { display: flex; flex-direction: column; gap: 14px; }
-  h2 { margin: 0; font: 600 15px var(--font-display); }
+  h2 { margin: 0; font: 620 15px var(--font-brand); }
   .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .stamp { height: 46px; border: 3px solid currentColor; border-radius: 6px; background: #fff; font: 800 15px var(--font); letter-spacing: 0.12em; }
   .stamp.round { border-radius: 23px; }

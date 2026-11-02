@@ -68,7 +68,7 @@
   .ic { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; flex: none; background: var(--accent-soft); color: var(--accent); }
   .ic.warn { background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--warn); }
   .tx { flex: 1; min-width: 0; }
-  h2 { margin: 2px 0 6px; font: 600 16.5px/1.3 var(--font-display); letter-spacing: -0.015em; }
+  h2 { margin: 2px 0 6px; font: 620 16.5px/1.3 var(--font-brand); letter-spacing: -0.015em; }
   p { margin: 0 0 4px; color: var(--text-2); line-height: 1.5; font-size: 13px; }
   .detail { font-size: 12px; color: var(--text-3); white-space: pre-wrap; }
   .fields { margin: 16px 0 4px; }

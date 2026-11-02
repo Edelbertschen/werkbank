@@ -8,7 +8,7 @@ test('verschlüsseltes PDF: Passwort, Bearbeiten, Speichern mit gleichem Schutz'
   expect(info!.protected).toBe(true);
   expect((await app.runTool('page-numbers')).ok).toBe(true);
   const dl = app.page.waitForEvent('download');
-  await app.page.keyboard.press('Control+s');
+  await app.page.keyboard.press('ControlOrMeta+s');
   const file = await (await dl).path();
   const head = (await import('node:fs')).readFileSync(file!).toString('latin1');
   expect(head).toMatch(/\/Encrypt/);
@@ -84,7 +84,7 @@ test('Word-Export enthält Text mit Umlauten und Sonderzeichen', async ({ app })
 test('120 Seiten: Miniaturen und Organisieren bleiben flüssig', async ({ app }) => {
   await app.open('long.pdf');
   const t0 = Date.now();
-  await app.page.keyboard.press('Control+Shift+o');
+  await app.page.keyboard.press('ControlOrMeta+Shift+o');
   await expect(app.page.locator('.org')).toBeVisible();
   expect(Date.now() - t0).toBeLessThan(5000);
   await app.page.keyboard.press('Escape');

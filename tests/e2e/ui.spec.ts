@@ -27,7 +27,7 @@ test('kein Inhalt der Bandleiste ragt über den Rand', async ({ app }) => {
 
 test('Befehlssuche findet Werkzeuge nach Alltagswörtern', async ({ app }) => {
   await app.open('text.pdf');
-  await app.page.keyboard.press('Control+k');
+  await app.page.keyboard.press('ControlOrMeta+k');
   await app.page.keyboard.type('kleiner machen');
   await expect(app.page.locator('.palette, [role=dialog]').getByText('Komprimieren').first()).toBeVisible();
   await app.page.keyboard.press('Escape');
@@ -43,7 +43,7 @@ test('dunkles Erscheinungsbild folgt dem System', async ({ app }) => {
 test('Schließen eines geänderten Dokuments fragt nach', async ({ app }) => {
   await app.open('text.pdf');
   await app.runTool('rotate-right');
-  await app.page.keyboard.press('Control+w');
+  await app.page.keyboard.press('ControlOrMeta+w');
   await expect(app.page.locator('.dialog')).toBeVisible();
   await expect(app.page.locator('.dialog')).toContainText(/speichern/i);
 });
@@ -70,7 +70,7 @@ test('Registerkarten per Rechtsklick ausblenden und in den Einstellungen zurück
   await app.page.getByText('„Formulare“ ausblenden').click();
   await expect(app.page.getByRole('tab', { name: 'Formulare', exact: true })).toHaveCount(0);
   // Werkzeuge bleiben über die Befehlssuche erreichbar
-  await app.page.keyboard.press('Control+k');
+  await app.page.keyboard.press('ControlOrMeta+k');
   await app.page.keyboard.type('textfeld');
   await expect(app.page.locator('.pal').getByText('Textfeld').first()).toBeVisible();
   await app.page.keyboard.press('Escape');

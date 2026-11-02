@@ -29,7 +29,7 @@ async function editHiermit(app: any, typed: string) {
   const box = (await page.locator('.page[data-page-number="1"]').boundingBox())!;
   await app.tab('Bearbeiten'); await page.locator('.ribbon button[aria-label="Text bearbeiten"]').first().click();
   await page.mouse.click(box.x + box.width * 0.2, box.y + box.height * 112 / 842);
-  await page.keyboard.press('Control+a');
+  await page.keyboard.press('ControlOrMeta+a');
   await page.keyboard.type(typed);
 }
 async function apply(app: any) {
