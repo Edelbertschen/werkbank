@@ -13,7 +13,7 @@ test.describe('Willkommen', () => {
     await app.page.waitForTimeout(400);
     await app.page.reload();
     await app.page.waitForFunction(() => (window as any).__wb);
-    await expect(app.page.getByText('Datei hierher ziehen')).toBeVisible();
+    await expect(app.page.getByText('Leg eine Datei auf die Werkbank.')).toBeVisible();
     await expect(app.page.locator('.welcome')).toHaveCount(0);
   });
 
@@ -44,7 +44,7 @@ test.describe('Willkommen', () => {
     await expect(en).toBeVisible({ timeout: 20_000 });
     await expect(en.getByRole('button', { name: 'English' })).toHaveAttribute('aria-pressed', 'true');
     await en.getByRole('button', { name: 'Get started' }).click();
-    await expect(app.page.getByText('Drag a file here')).toBeVisible();
+    await expect(app.page.getByText('Put a file on the workbench.')).toBeVisible();
   });
 
   test('Einführung lässt sich in den Einstellungen wieder zeigen', async ({ app }) => {
