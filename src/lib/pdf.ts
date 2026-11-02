@@ -21,6 +21,8 @@ export type { PDFDocumentProxy };
 export const PDFJS_ASSETS = {
   cMapUrl: '/engines/pdfjs/cmaps/',
   standardFontDataUrl: '/engines/pdfjs/standard_fonts/',
+  wasmUrl: '/engines/pdfjs/wasm/',
+  iccUrl: '/engines/pdfjs/iccs/',
 };
 
 export class PasswordNeeded extends Error {
@@ -34,6 +36,8 @@ export async function openPdf(bytes: Uint8Array, password?: string): Promise<PDF
     cMapUrl: PDFJS_ASSETS.cMapUrl,
     cMapPacked: true,
     standardFontDataUrl: PDFJS_ASSETS.standardFontDataUrl,
+    wasmUrl: PDFJS_ASSETS.wasmUrl,
+    iccUrl: PDFJS_ASSETS.iccUrl,
     isEvalSupported: false,
     enableXfa: false,
     useSystemFonts: false,

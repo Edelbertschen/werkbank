@@ -44,6 +44,9 @@ copy('@neslinesli93/qpdf-wasm/dist/qpdf.wasm', 'qpdf/qpdf.wasm');
 // pdf.js Zusatzdaten (asiatische Schriften, Standardschriften)
 copy('pdfjs-dist/cmaps', 'pdfjs/cmaps');
 copy('pdfjs-dist/standard_fonts', 'pdfjs/standard_fonts');
+// Bild-Decoder (JPEG 2000, JBIG2) und Farbprofile – ohne sie bleiben solche Bilder leer
+copy('pdfjs-dist/wasm', 'pdfjs/wasm');
+copy('pdfjs-dist/iccs', 'pdfjs/iccs');
 
 // pdf.js-Viewer-Symbole (Notizsymbole, Editor-Griffe)
 rmSync(join(root, 'public', 'pdfjs-images'), { recursive: true, force: true });
