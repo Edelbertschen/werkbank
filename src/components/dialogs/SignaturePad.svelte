@@ -139,9 +139,11 @@
   .hint { margin: 0; font-size: 12px; color: var(--text-3); text-align: center; }
   .saved { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .sv { position: relative; }
-  .use { width: 100%; height: 76px; border: 0; border-radius: 9px; background: #fff; box-shadow: inset 0 0 0 1px var(--line-strong); padding: 8px; display: grid; place-items: center; }
+  .use { width: 100%; height: 76px; border: 0; border-radius: 9px; background: #fff; box-shadow: inset 0 0 0 1px var(--line-strong); padding: 8px; display: grid; place-items: center;
+    /* feste Zelle, damit das Bild sich an der Kachel misst und nicht an seiner eigenen Größe */
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr); overflow: hidden; }
   .use:hover { box-shadow: inset 0 0 0 2px var(--accent); }
-  .use img { max-height: 100%; max-width: 100%; }
+  .use img { width: 100%; height: 100%; object-fit: scale-down; }
   .del { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border: 0; border-radius: 5px; background: rgba(255, 255, 255, 0.9); color: #555; display: grid; place-items: center; }
   .keep { display: flex; gap: 7px; align-items: center; font-size: 12px; color: var(--text-2); }
   .buttons { display: flex; justify-content: flex-end; gap: 8px; }
