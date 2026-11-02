@@ -52,7 +52,7 @@ test('App-Symbol führt zurück zur Startseite', async ({ app }) => {
   await app.open('text.pdf');
   // Im Browser gibt es keine Dateipfade – „Zuletzt geöffnet“ gibt es nur in der Desktop-App.
   await app.page.locator('.brand').click();
-  await expect(app.page.getByRole('heading', { name: 'Zuletzt geöffnet' })).toBeVisible();
+  await expect(app.page.getByRole('heading', { name: 'Leg eine Datei auf die Werkbank.' })).toBeVisible();
 });
 
 test('Öffnen über den Systemdialog von der Startseite', async ({ app }) => {

@@ -1508,6 +1508,14 @@ const en: Record<string, string> = {
  "Die Bilder kommen als eigene Dateien dazu – im Wiki über den Medienmanager hochladen.": "Images are added as separate files – upload them via the wiki's media manager.",
  "Namensraum der Bilder": "Image namespace",
  "z. B. projekte:wald (leer = aktueller)": "e.g. projects:forest (empty = current)",
- "Seitenumbrüche als Trennlinie": "Page breaks as horizontal lines"
+ "Seitenumbrüche als Trennlinie": "Page breaks as horizontal lines",
+ "Leg eine Datei auf die Werkbank.": "Put a file on the workbench.",
+ "PDF, Word, Excel, PowerPoint, Bilder, E-Books oder E-Mails. Ziehen, ablegen, loslegen – alles bleibt auf diesem Rechner.": "PDF, Word, Excel, PowerPoint, images, e-books or emails. Drag, drop, get going – everything stays on this computer.",
+ "Oder": "Or",
+ "Jedes Werkzeug findest du mit": "Find any tool with",
+ "Was liegt an?": "What's on the bench?",
+ "Werkzeug suchen – z. B. „schwärzen“, „OCR“, „Word“": "Search tools – e.g. “redact”, “OCR”, “Word”",
+ "1 Datei": "1 file",
+ "Dateien kannst du überall in diesem Fenster ablegen.": "You can drop files anywhere in this window."
 };
 export default en;
