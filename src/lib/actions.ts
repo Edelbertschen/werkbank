@@ -1,7 +1,7 @@
 // Abläufe: Öffnen, Speichern, Schließen, Werkzeuge ausführen
 import { app, active, toast, addRecent, savePrefs } from './app.svelte';
 import { Doc } from './doc.svelte';
-import { PasswordNeeded, openPdf } from './pdf';
+import { PasswordNeeded, openPdf, isPdfDamage } from './pdf';
 import { askPassword, confirm, dialog } from './dialogs.svelte';
 import { anyToPdf, kindOf, hasPdfHeader } from './convert';
 import { qpdf } from './engines';
@@ -68,6 +68,8 @@ export async function openBytes(name: string, bytes: Uint8Array, path: string | 
       try { await doc.load(pdfBytes); break; }
       catch (e) {
         if (!(e instanceof PasswordNeeded)) {
+          // Kein Fehler der Datei (z. B. ein Programmteil ließ sich nicht laden): nicht „beschädigt“ melden
+          if (!isPdfDamage(e)) throw new Error(L("Werkbank konnte die Datei nicht laden ({0}). Bitte die App neu starten und erneut versuchen.", (e as any)?.message || e));
           // Beschädigt: einmal mit qpdf und MuPDF reparieren, die beste Fassung nehmen
           if (repaired || !isPdf) throw e;
           repaired = true;

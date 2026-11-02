@@ -1516,6 +1516,7 @@ const en: Record<string, string> = {
  "Was liegt an?": "What's on the bench?",
  "Werkzeug suchen – z. B. „schwärzen“, „OCR“, „Word“": "Search tools – e.g. “redact”, “OCR”, “Word”",
  "1 Datei": "1 file",
- "Dateien kannst du überall in diesem Fenster ablegen.": "You can drop files anywhere in this window."
+ "Dateien kannst du überall in diesem Fenster ablegen.": "You can drop files anywhere in this window.",
+ "Werkbank konnte die Datei nicht laden ({0}). Bitte die App neu starten und erneut versuchen.": "Werkbank could not load the file ({0}). Please restart the app and try again."
 };
 export default en;

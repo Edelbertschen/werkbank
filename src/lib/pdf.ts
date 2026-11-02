@@ -29,6 +29,14 @@ export class PasswordNeeded extends Error {
   constructor(public retry: boolean) { super(retry ? L("Falsches Passwort") : L("Passwort nötig")); }
 }
 
+/** Liegt der Fehler an der Datei selbst? pdf.js meldet alles, was beim Lesen der Datei schiefgeht,
+ *  als InvalidPDFException oder (aus dem Worker) UnknownErrorException. Andere Fehler – etwa ein
+ *  Worker, der nicht startet, weil ein Programmteil fehlt – sind kein Grund für eine Reparatur. */
+export function isPdfDamage(e: unknown): boolean {
+  const name = (e as any)?.name;
+  return name === 'InvalidPDFException' || name === 'UnknownErrorException';
+}
+
 export async function openPdf(bytes: Uint8Array, password?: string): Promise<PDFDocumentProxy> {
   const task = pdfjsLib.getDocument({
     data: bytes.slice(),
