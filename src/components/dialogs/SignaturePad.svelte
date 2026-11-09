@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { app, savePrefs } from '../../lib/app.svelte';
   import { pickFiles } from '../../lib/platform';
+  import { decodeImage, IMAGE_EXTENSIONS } from '../../lib/imagefile';
   import * as I from '../../lib/icons';
 
   let { title, done }: { title: string; done: (r: any) => void } = $props();
@@ -50,10 +51,10 @@
     return c;
   }
   async function loadImage() {
-    const [f] = await pickFiles({ filters: [{ name: L("Bilder"), extensions: ['png', 'jpg', 'jpeg', 'webp'] }] });
+    const [f] = await pickFiles({ filters: [{ name: L("Bilder"), extensions: IMAGE_EXTENSIONS }] });
     if (!f) return;
     // Weißen Hintergrund transparent machen, damit die Unterschrift sauber auf dem Papier liegt
-    const bmp = await createImageBitmap(new Blob([f.bytes as BlobPart]));
+    const { img: bmp } = await decodeImage(f.bytes, f.name);
     const c = document.createElement('canvas'); const s = Math.min(1, 1600 / bmp.width); c.width = bmp.width * s; c.height = bmp.height * s;
     const x = c.getContext('2d')!; x.drawImage(bmp, 0, 0, c.width, c.height);
     const im = x.getImageData(0, 0, c.width, c.height), d = im.data;

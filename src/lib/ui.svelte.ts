@@ -6,6 +6,7 @@ import { runTool } from './actions';
 import { dialog } from './dialogs.svelte';
 import type { EditMode } from './app.svelte';
 import { viewer } from './viewer.svelte';
+import { decodeImage, IMAGE_EXTENSIONS } from './imagefile';
 import SignaturePad from '../components/dialogs/SignaturePad.svelte';
 import StampPicker from '../components/dialogs/StampPicker.svelte';
 import { pickFiles } from './platform';
@@ -64,7 +65,7 @@ export const MODE_HINT: Partial<Record<EditMode, string>> = {
 
 async function pickPlacement(kind: 'sign' | 'stamp' | 'image') {
   if (kind === 'image') {
-    const [f] = await pickFiles({ filters: [{ name: L("Bilder"), extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'heic'] }], title: L("Bild einfügen") });
+    const [f] = await pickFiles({ filters: [{ name: L("Bilder"), extensions: IMAGE_EXTENSIONS }], title: L("Bild einfügen") });
     if (!f) return null;
     const { imagesToPdf } = await import('./convert');
     // Bild normalisieren (Drehung aus EXIF, HEIC …) über einen Canvas
@@ -82,12 +83,7 @@ async function pickPlacement(kind: 'sign' | 'stamp' | 'image') {
 }
 
 async function normalizeImage(bytes: Uint8Array, name: string): Promise<{ src: string; ratio: number }> {
-  let blob = new Blob([bytes as BlobPart]);
-  if (/\.(heic|heif)$/i.test(name)) { const h = (await import('heic2any')).default as any; const r = await h({ blob, toType: 'image/jpeg', quality: 0.92 }); blob = Array.isArray(r) ? r[0] : r; }
-  if (/\.svg$/i.test(name)) blob = new Blob([bytes as BlobPart], { type: 'image/svg+xml' });
-  let bmp: any;
-  try { bmp = await createImageBitmap(blob, { imageOrientation: 'from-image' } as any); }
-  catch { const u = URL.createObjectURL(blob); bmp = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = u; }); }
+  const { img: bmp } = await decodeImage(bytes, name);
   const max = 2400, s = Math.min(1, max / Math.max(bmp.width, bmp.height));
   const c = document.createElement('canvas'); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
   c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height);
