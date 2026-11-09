@@ -175,7 +175,7 @@
 <Toasts />
 
 <style>
-  .app { height: 100%; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; background: var(--win); }
+  .app { height: 100%; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); background: var(--win); }
   .app.presenting { grid-template-rows: minmax(0, 1fr); background: #000; }
   /* Arbeitsbereich: Seitenleiste, Dokumentfläche und Aufgabenbereich liegen als Blätter auf dem Fensterchrom */
   .ribbon-gap { height: 4px; }

@@ -155,7 +155,7 @@ out`, { files: { 'in.pdf': doc.bytes } }));
 {/if}
 
 <style>
-  .bar { display: flex; gap: 6px; padding: 0 12px 8px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 8px; }
   .find { position: relative; display: flex; align-items: center; padding: 0 12px 8px; }
   .find :global(svg) { position: absolute; left: 21px; color: var(--text-3); }
   .find .input { padding-left: 27px; }
@@ -168,6 +168,7 @@ out`, { files: { 'in.pdf': doc.bytes } }));
   .t { flex: 1; min-width: 0; text-align: left; border: 0; background: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; }
   .pg { font-size: 11px; color: var(--text-3); padding-right: 6px; }
   .row .input { height: 22px; }
-  .apply { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-top: 0.5px solid var(--line); background: var(--surface); font-size: 12px; }
-  .apply span { flex: 1; color: var(--text-2); }
+  /* bei schmaler Leiste rutschen die Knöpfe unter den Hinweis, statt abgeschnitten zu werden */
+  .apply { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; padding: 8px 10px; border-top: 0.5px solid var(--line); background: var(--surface); font-size: 12px; }
+  .apply span { flex: 1 1 9em; min-width: 0; color: var(--text-2); }
 </style>
